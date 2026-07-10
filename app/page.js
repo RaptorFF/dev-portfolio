@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   const features = [
     {
@@ -91,9 +93,9 @@ export default function Home() {
             <a className="button button-primary" href="#workflow">
               See the flow
             </a>
-            <a className="button button-secondary" href="#contact">
-              Join the waitlist
-            </a>
+            <Link className="button button-secondary" href="/dashboard">
+              Open dashboard preview
+            </Link>
           </div>
 
           <div className="hero-metrics" aria-label="Profile highlights">
