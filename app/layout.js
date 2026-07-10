@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Dev Portfolio",
-  description: "Personal developer portfolio",
+  title: "Portfolio Forge - Freemium Portfolio Builder",
+  description:
+    "Build a portfolio, import GitHub projects, and upgrade to Pro when you need more control.",
 };
 
 export default function RootLayout({ children }) {
