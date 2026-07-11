@@ -84,7 +84,7 @@ a {
 .topbar {
   position: sticky;
   top: 16px;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -126,6 +126,24 @@ a {
   font-size: 0.95rem;
 }
 
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.menu-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+  transition: all 0.3s ease;
+}
+
 .nav-links a:hover,
 .project-card a:hover {
   color: var(--text);
@@ -137,6 +155,7 @@ a {
   gap: 48px;
   align-items: center;
   padding: 14px 0 84px;
+  isolation: isolate;
 }
 
 .eyebrow,
@@ -732,10 +751,12 @@ a {
   }
 
   .hero-visual {
-    min-height: 520px;
+    min-height: auto;
   }
 
   .portrait-card {
+    position: relative;
+    top: auto;
     right: 0;
     left: 0;
     margin: 0 auto;
@@ -781,12 +802,53 @@ a {
     padding-top: 12px;
   }
 
+  .menu-toggle {
+    display: flex;
+  }
+
   .topbar {
     padding: 14px;
+    flex-wrap: wrap;
+    border-radius: 20px;
   }
 
   .nav-links {
-    gap: 12px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+    padding: 12px;
+    background: rgba(5, 6, 10, 0.95);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    backdrop-filter: blur(18px);
+    box-shadow: var(--shadow);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-links a {
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    background: rgba(255, 255, 255, 0.06);
   }
 
   .hero {
@@ -794,7 +856,7 @@ a {
   }
 
   .hero h1 {
-    font-size: clamp(2.8rem, 16vw, 4.2rem);
+    font-size: clamp(2rem, 6vw, 2.8rem);
   }
 
   .intro h2,

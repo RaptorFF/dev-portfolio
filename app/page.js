@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
   const features = [
@@ -55,6 +58,8 @@ export default function Home() {
     },
   ];
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <main className="portfolio-shell">
       <div className="background-glow background-glow-left" />
@@ -66,11 +71,33 @@ export default function Home() {
           <span>Portfolio Forge</span>
         </a>
 
-        <nav className="nav-links" aria-label="Primary">
-          <a href="#features">Features</a>
-          <a href="#workflow">How it works</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#contact">Contact</a>
+        <button
+          className="menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav
+          className={`nav-links ${menuOpen ? "active" : ""}`}
+          aria-label="Primary"
+        >
+          <a href="#features" onClick={() => setMenuOpen(false)}>
+            Features
+          </a>
+          <a href="#workflow" onClick={() => setMenuOpen(false)}>
+            How it works
+          </a>
+          <a href="#pricing" onClick={() => setMenuOpen(false)}>
+            Pricing
+          </a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>
+            Contact
+          </a>
         </nav>
       </header>
 
