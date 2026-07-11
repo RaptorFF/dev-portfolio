@@ -120,7 +120,7 @@ a {
 
 .nav-links {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 18px;
   color: var(--muted);
   font-size: 0.95rem;
@@ -761,17 +761,6 @@ a {
     left: 0;
     margin: 0 auto;
     transform: none;
-  }
-
-  .topbar {
-    border-radius: 28px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nav-links {
-    width: 100%;
-    justify-content: space-between;
   }
 
   .hero-metrics {
