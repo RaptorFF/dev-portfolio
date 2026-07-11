@@ -404,7 +404,11 @@ a {
 .intro h2,
 .section-header h2,
 .contact-section h2 {
-  font-size: clamp(2.1rem, 4vw, 4rem);
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+}
+
+.intro h2 + p {
+  margin-top: 18px;
 }
 
 .section-header {
@@ -851,7 +855,7 @@ a {
   .intro h2,
   .section-header h2,
   .contact-section h2 {
-    font-size: clamp(1.8rem, 9vw, 2.8rem);
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
   }
 
   .experience-meta,
