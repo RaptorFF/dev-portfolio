@@ -103,9 +103,7 @@ export default function Home() {
 
       <section className="hero" id="home">
         <div className="hero-copy">
-          <p className="eyebrow">
-            Freemium portfolio builder with GitHub import
-          </p>
+          <p className="eyebrow">Portfolio builder with GitHub import</p>
           <h1>
             Let creators build a premium portfolio and sync projects from
             GitHub.
