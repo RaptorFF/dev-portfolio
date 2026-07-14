@@ -66,10 +66,10 @@ export default function Home() {
       <div className="background-glow background-glow-right" />
 
       <header className="topbar">
-        <a className="brand" href="#home">
+        <Link className="brand" href="#home">
           <span className="brand-mark">D</span>
           <span>Portfolio Forge</span>
-        </a>
+        </Link>
 
         <button
           className="menu-toggle"
@@ -86,18 +86,18 @@ export default function Home() {
           className={`nav-links ${menuOpen ? "active" : ""}`}
           aria-label="Primary"
         >
-          <a href="#features" onClick={() => setMenuOpen(false)}>
+          <Link href="#features" onClick={() => setMenuOpen(false)}>
             Features
-          </a>
-          <a href="#workflow" onClick={() => setMenuOpen(false)}>
+          </Link>
+          <Link href="#workflow" onClick={() => setMenuOpen(false)}>
             How it works
-          </a>
-          <a href="#pricing" onClick={() => setMenuOpen(false)}>
+          </Link>
+          <Link href="#pricing" onClick={() => setMenuOpen(false)}>
             Pricing
-          </a>
-          <a href="#contact" onClick={() => setMenuOpen(false)}>
+          </Link>
+          <Link href="#contact" onClick={() => setMenuOpen(false)}>
             Contact
-          </a>
+          </Link>
         </nav>
       </header>
 
@@ -115,9 +115,9 @@ export default function Home() {
           </p>
 
           <div className="hero-actions">
-            <a className="button button-primary" href="#workflow">
+            <Link className="button button-primary" href="#workflow">
               See the flow
-            </a>
+            </Link>
             <Link className="button button-secondary" href="/dashboard">
               Open dashboard preview
             </Link>
@@ -202,7 +202,7 @@ export default function Home() {
               <p className="project-category">{plan.name}</p>
               <h3>{plan.note}</h3>
               <p>{plan.items.join(" • ")}</p>
-              <a href="#contact">Get early access</a>
+              <Link href="#contact">Get early access</Link>
             </article>
           ))}
         </div>
@@ -219,9 +219,12 @@ export default function Home() {
             Next step can be turning this into a working MVP with auth, GitHub
             OAuth, portfolio templates, and a free/pro subscription flow.
           </p>
-          <a className="button button-primary" href="mailto:hello@example.com">
+          <Link
+            className="button button-primary"
+            href="mailto:hello@example.com"
+          >
             Talk about the MVP
-          </a>
+          </Link>
         </div>
       </section>
     </main>

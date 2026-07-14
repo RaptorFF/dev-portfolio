@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const draftProjects = [
   {
     name: "Realtime Habit Tracker",
@@ -29,13 +31,13 @@ export default function DashboardPage() {
         </div>
 
         <nav className="dashboard-nav" aria-label="Dashboard navigation">
-          <a className="active" href="#overview">
+          <Link className="active" href="#overview">
             Overview
-          </a>
-          <a href="#profile">Profile</a>
-          <a href="#projects">Projects</a>
-          <a href="#theme">Theme</a>
-          <a href="#publish">Publish</a>
+          </Link>
+          <Link href="#profile">Profile</Link>
+          <Link href="#projects">Projects</Link>
+          <Link href="#theme">Theme</Link>
+          <Link href="#publish">Publish</Link>
         </nav>
 
         <div className="plan-card">
