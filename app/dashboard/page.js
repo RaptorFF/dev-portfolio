@@ -1,4 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+
+const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
+
+const defaultProfile = {
+  name: "",
+  role: "",
+  shortBio: "",
+};
 
 const draftProjects = [
   {
@@ -19,6 +30,41 @@ const draftProjects = [
 ];
 
 export default function DashboardPage() {
+  const [profile, setProfile] = useState(() => {
+    if (typeof window === "undefined") return defaultProfile;
+
+    const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (!savedProfile) return defaultProfile;
+
+    try {
+      const parsedProfile = JSON.parse(savedProfile);
+      return { ...defaultProfile, ...parsedProfile };
+    } catch {
+      window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+      return defaultProfile;
+    }
+  });
+  const [saveStatus, setSaveStatus] = useState("");
+
+  function handleProfileChange(e) {
+    const { name, value } = e.target;
+    setProfile((prev) => ({ ...prev, [name]: value }));
+    setSaveStatus("");
+  }
+
+  function handleSaveDraft() {
+    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    setSaveStatus("Draft profile je sačuvan.");
+  }
+
+  const previewName = profile.name || "Your Name";
+  const previewTitle = profile.role
+    ? `${profile.role} crafting bold web experiences`
+    : "Your role will appear here";
+  const previewBio =
+    profile.shortBio ||
+    "Add a short bio in Profile setup to preview your public portfolio.";
+
   return (
     <main className="dashboard-shell">
       <aside className="dashboard-sidebar">
@@ -59,7 +105,11 @@ export default function DashboardPage() {
             <h1>Design your portfolio like a product page</h1>
           </div>
           <div className="header-actions">
-            <button type="button" className="button button-secondary">
+            <button
+              type="button"
+              className="button button-secondary"
+              onClick={handleSaveDraft}
+            >
               Save draft
             </button>
             <button type="button" className="button button-primary">
@@ -68,23 +118,41 @@ export default function DashboardPage() {
           </div>
         </header>
 
+        {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
+
         <div className="dashboard-grid">
           <article className="editor-card" id="profile">
             <h2>Profile setup</h2>
             <div className="mock-field">
-              <label>Name</label>
-              <div>Filip Frontend</div>
+              <label htmlFor="profile-name">Name</label>
+              <input
+                id="profile-name"
+                name="name"
+                value={profile.name}
+                onChange={handleProfileChange}
+                placeholder="e.g. Filip Frontend"
+              />
             </div>
             <div className="mock-field">
-              <label>Role</label>
-              <div>Frontend Developer and Product Designer</div>
+              <label htmlFor="profile-role">Role</label>
+              <input
+                id="profile-role"
+                name="role"
+                value={profile.role}
+                onChange={handleProfileChange}
+                placeholder="e.g. Frontend Developer and Product Designer"
+              />
             </div>
             <div className="mock-field">
-              <label>Short bio</label>
-              <div>
-                Building polished interfaces and launching portfolio-ready web
-                products.
-              </div>
+              <label htmlFor="profile-shortBio">Short bio</label>
+              <textarea
+                id="profile-shortBio"
+                name="shortBio"
+                value={profile.shortBio}
+                onChange={handleProfileChange}
+                placeholder="Write a short intro for your portfolio"
+                rows={4}
+              />
             </div>
           </article>
 
@@ -127,12 +195,9 @@ export default function DashboardPage() {
         <h2>How your public portfolio will look</h2>
 
         <div className="mini-portfolio">
-          <p className="mini-eyebrow">Filip Frontend</p>
-          <h3>Frontend Developer crafting bold web experiences</h3>
-          <p>
-            This panel previews the chosen layout, project cards, and profile
-            details before publishing.
-          </p>
+          <p className="mini-eyebrow">{previewName}</p>
+          <h3>{previewTitle}</h3>
+          <p>{previewBio}</p>
           <button type="button" className="button button-secondary">
             Preview public URL
           </button>

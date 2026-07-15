@@ -613,7 +613,7 @@ a {
 
 .mock-field {
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
 .mock-field label {
@@ -621,6 +621,7 @@ a {
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-weight: 700;
 }
 
 .mock-field div {
@@ -628,6 +629,70 @@ a {
   border-radius: 12px;
   border: 1px solid var(--panel-border);
   background: rgba(0, 0, 0, 0.2);
+}
+
+.mock-field input,
+.mock-field textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    rgba(0, 0, 0, 0.24);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.mock-field input:hover,
+.mock-field textarea:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%),
+    rgba(0, 0, 0, 0.28);
+}
+
+.mock-field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.mock-field input::placeholder,
+.mock-field textarea::placeholder {
+  color: rgba(243, 239, 231, 0.45);
+}
+
+.mock-field input:focus,
+.mock-field textarea:focus {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: rgba(199, 156, 255, 0.72);
+  box-shadow:
+    0 0 0 2px rgba(199, 156, 255, 0.22),
+    0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+.mock-field input:-webkit-autofill,
+.mock-field input:-webkit-autofill:hover,
+.mock-field input:-webkit-autofill:focus,
+.mock-field textarea:-webkit-autofill,
+.mock-field textarea:-webkit-autofill:hover,
+.mock-field textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0 1000px rgba(16, 18, 26, 0.96) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.save-status {
+  margin: -4px 0 2px;
+  color: #cbeeb0;
+  font-size: 0.86rem;
 }
 
 .card-headline {
