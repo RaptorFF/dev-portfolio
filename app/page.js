@@ -109,9 +109,9 @@ export default function Home() {
             GitHub.
           </h1>
           <p className="hero-text">
-            Portfolio Forge is a freemium web app where users can create a
-            polished portfolio, import their GitHub projects automatically, and
-            upgrade for more control when they need it.
+            Portfolio Forge is a web app where users can create a polished
+            portfolio, import their GitHub projects automatically, and upgrade
+            for more control when they need it.
           </p>
 
           <div className="hero-actions">
