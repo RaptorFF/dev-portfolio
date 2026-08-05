@@ -830,7 +830,114 @@ a {
   margin-bottom: 8px;
 }
 
+.preview-page-shell {
+  min-height: 100vh;
+  padding: 32px 20px;
+  display: grid;
+  place-items: center;
+}
+
+.preview-page-card {
+  width: min(760px, 100%);
+  padding: 32px;
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(199, 156, 255, 0.08), transparent 40%),
+    var(--panel-bg);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 18px;
+}
+
+.preview-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.preview-page-kicker {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.preview-page-card h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.preview-page-card h2 {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+  color: var(--accent);
+}
+
+.preview-page-card h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.preview-page-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.preview-page-intro,
+.preview-page-section {
+  padding-top: 8px;
+}
+
+.preview-page-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.preview-page-projects article {
+  padding: 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.preview-page-projects article:hover {
+  transform: translateY(-2px);
+  border-color: rgba(199, 156, 255, 0.4);
+}
+
+.preview-page-projects strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.preview-page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
 @media (max-width: 960px) {
+  .preview-page-header {
+    flex-direction: column;
+  }
+
+  .preview-page-projects {
+    grid-template-columns: 1fr;
+  }
   .hero,
   .contact-section,
   .projects-grid {

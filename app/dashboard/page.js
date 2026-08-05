@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
@@ -30,6 +31,7 @@ const draftProjects = [
 ];
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [profile, setProfile] = useState(() => {
     if (typeof window === "undefined") return defaultProfile;
 
@@ -55,6 +57,11 @@ export default function DashboardPage() {
   function handleSaveDraft() {
     window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
     setSaveStatus("Draft profile je sačuvan.");
+  }
+
+  function handlePreviewPublicUrl() {
+    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    router.push("/preview");
   }
 
   const previewName = profile.name || "Your Name";
@@ -199,7 +206,11 @@ export default function DashboardPage() {
           <p className="mini-eyebrow">{previewName}</p>
           <h3>{previewTitle}</h3>
           <p>{previewBio}</p>
-          <button type="button" className="button button-secondary">
+          <button
+            type="button"
+            className="button button-secondary"
+            onClick={handlePreviewPublicUrl}
+          >
             Preview public URL
           </button>
         </div>
