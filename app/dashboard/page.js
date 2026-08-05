@@ -32,20 +32,7 @@ const draftProjects = [
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [profile, setProfile] = useState(() => {
-    if (typeof window === "undefined") return defaultProfile;
-
-    const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (!savedProfile) return defaultProfile;
-
-    try {
-      const parsedProfile = JSON.parse(savedProfile);
-      return { ...defaultProfile, ...parsedProfile };
-    } catch {
-      window.localStorage.removeItem(PROFILE_STORAGE_KEY);
-      return defaultProfile;
-    }
-  });
+  const [profile, setProfile] = useState(defaultProfile);
   const [saveStatus, setSaveStatus] = useState("");
 
   function handleProfileChange(e) {
