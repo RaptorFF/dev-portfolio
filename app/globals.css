@@ -643,6 +643,8 @@ a {
   color: var(--text);
   font: inherit;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -661,6 +663,9 @@ a {
 .mock-field textarea {
   resize: vertical;
   min-height: 110px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .mock-field input::placeholder,
@@ -772,11 +777,29 @@ a {
 
 .preview-panel {
   gap: 14px;
+  min-width: 0;
 }
 
 .mini-portfolio,
 .sync-note {
   padding: 14px;
+}
+
+.mini-portfolio {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.mini-portfolio .button {
+  margin-top: 4px;
+}
+
+.mini-portfolio p {
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .mini-eyebrow {
@@ -788,8 +811,11 @@ a {
 }
 
 .mini-portfolio h3 {
-  margin-top: 10px;
+  margin: 0;
   font-size: 1.5rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .mini-portfolio p,
@@ -938,6 +964,7 @@ a {
   .dashboard-shell {
     width: min(100% - 20px, 1360px);
     margin-top: 12px;
+    gap: 12px;
   }
 
   .dashboard-main,
@@ -946,8 +973,55 @@ a {
     border-radius: 20px;
   }
 
+  .dashboard-sidebar,
+  .preview-panel {
+    padding: 14px;
+    gap: 12px;
+  }
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dashboard-header h1 {
+    max-width: 100%;
+    font-size: clamp(1.6rem, 5.6vw, 2.2rem);
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .header-actions .button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .editor-card,
+  .plan-card,
+  .mini-portfolio,
+  .sync-note {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .mock-field input,
+  .mock-field textarea {
+    font-size: 16px;
+  }
+
+  .card-headline,
+  .project-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chip {
+    width: fit-content;
   }
 }

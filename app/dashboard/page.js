@@ -59,7 +59,7 @@ export default function DashboardPage() {
 
   const previewName = profile.name || "Your Name";
   const previewTitle = profile.role
-    ? `${profile.role} crafting bold web experiences`
+    ? `${profile.role}`
     : "Your role will appear here";
   const previewBio =
     profile.shortBio ||
@@ -135,12 +135,13 @@ export default function DashboardPage() {
             </div>
             <div className="mock-field">
               <label htmlFor="profile-role">Role</label>
-              <input
+              <textarea
                 id="profile-role"
                 name="role"
                 value={profile.role}
                 onChange={handleProfileChange}
                 placeholder="e.g. Frontend Developer and Product Designer"
+                rows={2}
               />
             </div>
             <div className="mock-field">
