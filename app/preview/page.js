@@ -2,28 +2,42 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { applyTheme, THEME_STORAGE_KEY as THEME_STORAGE } from "../lib/themes";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
 
+const defaultProfile = {
+  name: "Your Name",
+  role: "Your role will appear here",
+  shortBio:
+    "Add a short bio in Profile setup to preview your public portfolio.",
+};
+
+function getInitialProfile() {
+  if (typeof window === "undefined") return defaultProfile;
+
+  const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+  if (!savedProfile) return defaultProfile;
+
+  try {
+    return { ...defaultProfile, ...JSON.parse(savedProfile) };
+  } catch {
+    window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+    return defaultProfile;
+  }
+}
+
 export default function PreviewPage() {
-  const [profile, setProfile] = useState({
-    name: "Your Name",
-    role: "Your role will appear here",
-    shortBio:
-      "Add a short bio in Profile setup to preview your public portfolio.",
-  });
+  const [profile] = useState(getInitialProfile);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (!savedProfile) return;
-
-    try {
-      const parsedProfile = JSON.parse(savedProfile);
-      setProfile((prev) => ({ ...prev, ...parsedProfile }));
-    } catch {
-      window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      applyTheme("purple");
     }
   }, []);
 

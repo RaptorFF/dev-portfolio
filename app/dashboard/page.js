@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  applyTheme,
+  getThemeOptions,
+  THEME_STORAGE_KEY as THEME_STORAGE,
+} from "../lib/themes";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
 
@@ -30,16 +35,31 @@ const draftProjects = [
   },
 ];
 
+function getInitialTheme() {
+  if (typeof window === "undefined") return "purple";
+
+  return window.localStorage.getItem(THEME_STORAGE) || "purple";
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [profile, setProfile] = useState(defaultProfile);
   const [saveStatus, setSaveStatus] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState(getInitialTheme);
+  const themes = useMemo(() => getThemeOptions(), []);
 
   function handleProfileChange(e) {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
     setSaveStatus("");
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem(THEME_STORAGE, selectedTheme);
+    applyTheme(selectedTheme);
+  }, [selectedTheme]);
 
   function handleSaveDraft() {
     window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
@@ -173,13 +193,20 @@ export default function DashboardPage() {
           <article className="editor-card" id="theme">
             <h2>Theme controls</h2>
             <div className="theme-swatches">
-              <button type="button" className="swatch swatch-purple" />
-              <button type="button" className="swatch swatch-indigo" />
-              <button type="button" className="swatch swatch-slate" />
+              {themes.map((theme) => (
+                <button
+                  key={theme.value}
+                  type="button"
+                  className={`swatch ${theme.value === selectedTheme ? "active" : ""}`}
+                  style={{ background: theme.accentGradient }}
+                  onClick={() => setSelectedTheme(theme.value)}
+                  aria-label={`Select ${theme.label}`}
+                />
+              ))}
             </div>
             <p>
-              Let users choose typography style, spacing density, and accent
-              color without touching code.
+              Choose a color theme and see it reflected instantly in the live
+              preview.
             </p>
           </article>
         </div>
