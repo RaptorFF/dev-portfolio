@@ -18,7 +18,7 @@ export async function GET(request) {
   }
 
   const token = await getToken({
-    req: { headers: { cookie: request.headers.get("cookie") ?? "" } },
+    req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
