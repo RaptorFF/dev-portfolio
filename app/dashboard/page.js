@@ -10,30 +10,13 @@ import {
 } from "../lib/themes";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
+const PROJECTS_STORAGE_KEY = "portfolio-forge-github-projects";
 
 const defaultProfile = {
   name: "",
   role: "",
   shortBio: "",
 };
-
-const draftProjects = [
-  {
-    name: "Realtime Habit Tracker",
-    status: "Ready to publish",
-    source: "Manual",
-  },
-  {
-    name: "SaaS Billing Dashboard",
-    status: "Needs summary",
-    source: "GitHub (soon)",
-  },
-  {
-    name: "AI Landing Page",
-    status: "Draft",
-    source: "Manual",
-  },
-];
 
 function getInitialTheme() {
   if (typeof window === "undefined") return "purple";
@@ -46,7 +29,69 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState(defaultProfile);
   const [saveStatus, setSaveStatus] = useState("");
   const [selectedTheme, setSelectedTheme] = useState(getInitialTheme);
+  const [githubState, setGithubState] = useState("loading");
+  const [githubUser, setGithubUser] = useState(null);
+  const [repositories, setRepositories] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState(() => {
+    if (typeof window === "undefined") return [];
+
+    try {
+      const savedProjects = window.localStorage.getItem(PROJECTS_STORAGE_KEY);
+      const parsedProjects = savedProjects ? JSON.parse(savedProjects) : [];
+      return Array.isArray(parsedProjects) ? parsedProjects : [];
+    } catch {
+      return [];
+    }
+  });
+  const [refreshKey, setRefreshKey] = useState(0);
   const themes = useMemo(() => getThemeOptions(), []);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      PROJECTS_STORAGE_KEY,
+      JSON.stringify(selectedProjects),
+    );
+  }, [selectedProjects]);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function loadRepositories() {
+      setGithubState("loading");
+
+      try {
+        const response = await fetch("/api/github/repos", {
+          cache: "no-store",
+        });
+        const data = await response.json();
+
+        if (!isCurrent) return;
+
+        if (response.status === 401) {
+          setGithubState("disconnected");
+          return;
+        }
+
+        if (response.status === 503) {
+          setGithubState("not-configured");
+          return;
+        }
+
+        if (!response.ok) throw new Error(data.error);
+
+        setGithubUser(data.user);
+        setRepositories(data.repositories);
+        setGithubState("connected");
+      } catch {
+        if (isCurrent) setGithubState("error");
+      }
+    }
+
+    loadRepositories();
+    return () => {
+      isCurrent = false;
+    };
+  }, [refreshKey]);
 
   function handleProfileChange(e) {
     const { name, value } = e.target;
@@ -68,7 +113,56 @@ export default function DashboardPage() {
 
   function handlePreviewPublicUrl() {
     window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    window.localStorage.setItem(
+      PROJECTS_STORAGE_KEY,
+      JSON.stringify(selectedProjects),
+    );
     router.push("/preview");
+  }
+
+  function toggleProject(repository) {
+    setSelectedProjects((currentProjects) => {
+      const alreadySelected = currentProjects.some(
+        (project) => project.id === repository.id,
+      );
+
+      if (alreadySelected) {
+        return currentProjects.filter(
+          (project) => project.id !== repository.id,
+        );
+      }
+
+      return [
+        ...currentProjects,
+        { ...repository, portfolioDescription: repository.description || "" },
+      ];
+    });
+  }
+
+  function updateProjectDescription(projectId, description) {
+    setSelectedProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === projectId
+          ? { ...project, portfolioDescription: description }
+          : project,
+      ),
+    );
+  }
+
+  function moveProject(projectIndex, direction) {
+    setSelectedProjects((currentProjects) => {
+      const targetIndex = projectIndex + direction;
+      if (targetIndex < 0 || targetIndex >= currentProjects.length) {
+        return currentProjects;
+      }
+
+      const reorderedProjects = [...currentProjects];
+      [reorderedProjects[projectIndex], reorderedProjects[targetIndex]] = [
+        reorderedProjects[targetIndex],
+        reorderedProjects[projectIndex],
+      ];
+      return reorderedProjects;
+    });
   }
 
   const previewName = profile.name || "Your Name";
@@ -174,20 +268,162 @@ export default function DashboardPage() {
           <article className="editor-card" id="projects">
             <div className="card-headline">
               <h2>Projects</h2>
-              <span className="chip">GitHub import in next phase</span>
+              {githubState === "connected" ? (
+                <div className="github-actions">
+                  <button
+                    className="text-button"
+                    type="button"
+                    onClick={() => setRefreshKey((key) => key + 1)}
+                  >
+                    Refresh
+                  </button>
+                  <button
+                    className="text-button"
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/dashboard" })}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              ) : null}
             </div>
 
-            <div className="project-list">
-              {draftProjects.map((project) => (
-                <div className="project-row" key={project.name}>
-                  <div>
-                    <strong>{project.name}</strong>
-                    <span>{project.source}</span>
-                  </div>
-                  <span className="chip subtle">{project.status}</span>
+            <p className="github-status" role="status">
+              {githubState === "loading" && "Loading GitHub repositories..."}
+              {githubState === "connected" &&
+                `Connected as @${githubUser?.login}. Only public repositories are imported.`}
+              {githubState === "disconnected" &&
+                "Connect GitHub to import your public repositories."}
+              {githubState === "not-configured" &&
+                "GitHub OAuth is not configured. Add the credentials from .env.example to .env.local."}
+              {githubState === "error" &&
+                "Could not load repositories. Try refreshing the list."}
+            </p>
+
+            {githubState === "disconnected" ? (
+              <button
+                className="button button-primary github-connect-button"
+                type="button"
+                onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+              >
+                Connect GitHub
+              </button>
+            ) : null}
+
+            {githubState === "not-configured" ? (
+              <button
+                className="button button-primary github-connect-button"
+                type="button"
+                disabled
+              >
+                Connect GitHub
+              </button>
+            ) : null}
+
+            {githubState === "connected" ? (
+              <>
+                <div className="project-section-heading">
+                  <h3>Selected for portfolio</h3>
+                  <span>{selectedProjects.length} selected</span>
                 </div>
-              ))}
-            </div>
+
+                {selectedProjects.length ? (
+                  <div className="selected-project-list">
+                    {selectedProjects.map((project, index) => (
+                      <article className="selected-project" key={project.id}>
+                        <div className="project-row">
+                          <div className="project-summary">
+                            <strong>{project.name}</strong>
+                            <span>
+                              {project.language || "Repository"} · ★{" "}
+                              {project.stars}
+                            </span>
+                          </div>
+                          <div className="project-order-controls">
+                            <button
+                              className="text-button"
+                              type="button"
+                              onClick={() => moveProject(index, -1)}
+                              disabled={index === 0}
+                              aria-label={`Move ${project.name} up`}
+                            >
+                              Move up
+                            </button>
+                            <button
+                              className="text-button"
+                              type="button"
+                              onClick={() => moveProject(index, 1)}
+                              disabled={index === selectedProjects.length - 1}
+                              aria-label={`Move ${project.name} down`}
+                            >
+                              Move down
+                            </button>
+                          </div>
+                        </div>
+                        <div className="mock-field project-description-field">
+                          <label htmlFor={`project-description-${project.id}`}>
+                            Portfolio description
+                          </label>
+                          <textarea
+                            id={`project-description-${project.id}`}
+                            value={project.portfolioDescription}
+                            onChange={(event) =>
+                              updateProjectDescription(
+                                project.id,
+                                event.target.value,
+                              )
+                            }
+                            rows={2}
+                            placeholder="Describe what this project does"
+                          />
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="project-empty-state">
+                    Add repositories below to choose what appears in your
+                    portfolio.
+                  </p>
+                )}
+
+                <div className="project-section-heading">
+                  <h3>Your repositories</h3>
+                  <span>{repositories.length} public</span>
+                </div>
+                <div className="project-list">
+                  {repositories.map((repository) => {
+                    const isSelected = selectedProjects.some(
+                      (project) => project.id === repository.id,
+                    );
+
+                    return (
+                      <div className="project-row" key={repository.id}>
+                        <div className="project-summary">
+                          <strong>{repository.name}</strong>
+                          <span>
+                            {repository.language || "Repository"} · ★{" "}
+                            {repository.stars}
+                          </span>
+                          {repository.description ? (
+                            <span className="repository-description">
+                              {repository.description}
+                            </span>
+                          ) : null}
+                        </div>
+                        <button
+                          className="text-button"
+                          type="button"
+                          onClick={() => toggleProject(repository)}
+                        >
+                          {isSelected ? "Remove" : "Add project"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
           </article>
 
           <article className="editor-card" id="theme">
@@ -230,10 +466,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="sync-note">
-          <strong>Next milestone</strong>
-          <p>
-            Connect GitHub and map repositories into this preview automatically.
-          </p>
+          <strong>Project settings</strong>
+          <p>Selected projects and descriptions are saved in this browser.</p>
         </div>
       </aside>
     </main>

@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## GitHub OAuth setup
+
+Create a GitHub OAuth App in **Settings > Developer settings > OAuth Apps** with these URLs:
+
+- Homepage URL: `http://localhost:3000`
+- Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
+
+Copy `.env.example` to `.env.local`, then fill in `GITHUB_ID` and `GITHUB_SECRET` from the OAuth App. Generate a `NEXTAUTH_SECRET` with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Restart the development server after changing environment variables. The app requests only the `read:user` scope and imports public repositories. OAuth credentials and the GitHub access token stay server-side; selected projects and edited descriptions are currently saved in the browser, so they are not shared across devices yet.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

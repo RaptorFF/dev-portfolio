@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { applyTheme, THEME_STORAGE_KEY as THEME_STORAGE } from "../lib/themes";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
+const PROJECTS_STORAGE_KEY = "portfolio-forge-github-projects";
 
 const defaultProfile = {
   name: "Your Name",
@@ -27,8 +28,21 @@ function getInitialProfile() {
   }
 }
 
+function getInitialProjects() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const savedProjects = window.localStorage.getItem(PROJECTS_STORAGE_KEY);
+    const parsedProjects = savedProjects ? JSON.parse(savedProjects) : [];
+    return Array.isArray(parsedProjects) ? parsedProjects : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function PreviewPage() {
   const [profile] = useState(getInitialProfile);
+  const [projects] = useState(getInitialProjects);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -78,14 +92,22 @@ export default function PreviewPage() {
         <section className="preview-page-section">
           <h3>Selected projects</h3>
           <div className="preview-page-projects">
-            <article>
-              <strong>Portfolio Forge</strong>
-              <p>Design-led portfolio builder for modern creators.</p>
-            </article>
-            <article>
-              <strong>Realtime dashboard</strong>
-              <p>Clean analytics experience built with product thinking.</p>
-            </article>
+            {projects.length ? (
+              projects.map((project) => (
+                <article key={project.id}>
+                  <a href={project.htmlUrl} target="_blank" rel="noreferrer">
+                    <strong>{project.name}</strong>
+                  </a>
+                  <p>
+                    {project.portfolioDescription ||
+                      "Project description coming soon."}
+                  </p>
+                  {project.language ? <span>{project.language}</span> : null}
+                </article>
+              ))
+            ) : (
+              <p>No projects selected yet.</p>
+            )}
           </div>
         </section>
 

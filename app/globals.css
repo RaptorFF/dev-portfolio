@@ -743,6 +743,101 @@ a {
   gap: 10px;
 }
 
+.github-actions,
+.project-order-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.text-button {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.text-button:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.text-button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.github-status,
+.project-empty-state {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.github-connect-button {
+  justify-self: start;
+}
+
+.project-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.project-section-heading h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.project-section-heading span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.selected-project-list {
+  display: grid;
+  gap: 14px;
+}
+
+.selected-project {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.project-description-field textarea {
+  min-height: 72px;
+}
+
+.project-summary {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.project-summary strong {
+  overflow-wrap: anywhere;
+}
+
+.project-summary span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.repository-description {
+  max-width: 56ch;
+  overflow-wrap: anywhere;
+}
+
 .project-row {
   display: flex;
   justify-content: space-between;
