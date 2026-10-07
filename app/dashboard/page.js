@@ -81,6 +81,13 @@ export default function DashboardPage() {
         if (!response.ok) throw new Error(data.error);
 
         setGithubUser(data.user);
+        if (data.user) {
+          setProfile((currentProfile) => ({
+            ...currentProfile,
+            name: currentProfile.name || data.user.name || data.user.login || "",
+            shortBio: currentProfile.shortBio || data.user.bio || "",
+          }));
+        }
         setRepositories(data.repositories);
         setGithubState("connected");
       } catch {
@@ -232,6 +239,12 @@ export default function DashboardPage() {
         <div className="dashboard-grid">
           <article className="editor-card" id="profile">
             <h2>Profile setup</h2>
+            {githubState === "connected" ? (
+              <p className="github-status" role="status">
+                GitHub name and bio are filled in when available. GitHub
+                profiles do not include a role, so add that manually.
+              </p>
+            ) : null}
             <div className="mock-field">
               <label htmlFor="profile-name">Name</label>
               <input

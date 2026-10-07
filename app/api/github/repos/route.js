@@ -42,6 +42,8 @@ export async function GET(request) {
     return NextResponse.json({
       user: {
         login: user.login,
+        name: user.name,
+        bio: user.bio,
         avatarUrl: user.avatar_url,
       },
       repositories: repositories
