@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, signOut } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import {
   applyTheme,
   getThemeOptions,
@@ -11,7 +17,11 @@ import {
 } from "../lib/themes";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
+const PROFILE_CHANGE_EVENT = "portfolio-profile-change";
 const PROJECTS_STORAGE_KEY = "portfolio-forge-github-projects";
+const GITHUB_DATA_STORAGE_KEY = "portfolio-forge-github-data";
+const GITHUB_DATA_CHANGE_EVENT = "portfolio-github-data-change";
+const THEME_CHANGE_EVENT = "portfolio-theme-change";
 
 const defaultProfile = {
   name: "",
@@ -19,20 +29,180 @@ const defaultProfile = {
   shortBio: "",
 };
 
-function getInitialTheme() {
-  if (typeof window === "undefined") return "purple";
+const DEFAULT_PROFILE_SNAPSHOT = JSON.stringify(defaultProfile);
 
-  return window.localStorage.getItem(THEME_STORAGE) || "purple";
+function getProfileSnapshot() {
+  return (
+    window.localStorage.getItem(PROFILE_STORAGE_KEY) ||
+    DEFAULT_PROFILE_SNAPSHOT
+  );
+}
+
+function getServerProfileSnapshot() {
+  return DEFAULT_PROFILE_SNAPSHOT;
+}
+
+function subscribeToProfile(onChange) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(PROFILE_CHANGE_EVENT, onChange);
+
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(PROFILE_CHANGE_EVENT, onChange);
+  };
+}
+
+function parseProfileSnapshot(snapshot) {
+  try {
+    const parsedProfile = JSON.parse(snapshot);
+    if (!parsedProfile || typeof parsedProfile !== "object") {
+      throw new Error("Saved profile draft is not an object.");
+    }
+
+    return {
+      name: typeof parsedProfile.name === "string" ? parsedProfile.name : "",
+      role: typeof parsedProfile.role === "string" ? parsedProfile.role : "",
+      shortBio:
+        typeof parsedProfile.shortBio === "string"
+          ? parsedProfile.shortBio
+          : "",
+    };
+  } catch (error) {
+    console.error("Could not load saved profile draft:", error);
+    return defaultProfile;
+  }
+}
+
+function saveProfile(update) {
+  const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+  const currentProfile = savedProfile
+    ? parseProfileSnapshot(savedProfile)
+    : defaultProfile;
+  const nextProfile =
+    typeof update === "function" ? update(currentProfile) : update;
+
+  window.localStorage.setItem(
+    PROFILE_STORAGE_KEY,
+    JSON.stringify(nextProfile),
+  );
+  window.dispatchEvent(new Event(PROFILE_CHANGE_EVENT));
+}
+
+function getGithubDataSnapshot() {
+  return window.localStorage.getItem(GITHUB_DATA_STORAGE_KEY) || "null";
+}
+
+function getServerGithubDataSnapshot() {
+  return "null";
+}
+
+function subscribeToGithubData(onChange) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(GITHUB_DATA_CHANGE_EVENT, onChange);
+
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(GITHUB_DATA_CHANGE_EVENT, onChange);
+  };
+}
+
+function parseGithubDataSnapshot(snapshot) {
+  if (snapshot === "null") return null;
+  try {
+    const parsedData = JSON.parse(snapshot);
+    if (
+      !parsedData?.user ||
+      typeof parsedData.user.login !== "string" ||
+      !Array.isArray(parsedData.repositories)
+    ) {
+      throw new Error("Saved GitHub data has an invalid format.");
+    }
+
+    return parsedData;
+  } catch (error) {
+    console.error("Could not load cached GitHub data:", error);
+    return null;
+  }
+}
+
+function saveGithubData(data) {
+  try {
+    window.localStorage.setItem(GITHUB_DATA_STORAGE_KEY, JSON.stringify(data));
+    window.dispatchEvent(new Event(GITHUB_DATA_CHANGE_EVENT));
+  } catch (error) {
+    console.error("Could not cache GitHub data:", error);
+  }
+}
+
+function clearGithubData() {
+  try {
+    window.localStorage.removeItem(GITHUB_DATA_STORAGE_KEY);
+    window.dispatchEvent(new Event(GITHUB_DATA_CHANGE_EVENT));
+  } catch (error) {
+    console.error("Could not clear cached GitHub data:", error);
+  }
+}
+
+function getThemeSnapshot() {
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE);
+  return getThemeOptions().some((theme) => theme.value === savedTheme)
+    ? savedTheme
+    : "purple";
+}
+
+function getServerThemeSnapshot() {
+  return "purple";
+}
+
+function subscribeToTheme(onChange) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(THEME_CHANGE_EVENT, onChange);
+
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(THEME_CHANGE_EVENT, onChange);
+  };
+}
+
+function saveTheme(theme) {
+  window.localStorage.setItem(THEME_STORAGE, theme);
+  window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [profile, setProfile] = useState(defaultProfile);
+  const profileSnapshot = useSyncExternalStore(
+    subscribeToProfile,
+    getProfileSnapshot,
+    getServerProfileSnapshot,
+  );
+  const profile = useMemo(
+    () => parseProfileSnapshot(profileSnapshot),
+    [profileSnapshot],
+  );
+  const updateProfile = useCallback((update) => saveProfile(update), []);
   const [saveStatus, setSaveStatus] = useState("");
-  const [selectedTheme, setSelectedTheme] = useState(getInitialTheme);
+  const selectedTheme = useSyncExternalStore(
+    subscribeToTheme,
+    getThemeSnapshot,
+    getServerThemeSnapshot,
+  );
   const [githubState, setGithubState] = useState("loading");
-  const [githubUser, setGithubUser] = useState(null);
-  const [repositories, setRepositories] = useState([]);
+  const githubDataSnapshot = useSyncExternalStore(
+    subscribeToGithubData,
+    getGithubDataSnapshot,
+    getServerGithubDataSnapshot,
+  );
+  const githubData = useMemo(
+    () => parseGithubDataSnapshot(githubDataSnapshot),
+    [githubDataSnapshot],
+  );
+  const githubUser = githubData?.user ?? null;
+  const repositories = githubData?.repositories ?? [];
+  const showRepositoryManager =
+    githubState === "connected" ||
+    ((githubState === "loading" || githubState === "error") &&
+      githubData !== null);
   const [selectedProjects, setSelectedProjects] = useState(() => {
     if (typeof window === "undefined") return [];
 
@@ -69,26 +239,31 @@ export default function DashboardPage() {
         if (!isCurrent) return;
 
         if (response.status === 401) {
+          clearGithubData();
           setGithubState("disconnected");
           return;
         }
 
         if (response.status === 503) {
+          clearGithubData();
           setGithubState("not-configured");
           return;
         }
 
         if (!response.ok) throw new Error(data.error);
 
-        setGithubUser(data.user);
+        const nextGithubData = {
+          user: data.user,
+          repositories: data.repositories,
+        };
+        saveGithubData(nextGithubData);
         if (data.user) {
-          setProfile((currentProfile) => ({
+          updateProfile((currentProfile) => ({
             ...currentProfile,
             name: currentProfile.name || data.user.name || data.user.login || "",
             shortBio: currentProfile.shortBio || data.user.bio || "",
           }));
         }
-        setRepositories(data.repositories);
         setGithubState("connected");
       } catch {
         if (isCurrent) setGithubState("error");
@@ -99,28 +274,28 @@ export default function DashboardPage() {
     return () => {
       isCurrent = false;
     };
-  }, [refreshKey]);
+  }, [refreshKey, updateProfile]);
 
   function handleProfileChange(e) {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    updateProfile((currentProfile) => ({
+      ...currentProfile,
+      [name]: value,
+    }));
     setSaveStatus("");
   }
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    window.localStorage.setItem(THEME_STORAGE, selectedTheme);
     applyTheme(selectedTheme);
   }, [selectedTheme]);
 
   function handleSaveDraft() {
-    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    saveProfile(profile);
     setSaveStatus("Draft profile je sačuvan.");
   }
 
   function handlePreviewPublicUrl() {
-    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    saveProfile(profile);
     window.localStorage.setItem(
       PROJECTS_STORAGE_KEY,
       JSON.stringify(selectedProjects),
@@ -239,12 +414,11 @@ export default function DashboardPage() {
         <div className="dashboard-grid">
           <article className="editor-card" id="profile">
             <h2>Profile setup</h2>
-            {githubState === "connected" ? (
-              <p className="github-status" role="status">
-                GitHub name and bio are filled in when available. GitHub
-                profiles do not include a role, so add that manually.
-              </p>
-            ) : null}
+            <p className="github-status" role="status">
+              When GitHub is connected, name and bio are filled in when
+              available. GitHub profiles do not include a role, so add that
+              manually.
+            </p>
             <div className="mock-field">
               <label htmlFor="profile-name">Name</label>
               <input
@@ -282,28 +456,34 @@ export default function DashboardPage() {
           <article className="editor-card" id="projects">
             <div className="card-headline">
               <h2>Projects</h2>
-              {githubState === "connected" ? (
+              {githubState === "connected" || githubData ? (
                 <div className="github-actions">
                   <button
                     className="text-button"
                     type="button"
+                    disabled={githubState === "loading"}
                     onClick={() => setRefreshKey((key) => key + 1)}
                   >
-                    Refresh
+                    {githubState === "loading" ? "Refreshing..." : "Refresh"}
                   </button>
-                  <button
-                    className="text-button"
-                    type="button"
-                    onClick={() => signOut({ callbackUrl: "/dashboard" })}
-                  >
-                    Disconnect
-                  </button>
+                  {githubState === "connected" ? (
+                    <button
+                      className="text-button"
+                      type="button"
+                      onClick={() => signOut({ callbackUrl: "/dashboard" })}
+                    >
+                      Disconnect
+                    </button>
+                  ) : null}
                 </div>
               ) : null}
             </div>
 
             <p className="github-status" role="status">
-              {githubState === "loading" && "Loading GitHub repositories..."}
+              {githubState === "loading" &&
+                (githubData
+                  ? "Showing saved public repositories while checking GitHub for updates..."
+                  : "Loading GitHub repositories...")}
               {githubState === "connected" &&
                 `Connected as @${githubUser?.login}. Only public repositories are imported.`}
               {githubState === "disconnected" &&
@@ -311,7 +491,9 @@ export default function DashboardPage() {
               {githubState === "not-configured" &&
                 "GitHub OAuth is not configured. Add the credentials from .env.example to .env.local."}
               {githubState === "error" &&
-                "Could not load repositories. Try refreshing the list."}
+                (githubData
+                  ? "Could not refresh GitHub repositories. Showing saved data; try refreshing again."
+                  : "Could not load repositories. Try refreshing the list.")}
             </p>
 
             {githubState === "disconnected" ? (
@@ -334,7 +516,7 @@ export default function DashboardPage() {
               </button>
             ) : null}
 
-            {githubState === "connected" ? (
+            {showRepositoryManager ? (
               <>
                 <div className="project-section-heading">
                   <h3>Selected for portfolio</h3>
@@ -440,25 +622,6 @@ export default function DashboardPage() {
             ) : null}
           </article>
 
-          <article className="editor-card" id="theme">
-            <h2>Theme controls</h2>
-            <div className="theme-swatches">
-              {themes.map((theme) => (
-                <button
-                  key={theme.value}
-                  type="button"
-                  className={`swatch ${theme.value === selectedTheme ? "active" : ""}`}
-                  style={{ background: theme.accentGradient }}
-                  onClick={() => setSelectedTheme(theme.value)}
-                  aria-label={`Select ${theme.label}`}
-                />
-              ))}
-            </div>
-            <p>
-              Choose a color theme and see it reflected instantly in the live
-              preview.
-            </p>
-          </article>
         </div>
       </section>
 
@@ -478,6 +641,26 @@ export default function DashboardPage() {
             Preview public URL
           </button>
         </div>
+
+        <section className="theme-controls" id="theme">
+          <h3>Theme controls</h3>
+          <div className="theme-swatches">
+            {themes.map((theme) => (
+              <button
+                key={theme.value}
+                type="button"
+                className={`swatch ${theme.value === selectedTheme ? "active" : ""}`}
+                style={{ background: theme.accentGradient }}
+                onClick={() => saveTheme(theme.value)}
+                aria-label={`Select ${theme.label}`}
+              />
+            ))}
+          </div>
+          <p>
+            Choose a color theme and see it reflected instantly in the live
+            preview.
+          </p>
+        </section>
 
         <div className="sync-note">
           <strong>Project settings</strong>
