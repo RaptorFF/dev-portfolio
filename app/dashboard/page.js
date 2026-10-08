@@ -27,6 +27,7 @@ const defaultProfile = {
   name: "",
   role: "",
   shortBio: "",
+  email: "",
 };
 
 const DEFAULT_PROFILE_SNAPSHOT = JSON.stringify(defaultProfile);
@@ -66,6 +67,7 @@ function parseProfileSnapshot(snapshot) {
         typeof parsedProfile.shortBio === "string"
           ? parsedProfile.shortBio
           : "",
+      email: typeof parsedProfile.email === "string" ? parsedProfile.email : "",
     };
   } catch (error) {
     console.error("Could not load saved profile draft:", error);
@@ -263,6 +265,7 @@ export default function DashboardPage() {
             ...currentProfile,
             name: currentProfile.name || data.user.name || data.user.login || "",
             shortBio: currentProfile.shortBio || data.user.bio || "",
+            email: currentProfile.email || data.user.email || "",
           }));
         }
         setGithubState("connected");
@@ -308,6 +311,7 @@ export default function DashboardPage() {
           name: current.name || saved.name || "",
           role: current.role || saved.role || "",
           shortBio: current.shortBio || saved.shortBio || "",
+          email: current.email || saved.email || "",
         }));
         setSelectedProjects((current) =>
           current.length ? current : (portfolio.selected_projects ?? []),
@@ -540,6 +544,17 @@ export default function DashboardPage() {
                 onChange={handleProfileChange}
                 placeholder="Write a short intro for your portfolio"
                 rows={4}
+              />
+            </div>
+            <div className="mock-field">
+              <label htmlFor="profile-email">Contact email</label>
+              <input
+                id="profile-email"
+                name="email"
+                type="email"
+                value={profile.email}
+                onChange={handleProfileChange}
+                placeholder="e.g. hello@example.com"
               />
             </div>
           </article>

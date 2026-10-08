@@ -97,6 +97,7 @@ export async function PUT(request) {
         name: str(body?.profile?.name, 100),
         role: str(body?.profile?.role, 200),
         shortBio: str(body?.profile?.shortBio, 1000),
+        email: str(body?.profile?.email, 200).trim(),
       },
       selected_projects: projects,
       updated_at: new Date().toISOString(),

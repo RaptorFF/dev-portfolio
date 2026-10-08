@@ -44,6 +44,7 @@ export async function GET(request) {
         login: user.login,
         name: user.name,
         bio: user.bio,
+        email: user.email,
         avatarUrl: user.avatar_url,
       },
       repositories: repositories

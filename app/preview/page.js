@@ -75,19 +75,12 @@ export default function PreviewPage() {
         </div>
 
         <div className="preview-page-intro">
+          <h3>About</h3>
           <p>
             {profile.shortBio ||
               "Add a short bio in Profile setup to preview your public portfolio."}
           </p>
         </div>
-
-        <section className="preview-page-section">
-          <h3>About</h3>
-          <p>
-            I build polished digital experiences with a focus on clarity,
-            motion, and thoughtful product design.
-          </p>
-        </section>
 
         <section className="preview-page-section">
           <h3>Selected projects</h3>
@@ -113,7 +106,13 @@ export default function PreviewPage() {
 
         <section className="preview-page-section">
           <h3>Contact</h3>
-          <p>hello@portfolioforge.dev</p>
+          {profile.email ? (
+            <p>
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            </p>
+          ) : (
+            <p>Add a contact email in Profile setup.</p>
+          )}
         </section>
       </section>
     </main>

@@ -25,6 +25,7 @@ async function getPortfolio(slug) {
 }
 
 const safeUrl = (url) => (/^https?:\/\//i.test(url) ? url : undefined);
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -99,6 +100,15 @@ export default async function PublicPortfolioPage({ params }) {
             )}
           </div>
         </section>
+
+        {EMAIL_PATTERN.test(profile.email ?? "") ? (
+          <section className="preview-page-section">
+            <h3>Contact</h3>
+            <p>
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            </p>
+          </section>
+        ) : null}
       </section>
     </main>
   );
