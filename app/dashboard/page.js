@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn, signOut } from "next-auth/react";
 import {
   useCallback,
   useEffect,
@@ -15,6 +14,9 @@ import {
   getThemeOptions,
   THEME_STORAGE_KEY as THEME_STORAGE,
 } from "../lib/themes";
+import PreviewPanel from "./_components/preview-panel";
+import ProfileEditor from "./_components/profile-editor";
+import ProjectsManager from "./_components/projects-manager";
 
 const PROFILE_STORAGE_KEY = "portfolio-forge-profile-draft";
 const PROFILE_CHANGE_EVENT = "portfolio-profile-change";
@@ -426,14 +428,6 @@ export default function DashboardPage() {
     });
   }
 
-  const previewName = profile.name || "Your Name";
-  const previewTitle = profile.role
-    ? `${profile.role}`
-    : "Your role will appear here";
-  const previewBio =
-    profile.shortBio ||
-    "Add a short bio in Profile setup to preview your public portfolio.";
-
   return (
     <main className="dashboard-shell">
       <aside className="dashboard-sidebar">
@@ -507,272 +501,29 @@ export default function DashboardPage() {
         ) : null}
 
         <div className="dashboard-grid">
-          <article className="editor-card" id="profile">
-            <h2>Profile setup</h2>
-            <p className="github-status" role="status">
-              When GitHub is connected, name and bio are filled in when
-              available. GitHub profiles do not include a role, so add that
-              manually.
-            </p>
-            <div className="mock-field">
-              <label htmlFor="profile-name">Name</label>
-              <input
-                id="profile-name"
-                name="name"
-                value={profile.name}
-                onChange={handleProfileChange}
-                placeholder="e.g. Filip Frontend"
-              />
-            </div>
-            <div className="mock-field">
-              <label htmlFor="profile-role">Role</label>
-              <textarea
-                id="profile-role"
-                name="role"
-                value={profile.role}
-                onChange={handleProfileChange}
-                placeholder="e.g. Frontend Developer and Product Designer"
-                rows={2}
-              />
-            </div>
-            <div className="mock-field">
-              <label htmlFor="profile-shortBio">Short bio</label>
-              <textarea
-                id="profile-shortBio"
-                name="shortBio"
-                value={profile.shortBio}
-                onChange={handleProfileChange}
-                placeholder="Write a short intro for your portfolio"
-                rows={4}
-              />
-            </div>
-            <div className="mock-field">
-              <label htmlFor="profile-email">Contact email</label>
-              <input
-                id="profile-email"
-                name="email"
-                type="email"
-                value={profile.email}
-                onChange={handleProfileChange}
-                placeholder="e.g. hello@example.com"
-              />
-            </div>
-          </article>
-
-          <article className="editor-card" id="projects">
-            <div className="card-headline">
-              <h2>Projects</h2>
-              {githubState === "connected" || githubData ? (
-                <div className="github-actions">
-                  <button
-                    className="text-button"
-                    type="button"
-                    disabled={githubState === "loading"}
-                    onClick={() => setRefreshKey((key) => key + 1)}
-                  >
-                    {githubState === "loading" ? "Refreshing..." : "Refresh"}
-                  </button>
-                  {githubState === "connected" ? (
-                    <button
-                      className="text-button"
-                      type="button"
-                      onClick={() => signOut({ callbackUrl: "/dashboard" })}
-                    >
-                      Disconnect
-                    </button>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-
-            <p className="github-status" role="status">
-              {githubState === "loading" &&
-                (githubData
-                  ? "Showing saved public repositories while checking GitHub for updates..."
-                  : "Loading GitHub repositories...")}
-              {githubState === "connected" &&
-                `Connected as @${githubUser?.login}. Only public repositories are imported.`}
-              {githubState === "disconnected" &&
-                "Connect GitHub to import your public repositories."}
-              {githubState === "not-configured" &&
-                "GitHub OAuth is not configured. Add the credentials from .env.example to .env.local."}
-              {githubState === "error" &&
-                (githubData
-                  ? "Could not refresh GitHub repositories. Showing saved data; try refreshing again."
-                  : "Could not load repositories. Try refreshing the list.")}
-            </p>
-
-            {githubState === "disconnected" ? (
-              <button
-                className="button button-primary github-connect-button"
-                type="button"
-                onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-              >
-                Connect GitHub
-              </button>
-            ) : null}
-
-            {githubState === "not-configured" ? (
-              <button
-                className="button button-primary github-connect-button"
-                type="button"
-                disabled
-              >
-                Connect GitHub
-              </button>
-            ) : null}
-
-            {showRepositoryManager ? (
-              <>
-                <div className="project-section-heading">
-                  <h3>Selected for portfolio</h3>
-                  <span>{selectedProjects.length} selected</span>
-                </div>
-
-                {selectedProjects.length ? (
-                  <div className="selected-project-list">
-                    {selectedProjects.map((project, index) => (
-                      <article className="selected-project" key={project.id}>
-                        <div className="project-row">
-                          <div className="project-summary">
-                            <strong>{project.name}</strong>
-                            <span>
-                              {project.language || "Repository"} · ★{" "}
-                              {project.stars}
-                            </span>
-                          </div>
-                          <div className="project-order-controls">
-                            <button
-                              className="text-button"
-                              type="button"
-                              onClick={() => moveProject(index, -1)}
-                              disabled={index === 0}
-                              aria-label={`Move ${project.name} up`}
-                            >
-                              Move up
-                            </button>
-                            <button
-                              className="text-button"
-                              type="button"
-                              onClick={() => moveProject(index, 1)}
-                              disabled={index === selectedProjects.length - 1}
-                              aria-label={`Move ${project.name} down`}
-                            >
-                              Move down
-                            </button>
-                          </div>
-                        </div>
-                        <div className="mock-field project-description-field">
-                          <label htmlFor={`project-description-${project.id}`}>
-                            Portfolio description
-                          </label>
-                          <textarea
-                            id={`project-description-${project.id}`}
-                            value={project.portfolioDescription}
-                            onChange={(event) =>
-                              updateProjectDescription(
-                                project.id,
-                                event.target.value,
-                              )
-                            }
-                            rows={2}
-                            placeholder="Describe what this project does"
-                          />
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="project-empty-state">
-                    Add repositories below to choose what appears in your
-                    portfolio.
-                  </p>
-                )}
-
-                <div className="project-section-heading">
-                  <h3>Your repositories</h3>
-                  <span>{repositories.length} public</span>
-                </div>
-                <div className="project-list">
-                  {repositories.map((repository) => {
-                    const isSelected = selectedProjects.some(
-                      (project) => project.id === repository.id,
-                    );
-
-                    return (
-                      <div className="project-row" key={repository.id}>
-                        <div className="project-summary">
-                          <strong>{repository.name}</strong>
-                          <span>
-                            {repository.language || "Repository"} · ★{" "}
-                            {repository.stars}
-                          </span>
-                          {repository.description ? (
-                            <span className="repository-description">
-                              {repository.description}
-                            </span>
-                          ) : null}
-                        </div>
-                        <button
-                          className="text-button"
-                          type="button"
-                          onClick={() => toggleProject(repository)}
-                        >
-                          {isSelected ? "Remove" : "Add project"}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : null}
-          </article>
-
+          <ProfileEditor profile={profile} onChange={handleProfileChange} />
+          <ProjectsManager
+            githubState={githubState}
+            githubData={githubData}
+            githubUser={githubUser}
+            repositories={repositories}
+            showRepositoryManager={showRepositoryManager}
+            selectedProjects={selectedProjects}
+            onRefresh={() => setRefreshKey((key) => key + 1)}
+            onToggleProject={toggleProject}
+            onMoveProject={moveProject}
+            onUpdateDescription={updateProjectDescription}
+          />
         </div>
       </section>
 
-      <aside className="preview-panel" id="publish">
-        <p className="section-kicker">Live preview</p>
-        <h2>How your public portfolio will look</h2>
-
-        <div className="mini-portfolio">
-          <p className="mini-eyebrow">{previewName}</p>
-          <h3>{previewTitle}</h3>
-          <p>{previewBio}</p>
-          <button
-            type="button"
-            className="button button-secondary"
-            onClick={handlePreviewPublicUrl}
-          >
-            Preview public URL
-          </button>
-        </div>
-
-        <section className="theme-controls" id="theme">
-          <h3>Theme controls</h3>
-          <div className="theme-swatches">
-            {themes.map((theme) => (
-              <button
-                key={theme.value}
-                type="button"
-                className={`swatch ${theme.value === selectedTheme ? "active" : ""}`}
-                style={{ background: theme.accentGradient }}
-                onClick={() => saveTheme(theme.value)}
-                aria-label={`Select ${theme.label}`}
-              />
-            ))}
-          </div>
-          <p>
-            Choose a color theme and see it reflected instantly in the live
-            preview.
-          </p>
-        </section>
-
-        <div className="sync-note">
-          <strong>Project settings</strong>
-          <p>Selected projects and descriptions are saved in this browser.</p>
-        </div>
-      </aside>
+      <PreviewPanel
+        profile={profile}
+        themes={themes}
+        selectedTheme={selectedTheme}
+        onPreview={handlePreviewPublicUrl}
+        onSelectTheme={saveTheme}
+      />
     </main>
   );
 }
