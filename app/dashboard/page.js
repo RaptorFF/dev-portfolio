@@ -182,6 +182,7 @@ export default function DashboardPage() {
   );
   const updateProfile = useCallback((update) => saveProfile(update), []);
   const [saveStatus, setSaveStatus] = useState("");
+  const [publishedSlug, setPublishedSlug] = useState("");
   const selectedTheme = useSyncExternalStore(
     subscribeToTheme,
     getThemeSnapshot,
@@ -289,9 +290,82 @@ export default function DashboardPage() {
     applyTheme(selectedTheme);
   }, [selectedTheme]);
 
+  // Sačuvani portfolio popunjava samo ono što u ovom pregledaču još nije uneto.
+  useEffect(() => {
+    if (githubState !== "connected") return;
+    let isCurrent = true;
+
+    async function loadSavedPortfolio() {
+      try {
+        const response = await fetch("/api/portfolio", { cache: "no-store" });
+        if (!response.ok) return;
+
+        const { portfolio } = await response.json();
+        if (!portfolio || !isCurrent) return;
+
+        const saved = portfolio.profile ?? {};
+        updateProfile((current) => ({
+          name: current.name || saved.name || "",
+          role: current.role || saved.role || "",
+          shortBio: current.shortBio || saved.shortBio || "",
+        }));
+        setSelectedProjects((current) =>
+          current.length ? current : (portfolio.selected_projects ?? []),
+        );
+        if (
+          !window.localStorage.getItem(THEME_STORAGE) &&
+          getThemeOptions().some((theme) => theme.value === portfolio.theme)
+        ) {
+          saveTheme(portfolio.theme);
+        }
+      } catch (error) {
+        console.error("Could not load saved portfolio:", error);
+      }
+    }
+
+    loadSavedPortfolio();
+    return () => {
+      isCurrent = false;
+    };
+  }, [githubState, updateProfile]);
+
   function handleSaveDraft() {
     saveProfile(profile);
     setSaveStatus("Draft profile je sačuvan.");
+  }
+
+  async function handlePublish() {
+    saveProfile(profile);
+    setSaveStatus("Čuvanje portfolija...");
+    setPublishedSlug("");
+
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          theme: selectedTheme,
+          profile,
+          selectedProjects,
+        }),
+      });
+      const data = await response.json();
+
+      if (response.status === 401) {
+        setSaveStatus("Poveži GitHub da bi sačuvao portfolio.");
+        return;
+      }
+      if (response.status === 503) {
+        setSaveStatus("Supabase nije podešen. Proveri .env.local.");
+        return;
+      }
+      if (!response.ok) throw new Error(data.error);
+
+      setSaveStatus("Portfolio je objavljen:");
+      setPublishedSlug(data.slug);
+    } catch {
+      setSaveStatus("Čuvanje nije uspelo. Pokušaj ponovo.");
+    }
   }
 
   function handlePreviewPublicUrl() {
@@ -403,13 +477,30 @@ export default function DashboardPage() {
             >
               Save draft
             </button>
-            <button type="button" className="button button-primary">
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={handlePublish}
+            >
               Publish
             </button>
           </div>
         </header>
 
-        {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
+        {saveStatus ? (
+          <p className="save-status">
+            {saveStatus}{" "}
+            {publishedSlug ? (
+              <a
+                href={`/u/${publishedSlug}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                /u/{publishedSlug}
+              </a>
+            ) : null}
+          </p>
+        ) : null}
 
         <div className="dashboard-grid">
           <article className="editor-card" id="profile">
