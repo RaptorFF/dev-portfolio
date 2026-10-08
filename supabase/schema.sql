@@ -9,3 +9,6 @@ create table if not exists public.portfolios (
 
 -- Pristup ide samo preko servera (service role); bez policy-ja anon klijent ne vidi ništa.
 alter table public.portfolios enable row level security;
+
+-- Data API ne izlaže nove tabele automatski, pa prava dajemo samo server ulozi.
+grant select, insert, update, delete on public.portfolios to service_role;
