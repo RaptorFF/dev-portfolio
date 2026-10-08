@@ -33,7 +33,7 @@ Copy `.env.example` to `.env.local`, then fill in `GITHUB_ID` and `GITHUB_SECRET
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Restart the development server after changing environment variables. The app requests only the `read:user` scope and imports public repositories. OAuth credentials and the GitHub access token stay server-side; selected projects and edited descriptions are currently saved in the browser, so they are not shared across devices yet.
+Restart the development server after changing environment variables. The app requests only the `read:user` scope and imports public repositories. OAuth credentials and the GitHub access token stay server-side; profile, selected projects and the theme are stored in Supabase when you press **Publish** and are loaded from there on every device. Only the theme choice is also cached in the browser, to avoid a flash of the default theme. The public page is served at `/u/<github-login>`.
 
 ## Learn More
 

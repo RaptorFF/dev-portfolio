@@ -72,6 +72,7 @@ export default async function PublicPortfolioPage({ params }) {
 
         {profile.shortBio ? (
           <div className="preview-page-intro">
+            <h3>About</h3>
             <p>{profile.shortBio}</p>
           </div>
         ) : null}

@@ -2,7 +2,7 @@ export default function PreviewPanel({
   profile,
   themes,
   selectedTheme,
-  onPreview,
+  publishedSlug,
   onSelectTheme,
 }) {
   const previewName = profile.name || "Your Name";
@@ -20,13 +20,20 @@ export default function PreviewPanel({
         <p className="mini-eyebrow">{previewName}</p>
         <h3>{previewTitle}</h3>
         <p>{previewBio}</p>
-        <button
-          type="button"
-          className="button button-secondary"
-          onClick={onPreview}
-        >
-          Preview public URL
-        </button>
+        {publishedSlug ? (
+          <a
+            className="button button-secondary"
+            href={`/u/${publishedSlug}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open public page
+          </a>
+        ) : (
+          <button type="button" className="button button-secondary" disabled>
+            Publish to get your public URL
+          </button>
+        )}
       </div>
 
       <section className="theme-controls" id="theme">
@@ -51,7 +58,10 @@ export default function PreviewPanel({
 
       <div className="sync-note">
         <strong>Project settings</strong>
-        <p>Selected projects and descriptions are saved in this browser.</p>
+        <p>
+          Profile, projects and theme are saved to your account when you
+          publish.
+        </p>
       </div>
     </aside>
   );
