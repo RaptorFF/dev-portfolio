@@ -3,8 +3,7 @@ export default function ProfileEditor({ profile, onChange }) {
     <article className="editor-card" id="profile">
       <h2>Profile setup</h2>
       <p className="github-status" role="status">
-        When GitHub is connected, name and bio are filled in when available.
-        GitHub profiles do not include a role, so add that manually.
+        Fill in your details manually. If you connect GitHub, empty name and bio fields are prefilled when available.
       </p>
       <div className="mock-field">
         <label htmlFor="profile-name">Name</label>

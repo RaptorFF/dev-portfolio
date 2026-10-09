@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import PreviewPanel from "./_components/preview-panel";
 import ProfileEditor from "./_components/profile-editor";
 import ProjectsManager from "./_components/projects-manager";
@@ -51,10 +52,30 @@ export default function DashboardPage() {
             <h1>Design your portfolio like a product page</h1>
           </div>
           <div className="header-actions">
+            {editor.authState === "anonymous" ? (
+              <Link className="button button-secondary" href="/login">
+                Sign in
+              </Link>
+            ) : null}
+            {editor.authState === "authenticated" ? (
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                Sign out
+              </button>
+            ) : null}
             <button
               type="button"
               className="button button-primary"
               onClick={editor.publish}
+              disabled={!editor.canPublish}
+              title={
+                editor.canPublish
+                  ? undefined
+                  : "Fix your portfolio link before publishing"
+              }
             >
               Publish
             </button>
@@ -77,6 +98,47 @@ export default function DashboardPage() {
           </p>
         ) : null}
 
+        {editor.canEditSlug ? (
+          <div className="mock-field" id="publish">
+            <label htmlFor="portfolio-slug">Your portfolio link</label>
+            <input
+              id="portfolio-slug"
+              value={editor.slug}
+              onChange={(event) => editor.updateSlug(event.target.value)}
+              placeholder={editor.suggestedSlug || "e.g. filip-frontend"}
+              maxLength={30}
+            />
+            <span className="repository-description">
+              This is the web address you share with others. Pick a short name
+              (3-30 letters, numbers or dashes). If you leave it empty, we use{" "}
+              {editor.suggestedSlug ? (
+                <strong>{editor.suggestedSlug}</strong>
+              ) : (
+                "a name based on your profile"
+              )}
+              .
+            </span>
+            <span className="repository-description" role="status">
+              {
+                {
+                  checking: "Checking availability...",
+                  available: "✓ This link is available.",
+                  taken: "✗ This link is already taken. Try another one.",
+                  invalid:
+                    "Use 3-30 letters, numbers or dashes (not at the start or end).",
+                  error: "Could not check availability right now.",
+                }[editor.slugStatus]
+              }
+            </span>
+            <span className="repository-description">
+              Your portfolio will be at:{" "}
+              <strong>
+                /u/{editor.slug || editor.suggestedSlug || "your-name"}
+              </strong>
+            </span>
+          </div>
+        ) : null}
+
         <div className="dashboard-grid">
           <ProfileEditor
             profile={editor.profile}
@@ -93,6 +155,8 @@ export default function DashboardPage() {
             onToggleProject={editor.toggleProject}
             onMoveProject={editor.moveProject}
             onUpdateDescription={editor.updateProjectDescription}
+            onAddCustomProject={editor.addCustomProject}
+            onRemoveProject={editor.removeProject}
           />
         </div>
       </section>

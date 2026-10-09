@@ -7,12 +7,16 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const MAX_PROJECTS = 50;
+const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/;
 
 const str = (value, max) =>
   typeof value === "string" ? value.slice(0, max) : "";
 
 function sanitizeProject(project) {
-  if (!project || !Number.isInteger(project.id)) return null;
+  const validId =
+    Number.isInteger(project?.id) ||
+    (typeof project?.id === "string" && /^[\w-]{1,64}$/.test(project.id));
+  if (!validId) return null;
 
   return {
     id: project.id,
@@ -31,7 +35,10 @@ async function getUser(request) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  return token?.sub ? { id: `github:${token.sub}`, token } : null;
+  if (!token?.sub) return null;
+
+  const id = token.githubAccessToken ? `github:${token.sub}` : token.sub;
+  return { id, token };
 }
 
 export async function GET(request) {
@@ -66,7 +73,7 @@ export async function PUT(request) {
   }
 
   const user = await getUser(request);
-  if (!user || !user.token.githubAccessToken) {
+  if (!user) {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
@@ -85,13 +92,22 @@ export async function PUT(request) {
     : [];
 
   try {
-    // Slug se uzima sa GitHub-a, a ne iz zahteva, da ga korisnik ne bi lažirao.
-    const octokit = new Octokit({ auth: user.token.githubAccessToken });
-    const { data: ghUser } = await octokit.rest.users.getAuthenticated();
+    let slug;
+    if (user.token.githubAccessToken) {
+      // Slug se uzima sa GitHub-a, a ne iz zahteva, da ga korisnik ne bi lažirao.
+      const octokit = new Octokit({ auth: user.token.githubAccessToken });
+      const { data: ghUser } = await octokit.rest.users.getAuthenticated();
+      slug = ghUser.login.toLowerCase();
+    } else {
+      slug = str(body?.slug, 30).trim().toLowerCase();
+      if (!SLUG_PATTERN.test(slug)) {
+        return NextResponse.json({ error: "invalid_slug" }, { status: 400 });
+      }
+    }
 
     const row = {
       user_id: user.id,
-      slug: ghUser.login.toLowerCase(),
+      slug,
       theme: str(body?.theme, 30) || "purple",
       profile: {
         name: str(body?.profile?.name, 100),
@@ -107,6 +123,9 @@ export async function PUT(request) {
       .from("portfolios")
       .upsert(row, { onConflict: "user_id" });
 
+    if (error?.code === "23505") {
+      return NextResponse.json({ error: "slug_taken" }, { status: 409 });
+    }
     if (error) throw error;
 
     return NextResponse.json({ slug: row.slug });
