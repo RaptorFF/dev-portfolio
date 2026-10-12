@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import ProjectPreview from "../../components/project-preview";
+import { getLiveUrl } from "../../lib/project-preview";
 
 const emptyCustomProject = { name: "", description: "", url: "", language: "" };
 
@@ -91,6 +92,7 @@ export default function ProjectsManager({
   onMoveProject,
   onUpdateDescription,
   onUpdatePreviewImage,
+  onRefreshPreview,
   onAddCustomProject,
   onRemoveProject,
 }) {
@@ -197,6 +199,19 @@ export default function ProjectsManager({
                   >
                     Move down
                   </button>
+                  {getLiveUrl(project) && !project.previewImage ? (
+                    <button
+                      className="text-button"
+                      type="button"
+                      onClick={() => onRefreshPreview(project.id)}
+                      disabled={project.refreshPreview}
+                      aria-label={`Refresh preview for ${project.name}`}
+                    >
+                      {project.refreshPreview
+                        ? "Refresh on publish"
+                        : "Refresh preview"}
+                    </button>
+                  ) : null}
                   <button
                     className="text-button"
                     type="button"

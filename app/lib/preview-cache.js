@@ -69,12 +69,16 @@ export async function attachCachedPreviews(
   let budget = MAX_NEW_PER_PUBLISH;
 
   return Promise.all(
-    projects.map(async (project) => {
+    projects.map(async ({ refreshPreview, ...project }) => {
       const liveUrl = getLiveUrl(project);
       if (!liveUrl || project.previewImage) return { ...project, ...empty };
 
       const previous = existing.get(project.id);
-      if (previous?.cachedPreview && previous.cachedPreviewSource === liveUrl) {
+      if (
+        !refreshPreview &&
+        previous?.cachedPreview &&
+        previous.cachedPreviewSource === liveUrl
+      ) {
         return {
           ...project,
           cachedPreview: previous.cachedPreview,

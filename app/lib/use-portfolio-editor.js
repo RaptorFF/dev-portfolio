@@ -224,6 +224,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
                   ...project,
                   cachedPreview: preview.cachedPreview,
                   cachedPreviewSource: preview.cachedPreviewSource,
+                  refreshPreview: false,
                 }
               : project;
           }),
@@ -360,6 +361,15 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     setSaveStatus("");
   }
 
+  function requestPreviewRefresh(projectId) {
+    setSelectedProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === projectId ? { ...project, refreshPreview: true } : project,
+      ),
+    );
+    setSaveStatus("");
+  }
+
   function moveProject(projectIndex, direction) {
     setSelectedProjects((currentProjects) => {
       const targetIndex = projectIndex + direction;
@@ -398,6 +408,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     updateSlug,
     addCustomProject,
     updateProjectPreviewImage,
+    requestPreviewRefresh,
     removeProject,
     refresh: () => setRefreshKey((key) => key + 1),
     updateProfileField,

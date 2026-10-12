@@ -28,6 +28,7 @@ function sanitizeProject(project) {
     previewImage: /^https?:\/\//i.test(project.previewImage)
       ? str(project.previewImage, 500)
       : "",
+    refreshPreview: project.refreshPreview === true,
     language: str(project.language, 50),
     stars: Number.isInteger(project.stars) ? project.stars : 0,
   };
