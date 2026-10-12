@@ -14,15 +14,48 @@ const text = (value) => (typeof value === "string" ? value : "");
 export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   const [profile, setProfile] = useState(defaultProfile);
   const [selectedProjects, setSelectedProjects] = useState([]);
-  const [githubData, setGithubData] = useState(null);
-  const [githubState, setGithubState] = useState("loading");
+  const [loadedGithubData, setGithubData] = useState(null);
+  const [loadedGithubState, setGithubState] = useState("loading");
   const [saveStatus, setSaveStatus] = useState("");
   const [publishedSlug, setPublishedSlug] = useState("");
   const [slug, setSlug] = useState("");
   const [authState, setAuthState] = useState("loading");
   const [refreshKey, setRefreshKey] = useState(0);
   const [portfolioLoaded, setPortfolioLoaded] = useState(false);
+  const [session, setSession] = useState(null);
   const prefilledFor = useRef(null);
+
+  // /api/auth/session uvek vraća 200, pa anonimni korisnici ne izazivaju 401.
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function loadSession() {
+      let next = { authenticated: false, hasGithub: false };
+
+      try {
+        const response = await fetch("/api/auth/session", {
+          cache: "no-store",
+        });
+        const data = response.ok ? await response.json() : null;
+        if (data?.user) {
+          next = { authenticated: true, hasGithub: Boolean(data.hasGithub) };
+        }
+      } catch (error) {
+        console.error("Could not load session:", error);
+      }
+
+      if (isCurrent) setSession(next);
+    }
+
+    loadSession();
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  const githubUnavailable = session !== null && !session.hasGithub;
+  const githubData = githubUnavailable ? null : loadedGithubData;
+  const githubState = githubUnavailable ? "disconnected" : loadedGithubState;
 
   const githubUser = githubData?.user ?? null;
   const repositories = githubData?.repositories ?? [];
@@ -34,17 +67,20 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   // Sačuvani portfolio se učitava samo jednom i ne zavisi od GitHub-a, da osvežavanje
   // liste repozitorijuma ne pregazi izmene koje još nisu objavljene.
   useEffect(() => {
+    if (!session) return;
     let isCurrent = true;
 
     async function loadSavedPortfolio() {
       let portfolio = null;
-      let status = "authenticated";
+      let status = session.authenticated ? "authenticated" : "anonymous";
 
       try {
-        const response = await fetch("/api/portfolio", { cache: "no-store" });
-        if (response.status === 401) status = "anonymous";
-        else if (response.status === 503) status = "not-configured";
-        else if (response.ok) portfolio = (await response.json()).portfolio;
+        if (session.authenticated) {
+          const response = await fetch("/api/portfolio", { cache: "no-store" });
+          if (response.status === 401) status = "anonymous";
+          else if (response.status === 503) status = "not-configured";
+          else if (response.ok) portfolio = (await response.json()).portfolio;
+        }
       } catch (error) {
         console.error("Could not load saved portfolio:", error);
       }
@@ -76,7 +112,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     return () => {
       isCurrent = false;
     };
-  }, [themes, saveTheme]);
+  }, [session, themes, saveTheme]);
 
   // GitHub podaci samo popunjavaju prazna polja profila.
   useEffect(() => {
@@ -93,6 +129,8 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   }, [portfolioLoaded, githubUser]);
 
   useEffect(() => {
+    if (!session?.hasGithub) return;
+
     let isCurrent = true;
 
     async function loadRepositories() {
@@ -132,7 +170,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     return () => {
       isCurrent = false;
     };
-  }, [refreshKey]);
+  }, [session, refreshKey]);
 
   function updateProfileField(e) {
     const { name, value } = e.target;

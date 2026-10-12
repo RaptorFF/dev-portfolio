@@ -39,6 +39,19 @@ Restart the development server after changing environment variables. The app req
 
 Users can sign in at `/login` with just an email: a one-time link (valid 15 minutes) is sent via [Resend](https://resend.com). Set `RESEND_API_KEY` and `EMAIL_FROM` in `.env.local`; without a key the link is printed in the server console in development. Run the updated `supabase/schema.sql` to create the `login_tokens` table. Users without GitHub add projects manually and choose their own address (`/u/<slug>`).
 
+Da mail zaista stiže:
+
+Napravi besplatan nalog na resend.com i u API Keys napravi ključ.
+U .env.local dodaj:
+
+RESEND*API_KEY=re*...
+EMAIL_FROM=Portfolio Forge <onboarding@resend.dev>
+
+Restartuj npm run dev.
+Sa onboarding@resend.dev Resend šalje samo na email adresu s kojom si se registrovao. Za slanje drugim korisnicima moraš verifikovati svoj domen u Resend-u i staviti EMAIL_FROM s tog domena.
+
+Ako ključ postaviš, a mail i dalje ne stiže, provjeri i spam folder. Greške slanja se ispisuju u terminalu.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

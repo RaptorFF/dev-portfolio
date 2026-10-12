@@ -50,6 +50,10 @@ const handler = NextAuth({
 
       return token;
     },
+    async session({ session, token }) {
+      session.hasGithub = Boolean(token.githubAccessToken);
+      return session;
+    },
   },
 });
 
