@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ApplyTheme from "../../components/apply-theme";
+import ProjectPreview from "../../components/project-preview";
+import { getProjectLink } from "../../lib/project-preview";
 import { getSupabase } from "../../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -84,16 +86,31 @@ export default async function PublicPortfolioPage({ params }) {
               projects.map((project) => (
                 <article key={project.id}>
                   <a
-                    href={safeUrl(project.htmlUrl)}
+                    className="project-card-link"
+                    href={safeUrl(getProjectLink(project))}
                     target="_blank"
                     rel="noreferrer"
                   >
+                    <ProjectPreview project={project} />
                     <strong>{project.name}</strong>
                   </a>
                   {project.portfolioDescription ? (
                     <p>{project.portfolioDescription}</p>
                   ) : null}
-                  {project.language ? <span>{project.language}</span> : null}
+                  <div className="project-card-meta">
+                    {project.language ? <span>{project.language}</span> : null}
+                    {safeUrl(project.htmlUrl) ? (
+                      <a
+                        href={project.htmlUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {/github\.com/i.test(project.htmlUrl)
+                          ? "GitHub"
+                          : "Link"}
+                      </a>
+                    ) : null}
+                  </div>
                 </article>
               ))
             ) : (

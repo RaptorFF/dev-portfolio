@@ -155,6 +155,7 @@ export default function DashboardPage() {
             onToggleProject={editor.toggleProject}
             onMoveProject={editor.moveProject}
             onUpdateDescription={editor.updateProjectDescription}
+            onUpdatePreviewImage={editor.updateProjectPreviewImage}
             onAddCustomProject={editor.addCustomProject}
             onRemoveProject={editor.removeProject}
           />

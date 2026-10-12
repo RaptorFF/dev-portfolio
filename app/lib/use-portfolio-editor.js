@@ -289,6 +289,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         portfolioDescription: project.description,
         htmlUrl: project.url,
         homepage: "",
+        previewImage: project.previewImage || "",
         language: project.language,
         stars: 0,
       },
@@ -334,6 +335,15 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     setSaveStatus("");
   }
 
+  function updateProjectPreviewImage(projectId, previewImage) {
+    setSelectedProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === projectId ? { ...project, previewImage } : project,
+      ),
+    );
+    setSaveStatus("");
+  }
+
   function moveProject(projectIndex, direction) {
     setSelectedProjects((currentProjects) => {
       const targetIndex = projectIndex + direction;
@@ -371,6 +381,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     canEditSlug: githubState !== "connected",
     updateSlug,
     addCustomProject,
+    updateProjectPreviewImage,
     removeProject,
     refresh: () => setRefreshKey((key) => key + 1),
     updateProfileField,

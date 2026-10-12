@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
+import ProjectPreview from "../../components/project-preview";
 
 const emptyCustomProject = { name: "", description: "", url: "", language: "" };
 
@@ -89,6 +90,7 @@ export default function ProjectsManager({
   onToggleProject,
   onMoveProject,
   onUpdateDescription,
+  onUpdatePreviewImage,
   onAddCustomProject,
   onRemoveProject,
 }) {
@@ -165,6 +167,7 @@ export default function ProjectsManager({
         <div className="selected-project-list">
           {selectedProjects.map((project, index) => (
             <article className="selected-project" key={project.id}>
+              <ProjectPreview project={project} />
               <div className="project-row">
                 <div className="project-summary">
                   <strong>{project.name}</strong>
@@ -216,6 +219,20 @@ export default function ProjectsManager({
                   }
                   rows={2}
                   placeholder="Describe what this project does"
+                />
+              </div>
+              <div className="mock-field">
+                <label htmlFor={`project-preview-${project.id}`}>
+                  Preview image URL (optional)
+                </label>
+                <input
+                  id={`project-preview-${project.id}`}
+                  type="url"
+                  value={project.previewImage || ""}
+                  onChange={(event) =>
+                    onUpdatePreviewImage(project.id, event.target.value)
+                  }
+                  placeholder="https:// (leave empty for automatic preview)"
                 />
               </div>
             </article>

@@ -24,6 +24,9 @@ function sanitizeProject(project) {
     portfolioDescription: str(project.portfolioDescription, 500),
     htmlUrl: str(project.htmlUrl, 300),
     homepage: str(project.homepage, 300),
+    previewImage: /^https?:\/\//i.test(project.previewImage)
+      ? str(project.previewImage, 500)
+      : "",
     language: str(project.language, 50),
     stars: Number.isInteger(project.stars) ? project.stars : 0,
   };
