@@ -214,6 +214,22 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
       }
       if (!response.ok) throw new Error(data.error);
 
+      if (Array.isArray(data.previews)) {
+        const previewsById = new Map(data.previews.map((p) => [p.id, p]));
+        setSelectedProjects((currentProjects) =>
+          currentProjects.map((project) => {
+            const preview = previewsById.get(project.id);
+            return preview
+              ? {
+                  ...project,
+                  cachedPreview: preview.cachedPreview,
+                  cachedPreviewSource: preview.cachedPreviewSource,
+                }
+              : project;
+          }),
+        );
+      }
+
       setSaveStatus("Portfolio je objavljen:");
       setPublishedSlug(data.slug);
       setSlug(data.slug);

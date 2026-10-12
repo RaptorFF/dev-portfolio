@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import { attachCachedPreviews } from "../../lib/preview-cache";
 import { getSupabase } from "../../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -95,6 +96,19 @@ export async function PUT(request) {
     : [];
 
   try {
+    const { data: existingRow } = await supabase
+      .from("portfolios")
+      .select("selected_projects")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const projectsWithPreviews = await attachCachedPreviews(
+      supabase,
+      user.id,
+      projects,
+      existingRow?.selected_projects,
+    );
+
     let slug;
     if (user.token.githubAccessToken) {
       // Slug se uzima sa GitHub-a, a ne iz zahteva, da ga korisnik ne bi lažirao.
@@ -118,7 +132,7 @@ export async function PUT(request) {
         shortBio: str(body?.profile?.shortBio, 1000),
         email: str(body?.profile?.email, 200).trim(),
       },
-      selected_projects: projects,
+      selected_projects: projectsWithPreviews,
       updated_at: new Date().toISOString(),
     };
 
@@ -131,7 +145,16 @@ export async function PUT(request) {
     }
     if (error) throw error;
 
-    return NextResponse.json({ slug: row.slug });
+    return NextResponse.json({
+      slug: row.slug,
+      previews: projectsWithPreviews.map(
+        ({ id, cachedPreview, cachedPreviewSource }) => ({
+          id,
+          cachedPreview,
+          cachedPreviewSource,
+        }),
+      ),
+    });
   } catch (error) {
     if (error.status === 401) {
       return NextResponse.json(

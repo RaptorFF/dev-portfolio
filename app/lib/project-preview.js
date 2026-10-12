@@ -19,15 +19,19 @@ const isGithubUrl = (url) => {
   }
 };
 
-// Ordered list of image URLs to try: custom image, live site screenshot, GitHub OG card.
+export const getLiveUrl = (project) =>
+  [project.homepage, project.htmlUrl].find(
+    (url) => isHttp(url) && !isGithubUrl(url),
+  );
+
+// Ordered list of image URLs to try: custom image, stored screenshot, live screenshot, GitHub OG card.
 export function getPreviewCandidates(project) {
   const candidates = [];
 
   if (isHttp(project.previewImage)) candidates.push(project.previewImage);
+  if (isHttp(project.cachedPreview)) candidates.push(project.cachedPreview);
 
-  const liveUrl = [project.homepage, project.htmlUrl].find(
-    (url) => isHttp(url) && !isGithubUrl(url),
-  );
+  const liveUrl = getLiveUrl(project);
   if (liveUrl) {
     candidates.push(
       `https://api.microlink.io/?url=${encodeURIComponent(liveUrl)}&screenshot=true&meta=false&embed=screenshot.url`,
@@ -45,8 +49,5 @@ export function getPreviewCandidates(project) {
 }
 
 export function getProjectLink(project) {
-  const live = [project.homepage, project.htmlUrl].find(
-    (url) => isHttp(url) && !isGithubUrl(url),
-  );
-  return live || (isHttp(project.htmlUrl) ? project.htmlUrl : undefined);
+  return getLiveUrl(project) || (isHttp(project.htmlUrl) ? project.htmlUrl : undefined);
 }
