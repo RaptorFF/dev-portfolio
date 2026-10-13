@@ -95,7 +95,17 @@ export default function Home() {
           className={`nav-links ${menuOpen ? "active" : ""}`}
           aria-label="Primary"
         >
-          <div className="nav-dropdown">
+          <div
+            className="nav-dropdown"
+            onMouseEnter={() => setFeaturesOpen(true)}
+            onMouseLeave={() => setFeaturesOpen(false)}
+            onFocus={() => setFeaturesOpen(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) {
+                setFeaturesOpen(false);
+              }
+            }}
+          >
             <button
               className="nav-dropdown-toggle"
               type="button"
