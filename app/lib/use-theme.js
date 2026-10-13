@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import {
   applyTheme,
+  DEFAULT_THEME,
   getThemeOptions,
   THEME_STORAGE_KEY,
 } from "./themes";
@@ -13,11 +14,11 @@ function getThemeSnapshot() {
   const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
   return getThemeOptions().some((theme) => theme.value === savedTheme)
     ? savedTheme
-    : "purple";
+    : DEFAULT_THEME;
 }
 
 function getServerThemeSnapshot() {
-  return "purple";
+  return DEFAULT_THEME;
 }
 
 function subscribeToTheme(onChange) {

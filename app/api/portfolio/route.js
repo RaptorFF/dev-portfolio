@@ -3,6 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import { attachCachedPreviews } from "../../lib/preview-cache";
 import { getSupabase } from "../../lib/supabase";
+import { DEFAULT_THEME } from "../../lib/themes";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -126,7 +127,7 @@ export async function PUT(request) {
     const row = {
       user_id: user.id,
       slug,
-      theme: str(body?.theme, 30) || "purple",
+      theme: str(body?.theme, 30) || DEFAULT_THEME,
       profile: {
         name: str(body?.profile?.name, 100),
         role: str(body?.profile?.role, 200),

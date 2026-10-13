@@ -1,4 +1,5 @@
 export const THEME_STORAGE_KEY = "portfolio-forge-theme";
+export const DEFAULT_THEME = "purple";
 
 export const themeOptions = {
   purple: {
@@ -55,7 +56,7 @@ export function getThemeOptions() {
 export function applyTheme(themeId) {
   if (typeof window === "undefined") return;
 
-  const theme = themeOptions[themeId] || themeOptions.purple;
+  const theme = themeOptions[themeId] || themeOptions[DEFAULT_THEME];
   const root = document.documentElement;
 
   root.style.setProperty("--page-bg", theme.pageBg);
