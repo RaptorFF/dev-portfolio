@@ -59,6 +59,12 @@ export default function Home() {
   ];
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(false);
+
+  const closeNavigation = () => {
+    setMenuOpen(false);
+    setFeaturesOpen(false);
+  };
 
   return (
     <main className="portfolio-shell">
@@ -73,7 +79,10 @@ export default function Home() {
 
         <button
           className="menu-toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+            setFeaturesOpen(false);
+          }}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
         >
@@ -86,16 +95,39 @@ export default function Home() {
           className={`nav-links ${menuOpen ? "active" : ""}`}
           aria-label="Primary"
         >
-          <Link href="#features" onClick={() => setMenuOpen(false)}>
-            Features
-          </Link>
-          <Link href="#workflow" onClick={() => setMenuOpen(false)}>
+          <div className="nav-dropdown">
+            <button
+              className="nav-dropdown-toggle"
+              type="button"
+              onClick={() => setFeaturesOpen(!featuresOpen)}
+              aria-expanded={featuresOpen}
+              aria-controls="features-menu"
+            >
+              Features
+              <span className="nav-dropdown-chevron" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            <div
+              className="nav-dropdown-menu"
+              id="features-menu"
+              hidden={!featuresOpen}
+            >
+              <Link href="/dashboard" onClick={closeNavigation}>
+                Portfolio Dashboard
+              </Link>
+              <Link href="/dashboard/cv" onClick={closeNavigation}>
+                CV Builder
+              </Link>
+            </div>
+          </div>
+          <Link href="#workflow" onClick={closeNavigation}>
             How it works
           </Link>
-          <Link href="#pricing" onClick={() => setMenuOpen(false)}>
+          <Link href="#pricing" onClick={closeNavigation}>
             Pricing
           </Link>
-          <Link href="#contact" onClick={() => setMenuOpen(false)}>
+          <Link href="#contact" onClick={closeNavigation}>
             Contact
           </Link>
         </nav>
