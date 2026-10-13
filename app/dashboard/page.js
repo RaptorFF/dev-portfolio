@@ -105,7 +105,7 @@ export default function DashboardPage() {
               id="portfolio-slug"
               value={editor.slug}
               onChange={(event) => editor.updateSlug(event.target.value)}
-              placeholder={editor.suggestedSlug || "e.g. filip-frontend"}
+              placeholder={editor.suggestedSlug || "e.g. your-name-portfolio"}
               maxLength={30}
             />
             <span className="repository-description">
@@ -168,6 +168,8 @@ export default function DashboardPage() {
         themes={themes}
         selectedTheme={selectedTheme}
         publishedSlug={editor.publishedSlug}
+        previewSlug={editor.slug || editor.suggestedSlug}
+        selectedProjects={editor.selectedProjects}
         onSelectTheme={saveTheme}
       />
     </main>

@@ -3,7 +3,8 @@ export default function ProfileEditor({ profile, onChange }) {
     <article className="editor-card" id="profile">
       <h2>Profile setup</h2>
       <p className="github-status" role="status">
-        Fill in your details manually. If you connect GitHub, empty name and bio fields are prefilled when available.
+        Fill in your details manually. If you connect GitHub, empty name and bio
+        fields are prefilled when available.
       </p>
       <div className="mock-field">
         <label htmlFor="profile-name">Name</label>
@@ -12,7 +13,7 @@ export default function ProfileEditor({ profile, onChange }) {
           name="name"
           value={profile.name}
           onChange={onChange}
-          placeholder="e.g. Filip Frontend"
+          placeholder="e.g. Your Name"
         />
       </div>
       <div className="mock-field">

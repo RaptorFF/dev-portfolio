@@ -3,7 +3,13 @@ import { signIn, signOut } from "next-auth/react";
 import ProjectPreview from "../../components/project-preview";
 import { getLiveUrl } from "../../lib/project-preview";
 
-const emptyCustomProject = { name: "", description: "", url: "", language: "" };
+const emptyCustomProject = {
+  name: "",
+  description: "",
+  url: "",
+  language: "",
+  previewImage: "",
+};
 
 function CustomProjectForm({ onAdd }) {
   const [draft, setDraft] = useState(emptyCustomProject);
@@ -21,15 +27,13 @@ function CustomProjectForm({ onAdd }) {
       description: draft.description.trim(),
       url: draft.url.trim(),
       language: draft.language.trim().slice(0, 50),
+      previewImage: draft.previewImage.trim(),
     });
     setDraft(emptyCustomProject);
   }
 
   return (
     <form onSubmit={submit}>
-      <div className="project-section-heading">
-        <h3>Add a project manually</h3>
-      </div>
       <div className="mock-field">
         <label htmlFor="custom-project-name">Name</label>
         <input
@@ -72,6 +76,23 @@ function CustomProjectForm({ onAdd }) {
           onChange={update}
           maxLength={50}
         />
+      </div>
+      <div className="mock-field">
+        <label htmlFor="custom-project-preview-image">
+          Cover image URL (optional)
+        </label>
+        <input
+          id="custom-project-preview-image"
+          name="previewImage"
+          type="url"
+          value={draft.previewImage}
+          onChange={update}
+          maxLength={500}
+          placeholder="https://"
+        />
+        <span className="repository-description">
+          Add a publicly accessible image URL to show a cover for this project.
+        </span>
       </div>
       <button className="button button-secondary" type="submit">
         Add project
@@ -265,7 +286,6 @@ export default function ProjectsManager({
 
       {showRepositoryManager ? (
         <>
-
           <div className="project-section-heading">
             <h3>Your repositories</h3>
             <span>{repositories.length} public</span>
