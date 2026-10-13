@@ -1229,9 +1229,13 @@ a {
 }
 
 .mini-portfolio-actions .button {
+  display: flex;
+  width: 100%;
   min-width: 0;
   padding: 0 12px;
   font-size: 0.82rem;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .portfolio-preview-dialog {

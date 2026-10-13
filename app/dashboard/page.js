@@ -15,13 +15,13 @@ export default function DashboardPage() {
   return (
     <main className="dashboard-shell">
       <aside className="dashboard-sidebar">
-        <div className="dashboard-brand">
+        <Link className="dashboard-brand" href="/">
           <span className="brand-mark">P</span>
           <div>
             <strong>Portfolio Forge</strong>
             <span>Creator Dashboard</span>
           </div>
-        </div>
+        </Link>
 
         <nav className="dashboard-nav" aria-label="Dashboard navigation">
           <Link className="active" href="#overview">
@@ -29,8 +29,6 @@ export default function DashboardPage() {
           </Link>
           <Link href="#profile">Profile</Link>
           <Link href="#projects">Projects</Link>
-          <Link href="#theme">Theme</Link>
-          <Link href="#publish">Publish</Link>
           <Link href="/dashboard/cv">CV Builder</Link>
         </nav>
 
