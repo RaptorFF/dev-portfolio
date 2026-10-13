@@ -33,7 +33,7 @@ function CustomProjectForm({ onAdd }) {
   }
 
   return (
-    <form onSubmit={submit}>
+    <form className="custom-project-form" onSubmit={submit}>
       <div className="mock-field">
         <label htmlFor="custom-project-name">Name</label>
         <input
@@ -94,7 +94,7 @@ function CustomProjectForm({ onAdd }) {
           Add a publicly accessible image URL to show a cover for this project.
         </span>
       </div>
-      <button className="button button-secondary" type="submit">
+      <button className="button button-secondary custom-project-submit" type="submit">
         Add project
       </button>
     </form>

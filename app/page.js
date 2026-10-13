@@ -97,9 +97,17 @@ export default function Home() {
         >
           <div
             className="nav-dropdown"
-            onMouseEnter={() => setFeaturesOpen(true)}
+            onMouseEnter={() => {
+              if (!window.matchMedia("(max-width: 640px)").matches) {
+                setFeaturesOpen(true);
+              }
+            }}
             onMouseLeave={() => setFeaturesOpen(false)}
-            onFocus={() => setFeaturesOpen(true)}
+            onFocus={() => {
+              if (!window.matchMedia("(max-width: 640px)").matches) {
+                setFeaturesOpen(true);
+              }
+            }}
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) {
                 setFeaturesOpen(false);
@@ -109,7 +117,13 @@ export default function Home() {
             <button
               className="nav-dropdown-toggle"
               type="button"
-              onClick={() => setFeaturesOpen(!featuresOpen)}
+              onClick={() => {
+                if (window.matchMedia("(max-width: 640px)").matches) {
+                  setFeaturesOpen((open) => !open);
+                } else {
+                  setFeaturesOpen(true);
+                }
+              }}
               aria-expanded={featuresOpen}
               aria-controls="features-menu"
             >
