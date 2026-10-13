@@ -31,6 +31,7 @@ export default function DashboardPage() {
           <Link href="#projects">Projects</Link>
           <Link href="#theme">Theme</Link>
           <Link href="#publish">Publish</Link>
+          <Link href="/dashboard/cv">CV Builder</Link>
         </nav>
 
         <div className="plan-card">

@@ -35,6 +35,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 Restart the development server after changing environment variables. The app requests only the `read:user` scope and imports public repositories. OAuth credentials and the GitHub access token stay server-side; profile, selected projects and the theme are stored in Supabase when you press **Publish** and are loaded from there on every device. Only the theme choice is also cached in the browser, to avoid a flash of the default theme. The public page is served at `/u/<github-login>`.
 
+## CV Builder
+
+The dashboard includes a separate CV Builder at `/dashboard/cv`. It works without signing in and automatically saves the draft in the current browser on the current device. The draft includes contact details, experience, education, skills and the selected template. **Download PDF** opens the browser print dialog; choose **Save as PDF**. Clearing browser storage or switching devices removes access to the local draft, so users should download a PDF copy to keep it.
+
 ## Sign-in without GitHub (magic link)
 
 Users can sign in at `/login` with just an email: a one-time link (valid 15 minutes) is sent via [Resend](https://resend.com). Set `RESEND_API_KEY` and `EMAIL_FROM` in `.env.local`; without a key the link is printed in the server console in development. Run the updated `supabase/schema.sql` to create the `login_tokens` table. Users without GitHub add projects manually and choose their own address (`/u/<slug>`).
