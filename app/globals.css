@@ -1360,6 +1360,11 @@ a {
   gap: 18px;
 }
 
+.login-form {
+  display: grid;
+  gap: 16px;
+}
+
 .preview-dialog-card {
   display: flex;
   flex-direction: column;

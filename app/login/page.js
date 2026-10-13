@@ -5,10 +5,10 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 
 const messages = {
-  invalid_email: "Unesi ispravnu email adresu.",
-  too_many_requests: "Link je već poslat. Sačekaj minut pa pokušaj ponovo.",
-  not_configured: "Prijava nije podešena. Proveri .env.local.",
-  send_failed: "Slanje nije uspelo. Pokušaj ponovo.",
+  invalid_email: "Please enter a valid email address.",
+  too_many_requests: "A sign-in link was already sent. Please wait a minute and try again.",
+  not_configured: "Sign-in is not configured. Check .env.local.",
+  send_failed: "Unable to send the link. Please try again.",
 };
 
 export default function LoginPage() {
@@ -45,14 +45,14 @@ export default function LoginPage() {
   return (
     <main className="preview-page-shell">
       <section className="preview-page-card">
-        <h1>Prijava</h1>
+        <h1>Sign in</h1>
 
         {status === "sent" ? (
           <p className="save-status" role="status">
-            Poslali smo link za prijavu na {email}. Važi 15 minuta.
+            We sent a sign-in link to {email}. It is valid for 15 minutes.
           </p>
         ) : (
-          <form onSubmit={requestLink}>
+          <form className="login-form" onSubmit={requestLink}>
             <div className="mock-field">
               <label htmlFor="login-email">Email</label>
               <input
@@ -70,7 +70,7 @@ export default function LoginPage() {
               className="button button-primary"
               disabled={status === "sending"}
             >
-              {status === "sending" ? "Slanje..." : "Pošalji link za prijavu"}
+              {status === "sending" ? "Sending..." : "Send sign-in link"}
             </button>
           </form>
         )}
@@ -81,9 +81,9 @@ export default function LoginPage() {
             className="text-button"
             onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
           >
-            Ili nastavi sa GitHub-om
+            Or continue with GitHub
           </button>{" "}
-          · <Link href="/">Početna</Link>
+          · <Link href="/">Home</Link>
         </p>
       </section>
     </main>
