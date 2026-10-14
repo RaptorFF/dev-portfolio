@@ -2238,12 +2238,19 @@ a {
 }
 
 .public-project-link .project-preview {
-  aspect-ratio: 1.35;
+  aspect-ratio: auto;
   margin: 0;
   border: 0;
   border-radius: 0;
   background: var(--accent-soft);
   transition: transform 0.3s ease;
+}
+
+.public-project-link .project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .public-project-link:hover .project-preview {
