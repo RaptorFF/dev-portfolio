@@ -141,7 +141,18 @@ export default function DashboardPage() {
         <div className="dashboard-grid">
           <ProfileEditor
             profile={editor.profile}
+            githubFallback={
+              editor.githubUser?.login
+                ? `https://github.com/${editor.githubUser.login}`
+                : ""
+            }
+            skillsText={editor.skillsText}
             onChange={editor.updateProfileField}
+            onSkillsChange={editor.updateSkills}
+            onSocialLinkChange={editor.updateSocialLink}
+            onEntryChange={editor.updateProfileEntry}
+            onAddEntry={editor.addProfileEntry}
+            onRemoveEntry={editor.removeProfileEntry}
           />
           <ProjectsManager
             githubState={editor.githubState}

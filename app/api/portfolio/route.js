@@ -13,6 +13,29 @@ const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/;
 
 const str = (value, max) =>
   typeof value === "string" ? value.slice(0, max) : "";
+const safeExternalUrl = (value, max) => {
+  if (typeof value !== "string" || !value.trim()) return "";
+  const normalized = /^https?:\/\//i.test(value.trim())
+    ? value.trim()
+    : `https://${value.trim()}`;
+  try {
+    const parsed = new URL(normalized);
+    return parsed.protocol === "http:" || parsed.protocol === "https:"
+      ? str(normalized, max)
+      : "";
+  } catch {
+    return "";
+  }
+};
+
+function sanitizeProfileEntry(entry, titleField, organizationField) {
+  return {
+    [titleField]: str(entry?.[titleField], 120),
+    [organizationField]: str(entry?.[organizationField], 120),
+    period: str(entry?.period, 80),
+    description: str(entry?.description, 500),
+  };
+}
 
 function sanitizeProject(project) {
   const validId =
@@ -133,6 +156,32 @@ export async function PUT(request) {
         role: str(body?.profile?.role, 200),
         shortBio: str(body?.profile?.shortBio, 1000),
         email: str(body?.profile?.email, 200).trim(),
+        skills: Array.isArray(body?.profile?.skills)
+          ? body.profile.skills
+              .filter((skill) => typeof skill === "string")
+              .slice(0, 30)
+              .map((skill) => str(skill, 50).trim())
+              .filter(Boolean)
+          : [],
+        experience: Array.isArray(body?.profile?.experience)
+          ? body.profile.experience
+              .slice(0, 20)
+              .map((entry) =>
+                sanitizeProfileEntry(entry, "role", "company"),
+              )
+          : [],
+        education: Array.isArray(body?.profile?.education)
+          ? body.profile.education
+              .slice(0, 20)
+              .map((entry) =>
+                sanitizeProfileEntry(entry, "degree", "school"),
+              )
+          : [],
+        links: {
+          github: safeExternalUrl(body?.profile?.links?.github, 300),
+          linkedin: safeExternalUrl(body?.profile?.links?.linkedin, 300),
+          website: safeExternalUrl(body?.profile?.links?.website, 300),
+        },
       },
       selected_projects: projectsWithPreviews,
       updated_at: new Date().toISOString(),

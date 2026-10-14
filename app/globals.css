@@ -921,6 +921,44 @@ a {
   gap: 12px;
 }
 
+.profile-list-editor {
+  display: grid;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.profile-list-editor h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.profile-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-entry-editor {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.profile-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-remove-button {
+  justify-self: start;
+}
+
 .editor-card:nth-child(1) {
   grid-column: 1 / -1;
 }
@@ -1427,6 +1465,52 @@ a {
   padding-top: 8px;
 }
 
+.portfolio-skill-list,
+.portfolio-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portfolio-skill-list li,
+.portfolio-social-links a {
+  padding: 7px 11px;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.portfolio-entry-list {
+  display: grid;
+  gap: 10px;
+}
+
+.portfolio-entry-list article {
+  padding: 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.portfolio-entry-list h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.portfolio-entry-list p + p {
+  margin-top: 6px;
+}
+
+.portfolio-entry-list .portfolio-entry-meta {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
 .preview-page-projects {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1566,6 +1650,15 @@ a {
 }
 
 @media (max-width: 640px) {
+  .profile-entry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-list-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .portfolio-shell {
     width: min(100% - 20px, 1180px);
     padding-top: 12px;

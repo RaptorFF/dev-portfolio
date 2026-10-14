@@ -1,4 +1,122 @@
-export default function ProfileEditor({ profile, onChange }) {
+import { useState } from "react";
+
+const entryFields = {
+  experience: [
+    { name: "role", label: "Position", placeholder: "e.g. Frontend Developer" },
+    { name: "company", label: "Company", placeholder: "e.g. Acme Inc." },
+  ],
+  education: [
+    { name: "degree", label: "Degree or course", placeholder: "e.g. BSc Computer Science" },
+    { name: "school", label: "School", placeholder: "e.g. University name" },
+  ],
+};
+
+function ProfileEntryEditor({
+  collection,
+  entries,
+  onChange,
+  onAdd,
+  onRemove,
+}) {
+  const fields = entryFields[collection];
+  const safeEntries = Array.isArray(entries) ? entries : [];
+  const title = collection === "experience" ? "Experience" : "Education";
+
+  return (
+    <section className="profile-list-editor">
+      <div className="profile-list-heading">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="button button-secondary"
+          onClick={() => onAdd(collection)}
+        >
+          Add {collection === "experience" ? "experience" : "education"}
+        </button>
+      </div>
+      {safeEntries.map((entry, index) => (
+        <div className="profile-entry-editor" key={`${collection}-${index}`}>
+          <div className="profile-entry-grid">
+            {fields.map((field) => (
+              <div className="mock-field" key={field.name}>
+                <label htmlFor={`${collection}-${index}-${field.name}`}>
+                  {field.label}
+                </label>
+                <input
+                  id={`${collection}-${index}-${field.name}`}
+                  name={field.name}
+                  value={entry[field.name] || ""}
+                  onChange={(event) => onChange(collection, index, event)}
+                  placeholder={field.placeholder}
+                  maxLength={120}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="profile-entry-grid">
+            <div className="mock-field">
+              <label htmlFor={`${collection}-${index}-period`}>Period</label>
+              <input
+                id={`${collection}-${index}-period`}
+                name="period"
+                value={entry.period || ""}
+                onChange={(event) => onChange(collection, index, event)}
+                placeholder="e.g. 2022 – Present"
+                maxLength={80}
+              />
+            </div>
+            <div className="mock-field">
+              <label htmlFor={`${collection}-${index}-description`}>
+                Details
+              </label>
+              <textarea
+                id={`${collection}-${index}-description`}
+                name="description"
+                value={entry.description || ""}
+                onChange={(event) => onChange(collection, index, event)}
+                placeholder="A short description (optional)"
+                rows={2}
+                maxLength={500}
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            className="button button-secondary profile-remove-button"
+            onClick={() => onRemove(collection, index)}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export default function ProfileEditor({
+  profile,
+  githubFallback,
+  skillsText,
+  onChange,
+  onSkillsChange,
+  onSocialLinkChange,
+  onEntryChange,
+  onAddEntry,
+  onRemoveEntry,
+}) {
+  const [githubLinkEdited, setGithubLinkEdited] = useState(false);
+  const safeProfile = {
+    name: "",
+    role: "",
+    shortBio: "",
+    email: "",
+    skills: [],
+    experience: [],
+    education: [],
+    links: {},
+    ...profile,
+  };
+
   return (
     <article className="editor-card" id="profile">
       <h2>Profile setup</h2>
@@ -11,7 +129,7 @@ export default function ProfileEditor({ profile, onChange }) {
         <input
           id="profile-name"
           name="name"
-          value={profile.name}
+          value={safeProfile.name}
           onChange={onChange}
           placeholder="e.g. Your Name"
         />
@@ -21,7 +139,7 @@ export default function ProfileEditor({ profile, onChange }) {
         <textarea
           id="profile-role"
           name="role"
-          value={profile.role}
+          value={safeProfile.role}
           onChange={onChange}
           placeholder="e.g. Frontend Developer and Product Designer"
           rows={2}
@@ -32,7 +150,7 @@ export default function ProfileEditor({ profile, onChange }) {
         <textarea
           id="profile-shortBio"
           name="shortBio"
-          value={profile.shortBio}
+          value={safeProfile.shortBio}
           onChange={onChange}
           placeholder="Write a short intro for your portfolio"
           rows={4}
@@ -44,11 +162,74 @@ export default function ProfileEditor({ profile, onChange }) {
           id="profile-email"
           name="email"
           type="email"
-          value={profile.email}
+          value={safeProfile.email}
           onChange={onChange}
           placeholder="e.g. hello@example.com"
         />
       </div>
+
+      <section className="profile-list-editor">
+        <h3>Skills</h3>
+        <div className="mock-field">
+          <label htmlFor="profile-skills">Technologies and skills</label>
+          <textarea
+            id="profile-skills"
+            value={skillsText}
+            onChange={onSkillsChange}
+            placeholder="e.g. React, JavaScript, CSS, Figma"
+            rows={2}
+          />
+          <span className="repository-description">
+            Separate skills with commas.
+          </span>
+        </div>
+      </section>
+
+      <ProfileEntryEditor
+        collection="experience"
+        entries={safeProfile.experience}
+        onChange={onEntryChange}
+        onAdd={onAddEntry}
+        onRemove={onRemoveEntry}
+      />
+      <ProfileEntryEditor
+        collection="education"
+        entries={safeProfile.education}
+        onChange={onEntryChange}
+        onAdd={onAddEntry}
+        onRemove={onRemoveEntry}
+      />
+
+      <section className="profile-list-editor">
+        <h3>Professional links</h3>
+        {[
+          { name: "github", label: "GitHub", placeholder: "https://github.com/username" },
+          { name: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/username" },
+          { name: "website", label: "Personal website", placeholder: "https://yourwebsite.com" },
+        ].map((link) => (
+          <div className="mock-field" key={link.name}>
+            <label htmlFor={`profile-link-${link.name}`}>{link.label}</label>
+            <input
+              id={`profile-link-${link.name}`}
+              name={link.name}
+              type="url"
+              value={
+                safeProfile.links?.[link.name] ||
+                (link.name === "github" && !githubLinkEdited
+                  ? githubFallback
+                  : "") ||
+                ""
+              }
+              onChange={(event) => {
+                if (link.name === "github") setGithubLinkEdited(true);
+                onSocialLinkChange(event);
+              }}
+              placeholder={link.placeholder}
+              maxLength={300}
+            />
+          </div>
+        ))}
+      </section>
     </article>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ApplyTheme from "../../components/apply-theme";
+import PortfolioDetails from "../../components/portfolio-details";
 import ProjectPreview from "../../components/project-preview";
 import { getProjectLink } from "../../lib/project-preview";
 import { getSupabase } from "../../lib/supabase";
@@ -58,14 +59,6 @@ export default async function PublicPortfolioPage({ params }) {
             {profile.role ? <h2>{profile.role}</h2> : null}
           </div>
           <div className="preview-page-actions">
-            <a
-              className="button button-secondary"
-              href={`https://github.com/${portfolio.slug}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
             <Link className="button button-primary" href="/">
               Portfolio Forge
             </Link>
@@ -78,6 +71,11 @@ export default async function PublicPortfolioPage({ params }) {
             <p>{profile.shortBio}</p>
           </div>
         ) : null}
+
+        <PortfolioDetails
+          profile={profile}
+          githubFallback={`https://github.com/${portfolio.slug}`}
+        />
 
         <section className="preview-page-section">
           <h3>Selected projects</h3>

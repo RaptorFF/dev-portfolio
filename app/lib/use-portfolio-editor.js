@@ -7,12 +7,22 @@ const defaultProfile = {
   role: "",
   shortBio: "",
   email: "",
+  skills: [],
+  experience: [],
+  education: [],
+  links: {
+    github: "",
+    linkedin: "",
+    website: "",
+  },
 };
 
 const text = (value) => (typeof value === "string" ? value : "");
+const list = (value) => (Array.isArray(value) ? value : []);
 
 export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   const [profile, setProfile] = useState(defaultProfile);
+  const [skillsText, setSkillsText] = useState("");
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [loadedGithubData, setGithubData] = useState(null);
   const [loadedGithubState, setGithubState] = useState("loading");
@@ -93,7 +103,21 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         role: text(saved.role),
         shortBio: text(saved.shortBio),
         email: text(saved.email),
+        skills: list(saved.skills).filter((skill) => typeof skill === "string"),
+        experience: list(saved.experience),
+        education: list(saved.education),
+        links: {
+          ...defaultProfile.links,
+          ...(saved.links && typeof saved.links === "object"
+            ? saved.links
+            : {}),
+        },
       });
+      setSkillsText(
+        list(saved.skills)
+          .filter((skill) => typeof skill === "string")
+          .join(", "),
+      );
       setAuthState(status);
 
       if (portfolio) {
@@ -125,6 +149,10 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
       role: current.role,
       shortBio: current.shortBio || githubUser.bio || "",
       email: current.email || githubUser.email || "",
+      links: {
+        ...current.links,
+        github: current.links.github || `https://github.com/${githubUser.login}`,
+      },
     }));
   }, [portfolioLoaded, githubUser]);
 
@@ -178,6 +206,60 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     setSaveStatus("");
   }
 
+  function updateProfileEntry(collection, index, e) {
+    const { name, value } = e.target;
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      [collection]: list(currentProfile[collection]).map((entry, entryIndex) =>
+        entryIndex === index ? { ...entry, [name]: value } : entry,
+      ),
+    }));
+    setSaveStatus("");
+  }
+
+  function addProfileEntry(collection) {
+    const entry =
+      collection === "experience"
+        ? { role: "", company: "", period: "", description: "" }
+        : { degree: "", school: "", period: "", description: "" };
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      [collection]: [...list(currentProfile[collection]), entry],
+    }));
+    setSaveStatus("");
+  }
+
+  function removeProfileEntry(collection, index) {
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      [collection]: list(currentProfile[collection]).filter(
+        (_, entryIndex) => entryIndex !== index,
+      ),
+    }));
+    setSaveStatus("");
+  }
+
+  function updateSocialLink(e) {
+    const { name, value } = e.target;
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      links: { ...currentProfile.links, [name]: value },
+    }));
+    setSaveStatus("");
+  }
+
+  function updateSkills(e) {
+    const value = e.target.value;
+    const skills = value
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter(Boolean)
+      .slice(0, 30);
+    setSkillsText(value);
+    setProfile((currentProfile) => ({ ...currentProfile, skills }));
+    setSaveStatus("");
+  }
+
   async function publish() {
     setSaveStatus("Čuvanje portfolija...");
 
@@ -188,6 +270,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         body: JSON.stringify({
           theme: selectedTheme,
           profile,
+          skillsText,
           selectedProjects,
           slug: effectiveSlug,
         }),
@@ -389,6 +472,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
 
   return {
     profile,
+    skillsText,
     selectedProjects,
     githubData,
     githubUser,
@@ -412,6 +496,11 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     removeProject,
     refresh: () => setRefreshKey((key) => key + 1),
     updateProfileField,
+    updateSkills,
+    updateProfileEntry,
+    addProfileEntry,
+    removeProfileEntry,
+    updateSocialLink,
     publish,
     toggleProject,
     updateProjectDescription,

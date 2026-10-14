@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import PortfolioDetails from "../../components/portfolio-details";
 import ProjectPreview from "../../components/project-preview";
 import { getProjectLink } from "../../lib/project-preview";
 
@@ -81,16 +82,6 @@ export default function PreviewPanel({
               {profile.role ? <h2>{profile.role}</h2> : null}
             </div>
             <div className="preview-page-actions">
-              {previewSlug ? (
-                <a
-                  className="button button-secondary"
-                  href={`https://github.com/${previewSlug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-              ) : null}
               <button
                 type="button"
                 className="button button-primary"
@@ -107,6 +98,13 @@ export default function PreviewPanel({
               <p>{profile.shortBio}</p>
             </section>
           ) : null}
+
+          <PortfolioDetails
+            profile={profile}
+            githubFallback={
+              previewSlug ? `https://github.com/${previewSlug}` : ""
+            }
+          />
 
           <section className="preview-page-section">
             <h3>Selected projects</h3>
