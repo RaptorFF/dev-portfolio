@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ApplyTheme from "../../components/apply-theme";
 import PortfolioDetails from "../../components/portfolio-details";
+import PublicNav from "../../components/public-nav";
 import ProjectPreview from "../../components/project-preview";
 import { getProjectLink } from "../../lib/project-preview";
 import { getSupabase } from "../../lib/supabase";
@@ -57,10 +58,10 @@ export default async function PublicPortfolioPage({ params }) {
   const hasEmail = EMAIL_PATTERN.test(profile.email ?? "");
 
   return (
-    <main className="public-portfolio">
+    <main className="public-portfolio" id="top">
       <ApplyTheme theme={portfolio.theme} />
 
-      <header className="public-nav">
+      <PublicNav>
         <Link className="public-brand" href="/">
           <span aria-hidden="true">P</span>
           <span>Portfolio</span>
@@ -76,7 +77,7 @@ export default async function PublicPortfolioPage({ params }) {
             Let&apos;s talk <span aria-hidden="true">↗</span>
           </a>
         ) : null}
-      </header>
+      </PublicNav>
 
       <div className="public-page-content">
         <section className="public-hero" id="about">
@@ -220,7 +221,7 @@ export default async function PublicPortfolioPage({ params }) {
           <span>Portfolio</span>
         </Link>
         <p>© {new Date().getFullYear()} {displayName}. All rights reserved.</p>
-        <a href="#about">Back to top ↑</a>
+        <a href="#top">Back to top ↑</a>
       </footer>
     </main>
   );

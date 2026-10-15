@@ -1895,6 +1895,7 @@ a {
 
 .public-portfolio {
   min-height: 100vh;
+  overflow-x: clip;
   color: var(--text);
 }
 
@@ -1911,6 +1912,7 @@ a {
 }
 
 .public-nav {
+  --nav-shift: 10px;
   position: sticky;
   top: 0;
   z-index: 5;
@@ -1919,9 +1921,40 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  border-bottom: 1px solid transparent;
+}
+
+/* The nav's layout height never changes; only its background and content move, so scrolling can't feed back into scroll position. */
+.public-nav > * {
+  transition: transform 0.3s ease-out;
+}
+
+.public-nav.is-scrolled > * {
+  transform: translateY(calc(var(--nav-shift) * -1));
+}
+
+.public-nav::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  transform: translateX(-50%);
   border-bottom: 1px solid var(--panel-border);
-  background: color-mix(in srgb, var(--page-bg) 88%, transparent);
+  background: color-mix(in srgb, var(--page-bg) 94%, transparent);
   backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+  opacity: 0;
+  transition:
+    opacity 0.3s ease-out,
+    bottom 0.3s ease-out;
+}
+
+.public-nav.is-scrolled::before {
+  bottom: calc(var(--nav-shift) * 2);
+  opacity: 1;
 }
 
 .public-brand {
@@ -2478,6 +2511,7 @@ a {
   }
 
   .public-nav {
+    --nav-shift: 7px;
     min-height: 70px;
     gap: 10px;
   }
@@ -2559,7 +2593,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .public-portfolio *,
+  .public-portfolio *:not(.public-nav),
   .public-portfolio *::before,
   .public-portfolio *::after {
     scroll-behavior: auto !important;
