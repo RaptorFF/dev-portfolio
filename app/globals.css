@@ -2238,23 +2238,28 @@ a {
 }
 
 .public-project-link .project-preview {
-  aspect-ratio: auto;
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
   margin: 0;
   border: 0;
   border-radius: 0;
   background: var(--accent-soft);
-  transition: transform 0.3s ease;
 }
 
 .public-project-link .project-preview img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.3s ease;
 }
 
-.public-project-link:hover .project-preview {
-  transform: scale(1.025);
+.public-project-link:hover .project-preview img {
+  transform: scale(1.04);
 }
 
 .public-project-number,
