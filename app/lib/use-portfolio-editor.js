@@ -153,6 +153,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     prefilledFor.current = githubUser.login;
 
     setProfile((current) => ({
+      ...current,
       name: current.name || githubUser.name || githubUser.login || "",
       role: current.role,
       shortBio: current.shortBio || githubUser.bio || "",
