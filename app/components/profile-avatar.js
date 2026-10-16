@@ -14,6 +14,7 @@ export default function ProfileAvatar({ src, initials, className = "" }) {
           alt=""
           fill
           sizes="(max-width: 700px) 180px, 270px"
+          loading="eager"
           unoptimized
           onError={() => setFailedSource(src)}
         />

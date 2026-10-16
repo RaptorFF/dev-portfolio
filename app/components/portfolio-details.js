@@ -13,6 +13,42 @@ const safeUrl = (url) => {
   }
 };
 
+function SectionIcon({ type }) {
+  const paths = {
+    education: (
+      <>
+        <path d="m2 10 10-5 10 5-10 5-10-5Z" />
+        <path d="M6 12v5c3.2 2.4 8.8 2.4 12 0v-5" />
+        <path d="M22 10v6" />
+      </>
+    ),
+    experience: (
+      <>
+        <rect x="3" y="7" width="18" height="13" rx="2" />
+        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        <path d="M3 12h18M10 12v2h4v-2" />
+      </>
+    ),
+    skills: (
+      <>
+        <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
+      </>
+    ),
+  };
+
+  return (
+    <svg
+      aria-hidden="true"
+      className="portfolio-details-icon"
+      fill="none"
+      focusable="false"
+      viewBox="0 0 24 24"
+    >
+      {paths[type]}
+    </svg>
+  );
+}
+
 export default function PortfolioDetails({ profile, githubFallback }) {
   const skills = (Array.isArray(profile.skills)
     ? profile.skills
@@ -53,7 +89,10 @@ export default function PortfolioDetails({ profile, githubFallback }) {
     <>
       {education.length ? (
         <section className="preview-page-section">
-          <h3>Education</h3>
+          <h3 className="portfolio-details-heading">
+            <SectionIcon type="education" />
+            Education
+          </h3>
           <div className="portfolio-entry-list">
             {education.map((entry, index) => (
               <article key={`${entry.school}-${entry.degree}-${index}`}>
@@ -70,7 +109,10 @@ export default function PortfolioDetails({ profile, githubFallback }) {
 
       {experience.length ? (
         <section className="preview-page-section">
-          <h3>Experience</h3>
+          <h3 className="portfolio-details-heading">
+            <SectionIcon type="experience" />
+            Experience
+          </h3>
           <div className="portfolio-entry-list">
             {experience.map((entry, index) => (
               <article key={`${entry.company}-${entry.role}-${index}`}>
@@ -87,7 +129,10 @@ export default function PortfolioDetails({ profile, githubFallback }) {
 
       {skills.length ? (
         <section className="preview-page-section">
-          <h3>Skills</h3>
+          <h3 className="portfolio-details-heading">
+            <SectionIcon type="skills" />
+            Skills
+          </h3>
           <ul className="portfolio-skill-list">
             {skills.map((skill, index) => (
               <li key={`${skill}-${index}`}>{skill}</li>

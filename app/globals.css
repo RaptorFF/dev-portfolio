@@ -1507,6 +1507,23 @@ a {
   padding-top: 8px;
 }
 
+.portfolio-details-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portfolio-details-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: var(--accent);
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
 .portfolio-skill-list,
 .portfolio-social-links {
   display: flex;
