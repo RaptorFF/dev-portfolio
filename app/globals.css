@@ -959,6 +959,48 @@ a {
   justify-self: start;
 }
 
+.profile-avatar-editor {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.profile-avatar-preview {
+  position: relative;
+  display: grid;
+  flex: 0 0 72px;
+  width: 72px;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+  border-radius: 50%;
+  background:
+    linear-gradient(145deg, var(--accent-soft), transparent 70%),
+    var(--panel-bg);
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.profile-avatar-preview img {
+  object-fit: cover;
+}
+
+.profile-avatar-controls {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.profile-avatar-controls .button {
+  justify-self: start;
+}
+
 .editor-card:nth-child(1) {
   grid-column: 1 / -1;
 }
@@ -1589,6 +1631,10 @@ a {
 }
 
 @media (max-width: 960px) {
+  .profile-avatar-editor {
+    align-items: flex-start;
+  }
+
   .preview-page-header {
     flex-direction: column;
   }
@@ -1650,6 +1696,10 @@ a {
 }
 
 @media (max-width: 640px) {
+  .profile-avatar-editor {
+    flex-direction: column;
+  }
+
   .profile-entry-grid {
     grid-template-columns: 1fr;
   }
@@ -2196,10 +2246,12 @@ a {
 }
 
 .public-monogram {
+  position: relative;
   display: grid;
   width: clamp(180px, 25vw, 270px);
   aspect-ratio: 1;
   place-items: center;
+  overflow: hidden;
   border: 1px solid var(--panel-border);
   border-radius: 50%;
   background:
@@ -2210,6 +2262,10 @@ a {
   font-size: clamp(4rem, 9vw, 7rem);
   font-weight: 700;
   letter-spacing: -0.1em;
+}
+
+.public-monogram img {
+  object-fit: cover;
 }
 
 .public-art-label {

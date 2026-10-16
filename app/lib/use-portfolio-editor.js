@@ -7,6 +7,8 @@ const defaultProfile = {
   role: "",
   shortBio: "",
   email: "",
+  avatarUrl: "",
+  avatarImage: "",
   skills: [],
   experience: [],
   education: [],
@@ -40,7 +42,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     let isCurrent = true;
 
     async function loadSession() {
-      let next = { authenticated: false, hasGithub: false };
+      let next = { authenticated: false, hasGithub: false, avatarUrl: "" };
 
       try {
         const response = await fetch("/api/auth/session", {
@@ -48,7 +50,11 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         });
         const data = response.ok ? await response.json() : null;
         if (data?.user) {
-          next = { authenticated: true, hasGithub: Boolean(data.hasGithub) };
+          next = {
+            authenticated: true,
+            hasGithub: Boolean(data.hasGithub),
+            avatarUrl: text(data.user?.image),
+          };
         }
       } catch (error) {
         console.error("Could not load session:", error);
@@ -103,6 +109,8 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         role: text(saved.role),
         shortBio: text(saved.shortBio),
         email: text(saved.email),
+        avatarUrl: session.avatarUrl || text(saved.avatarUrl),
+        avatarImage: text(saved.avatarImage),
         skills: list(saved.skills).filter((skill) => typeof skill === "string"),
         experience: list(saved.experience),
         education: list(saved.education),
@@ -149,6 +157,9 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
       role: current.role,
       shortBio: current.shortBio || githubUser.bio || "",
       email: current.email || githubUser.email || "",
+      avatarUrl: current.avatarImage
+        ? current.avatarUrl
+        : githubUser.avatarUrl || current.avatarUrl,
       links: {
         ...current.links,
         github: current.links.github || `https://github.com/${githubUser.login}`,
@@ -203,6 +214,16 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   function updateProfileField(e) {
     const { name, value } = e.target;
     setProfile((currentProfile) => ({ ...currentProfile, [name]: value }));
+    setSaveStatus("");
+  }
+
+  function updateAvatar(avatarImage) {
+    setProfile((currentProfile) => ({ ...currentProfile, avatarImage }));
+    setSaveStatus("");
+  }
+
+  function removeAvatar() {
+    setProfile((currentProfile) => ({ ...currentProfile, avatarImage: "" }));
     setSaveStatus("");
   }
 
@@ -496,6 +517,8 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     removeProject,
     refresh: () => setRefreshKey((key) => key + 1),
     updateProfileField,
+    updateAvatar,
+    removeAvatar,
     updateSkills,
     updateProfileEntry,
     addProfileEntry,

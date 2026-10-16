@@ -1,4 +1,5 @@
 ﻿import NextAuth from "next-auth";
+import { createHash } from "node:crypto";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import {
@@ -51,7 +52,17 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.hasGithub = Boolean(token.githubAccessToken);
+      const hasGithub = Boolean(token.githubAccessToken);
+      session.hasGithub = hasGithub;
+      if (session.user) {
+        session.user.image = hasGithub
+          ? token.picture ?? null
+          : token.email
+            ? `https://www.gravatar.com/avatar/${createHash("md5")
+                .update(token.email.trim().toLowerCase())
+                .digest("hex")}?d=404`
+            : null;
+      }
       return session;
     },
   },

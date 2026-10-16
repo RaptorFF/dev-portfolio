@@ -148,6 +148,8 @@ export default function DashboardPage() {
             }
             skillsText={editor.skillsText}
             onChange={editor.updateProfileField}
+            onAvatarChange={editor.updateAvatar}
+            onRemoveAvatar={editor.removeAvatar}
             onSkillsChange={editor.updateSkills}
             onSocialLinkChange={editor.updateSocialLink}
             onEntryChange={editor.updateProfileEntry}

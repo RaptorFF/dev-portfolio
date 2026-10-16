@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ApplyTheme from "../../components/apply-theme";
+import ProfileAvatar from "../../components/profile-avatar";
 import PortfolioDetails from "../../components/portfolio-details";
 import PublicNav from "../../components/public-nav";
 import ProjectPreview from "../../components/project-preview";
@@ -67,7 +68,7 @@ export default async function PublicPortfolioPage({ params }) {
           <span>Portfolio</span>
         </Link>
         <nav aria-label="Main navigation">
-          <a href="#about">About</a>
+          <a href="#details">About</a>
           <a href="#work">Work</a>
           <a href="#details">Experience</a>
           <a href="#contact">Contact</a>
@@ -98,21 +99,28 @@ export default async function PublicPortfolioPage({ params }) {
                 Explore my work <span aria-hidden="true">↓</span>
               </a>
               {hasEmail ? (
-                <a className="public-button public-button-secondary" href={`mailto:${profile.email}`}>
+                <a
+                  className="public-button public-button-secondary"
+                  href={`mailto:${profile.email}`}
+                >
                   Get in touch
                 </a>
               ) : null}
             </div>
             <p className="public-hero-caption">
-              Explore selected work <span aria-hidden="true">·</span>{" "}
-              Learn about my experience
+              Explore selected work <span aria-hidden="true">·</span> Learn
+              about my experience
             </p>
           </div>
 
           <div className="public-hero-art" aria-hidden="true">
             <div className="public-orbit public-orbit-one" />
             <div className="public-orbit public-orbit-two" />
-            <div className="public-monogram">{initials}</div>
+            <ProfileAvatar
+              className="public-monogram"
+              src={profile.avatarImage || safeUrl(profile.avatarUrl)}
+              initials={initials}
+            />
             <div className="public-art-label">
               <span>{displayName}</span>
               <span>{profile.role || "Portfolio"}</span>
@@ -120,11 +128,32 @@ export default async function PublicPortfolioPage({ params }) {
           </div>
         </section>
 
+        <section className="public-details-section" id="details">
+          <div className="public-section-heading">
+            <div>
+              <p className="public-section-kicker">
+                The person behind the work
+              </p>
+              <h2>
+                A little more about me<span>.</span>
+              </h2>
+            </div>
+          </div>
+          <PortfolioDetails
+            profile={profile}
+            githubFallback={`https://github.com/${portfolio.slug}`}
+          />
+        </section>
+
         <section className="public-work-section" id="work">
           <div className="public-section-heading">
             <div>
-              <p className="public-section-kicker">A few things I&apos;ve made</p>
-              <h2>Selected work<span>.</span></h2>
+              <p className="public-section-kicker">
+                A few things I&apos;ve made
+              </p>
+              <h2>
+                Selected work<span>.</span>
+              </h2>
             </div>
             <p>
               A selection of projects that show what I enjoy building and the
@@ -159,9 +188,15 @@ export default async function PublicPortfolioPage({ params }) {
                       ) : null}
                     </div>
                     <div className="public-project-meta">
-                      {project.language ? <span>{project.language}</span> : null}
+                      {project.language ? (
+                        <span>{project.language}</span>
+                      ) : null}
                       {safeUrl(project.htmlUrl) ? (
-                        <a href={project.htmlUrl} target="_blank" rel="noreferrer">
+                        <a
+                          href={project.htmlUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
                           {/github\.com/i.test(project.htmlUrl)
                             ? "GitHub"
                             : "Visit project"}
@@ -173,28 +208,19 @@ export default async function PublicPortfolioPage({ params }) {
                 </article>
               ))
             ) : (
-              <p className="public-empty-state">No projects have been selected yet.</p>
+              <p className="public-empty-state">
+                No projects have been selected yet.
+              </p>
             )}
           </div>
-        </section>
-
-        <section className="public-details-section" id="details">
-          <div className="public-section-heading">
-            <div>
-              <p className="public-section-kicker">The person behind the work</p>
-              <h2>A little more about me<span>.</span></h2>
-            </div>
-          </div>
-          <PortfolioDetails
-            profile={profile}
-            githubFallback={`https://github.com/${portfolio.slug}`}
-          />
         </section>
 
         <section className="public-contact-section" id="contact">
           <div>
             <p className="public-section-kicker">Have a project in mind?</p>
-            <h2>Let&apos;s make something great<span>.</span></h2>
+            <h2>
+              Let&apos;s make something great<span>.</span>
+            </h2>
             <p>
               Interested in working together or just want to say hello? I&apos;d
               love to hear from you.
@@ -208,7 +234,10 @@ export default async function PublicPortfolioPage({ params }) {
               Say hello <span aria-hidden="true">↗</span>
             </a>
           ) : (
-            <a className="public-button public-button-secondary" href="#details">
+            <a
+              className="public-button public-button-secondary"
+              href="#details"
+            >
               Find me online
             </a>
           )}
@@ -220,7 +249,9 @@ export default async function PublicPortfolioPage({ params }) {
           <span aria-hidden="true">P</span>
           <span>Portfolio</span>
         </Link>
-        <p>© {new Date().getFullYear()} {displayName}. All rights reserved.</p>
+        <p>
+          © {new Date().getFullYear()} {displayName}. All rights reserved.
+        </p>
         <a href="#top">Back to top ↑</a>
       </footer>
     </main>

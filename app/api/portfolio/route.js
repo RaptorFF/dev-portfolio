@@ -10,6 +10,9 @@ export const runtime = "nodejs";
 
 const MAX_PROJECTS = 50;
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/;
+const AVATAR_IMAGE_PATTERN =
+  /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
+const MAX_AVATAR_IMAGE_LENGTH = 2_000_000;
 
 const str = (value, max) =>
   typeof value === "string" ? value.slice(0, max) : "";
@@ -27,6 +30,18 @@ const safeExternalUrl = (value, max) => {
     return "";
   }
 };
+
+function sanitizeAvatarImage(value) {
+  if (
+    typeof value !== "string" ||
+    value.length > MAX_AVATAR_IMAGE_LENGTH ||
+    !AVATAR_IMAGE_PATTERN.test(value)
+  ) {
+    return "";
+  }
+
+  return value;
+}
 
 function sanitizeProfileEntry(entry, titleField, organizationField) {
   return {
@@ -119,6 +134,10 @@ export async function PUT(request) {
         .map(sanitizeProject)
         .filter(Boolean)
     : [];
+  const avatarImage = sanitizeAvatarImage(body?.profile?.avatarImage);
+  if (body?.profile?.avatarImage && !avatarImage) {
+    return NextResponse.json({ error: "invalid_avatar_image" }, { status: 400 });
+  }
 
   try {
     const { data: existingRow } = await supabase
@@ -156,6 +175,8 @@ export async function PUT(request) {
         role: str(body?.profile?.role, 200),
         shortBio: str(body?.profile?.shortBio, 1000),
         email: str(body?.profile?.email, 200).trim(),
+        avatarUrl: safeExternalUrl(body?.profile?.avatarUrl, 1000),
+        avatarImage,
         skills: Array.isArray(body?.profile?.skills)
           ? body.profile.skills
               .filter((skill) => typeof skill === "string")
