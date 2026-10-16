@@ -51,14 +51,20 @@ export default function PortfolioDetails({ profile, githubFallback }) {
 
   return (
     <>
-      {skills.length ? (
+      {education.length ? (
         <section className="preview-page-section">
-          <h3>Skills</h3>
-          <ul className="portfolio-skill-list">
-            {skills.map((skill, index) => (
-              <li key={`${skill}-${index}`}>{skill}</li>
+          <h3>Education</h3>
+          <div className="portfolio-entry-list">
+            {education.map((entry, index) => (
+              <article key={`${entry.school}-${entry.degree}-${index}`}>
+                <h4>{entry.degree}</h4>
+                <p className="portfolio-entry-meta">
+                  {[entry.school, entry.period].filter(Boolean).join(" · ")}
+                </p>
+                {entry.description ? <p>{entry.description}</p> : null}
+              </article>
             ))}
-          </ul>
+          </div>
         </section>
       ) : null}
 
@@ -79,20 +85,14 @@ export default function PortfolioDetails({ profile, githubFallback }) {
         </section>
       ) : null}
 
-      {education.length ? (
+      {skills.length ? (
         <section className="preview-page-section">
-          <h3>Education</h3>
-          <div className="portfolio-entry-list">
-            {education.map((entry, index) => (
-              <article key={`${entry.school}-${entry.degree}-${index}`}>
-                <h4>{entry.degree}</h4>
-                <p className="portfolio-entry-meta">
-                  {[entry.school, entry.period].filter(Boolean).join(" · ")}
-                </p>
-                {entry.description ? <p>{entry.description}</p> : null}
-              </article>
+          <h3>Skills</h3>
+          <ul className="portfolio-skill-list">
+            {skills.map((skill, index) => (
+              <li key={`${skill}-${index}`}>{skill}</li>
             ))}
-          </div>
+          </ul>
         </section>
       ) : null}
 

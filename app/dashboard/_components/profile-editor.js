@@ -290,6 +290,21 @@ export default function ProfileEditor({
         />
       </div>
 
+      <ProfileEntryEditor
+        collection="education"
+        entries={safeProfile.education}
+        onChange={onEntryChange}
+        onAdd={onAddEntry}
+        onRemove={onRemoveEntry}
+      />
+      <ProfileEntryEditor
+        collection="experience"
+        entries={safeProfile.experience}
+        onChange={onEntryChange}
+        onAdd={onAddEntry}
+        onRemove={onRemoveEntry}
+      />
+
       <section className="profile-list-editor">
         <h3>Skills</h3>
         <div className="mock-field">
@@ -306,21 +321,6 @@ export default function ProfileEditor({
           </span>
         </div>
       </section>
-
-      <ProfileEntryEditor
-        collection="experience"
-        entries={safeProfile.experience}
-        onChange={onEntryChange}
-        onAdd={onAddEntry}
-        onRemove={onRemoveEntry}
-      />
-      <ProfileEntryEditor
-        collection="education"
-        entries={safeProfile.education}
-        onChange={onEntryChange}
-        onAdd={onAddEntry}
-        onRemove={onRemoveEntry}
-      />
 
       <section className="profile-list-editor">
         <h3>Professional links</h3>
