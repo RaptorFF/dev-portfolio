@@ -1338,20 +1338,19 @@ a {
   position: fixed;
   inset: 0;
   display: flex;
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
   max-width: none;
   max-height: none;
   margin: 0;
-  padding: 24px;
-  overflow: auto;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  overflow: hidden;
   color: var(--text);
   border: 0;
   border-radius: 0;
-  background: transparent;
+  background: var(--body-bg), var(--page-bg);
   box-shadow: none;
 }
 
@@ -1359,27 +1358,37 @@ a {
   display: none;
 }
 
+.preview-dialog-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.preview-dialog-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.preview-dialog-scroll .public-portfolio {
+  min-height: 0;
+}
+
 .portfolio-preview-dialog::backdrop {
   background: rgba(5, 7, 12, 0.78);
   backdrop-filter: blur(6px);
 }
 
-.preview-dialog-card {
-  width: min(900px, 100%);
-  height: calc(100dvh - 48px);
-  margin: 0 auto;
-  overflow: auto;
-}
-
 @media (max-width: 600px) {
-  .portfolio-preview-dialog {
-    padding: 14px;
-  }
-
-  .preview-dialog-card {
-    height: calc(100dvh - 28px);
-  }
-
   .mini-portfolio-actions {
     grid-template-columns: 1fr;
   }

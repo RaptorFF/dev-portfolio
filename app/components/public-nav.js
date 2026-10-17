@@ -1,22 +1,26 @@
 "use client";
 
-import { Children, useEffect, useState } from "react";
+import { Children, useEffect, useRef, useState } from "react";
 
 const SCROLL_ON = 120;
 const SCROLL_OFF = 60;
 
 export default function PublicNav({ children }) {
+  const headerRef = useRef(null);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Inside the dashboard preview the page scrolls in a container, not the window.
+    const container = headerRef.current?.closest("[data-scroll-container]");
+    const target = container ?? window;
     const onScroll = () => {
-      const y = window.scrollY;
+      const y = container ? container.scrollTop : window.scrollY;
       setScrolled((prev) => (prev ? y > SCROLL_OFF : y > SCROLL_ON));
     };
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    target.addEventListener("scroll", onScroll, { passive: true });
+    return () => target.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -35,6 +39,7 @@ export default function PublicNav({ children }) {
 
   return (
     <header
+      ref={headerRef}
       className={`public-nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}
     >
       {brand}
