@@ -1,3 +1,5 @@
+// Utility functions for handling project preview URLs and images.
+
 const isHttp = (url) => typeof url === "string" && /^https?:\/\//i.test(url);
 
 function parseGithubRepo(url) {
@@ -49,5 +51,8 @@ export function getPreviewCandidates(project) {
 }
 
 export function getProjectLink(project) {
-  return getLiveUrl(project) || (isHttp(project.htmlUrl) ? project.htmlUrl : undefined);
+  return (
+    getLiveUrl(project) ||
+    (isHttp(project.htmlUrl) ? project.htmlUrl : undefined)
+  );
 }

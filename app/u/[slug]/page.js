@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import PublicPortfolioView from "../../components/public-portfolio-view";
 import { getSupabase } from "../../lib/supabase";
 
+// Public portfolio page component for displaying a user's portfolio based on the slug.
+
 export const dynamic = "force-dynamic";
 
 async function getPortfolio(slug) {

@@ -94,13 +94,17 @@ function CustomProjectForm({ onAdd }) {
           Add a publicly accessible image URL to show a cover for this project.
         </span>
       </div>
-      <button className="button button-secondary custom-project-submit" type="submit">
+      <button
+        className="button button-secondary custom-project-submit"
+        type="submit"
+      >
         Add project
       </button>
     </form>
   );
 }
 
+// Component to manage the user's projects, including GitHub repositories and custom projects
 export default function ProjectsManager({
   githubState,
   githubData,

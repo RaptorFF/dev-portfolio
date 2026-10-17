@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
+// Login page component for handling email-based magic link sign-in and GitHub OAuth.
 const messages = {
   invalid_email: "Please enter a valid email address.",
-  too_many_requests: "A sign-in link was already sent. Please wait a minute and try again.",
+  too_many_requests:
+    "A sign-in link was already sent. Please wait a minute and try again.",
   not_configured: "Sign-in is not configured. Check .env.local.",
   send_failed: "Unable to send the link. Please try again.",
 };

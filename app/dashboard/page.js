@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const { themes, selectedTheme, saveTheme } = useTheme();
   const editor = usePortfolioEditor({ themes, selectedTheme, saveTheme });
 
+  // Update active section based on URL hash
   useEffect(() => {
     const updateActiveSection = () => {
       const section = window.location.hash.slice(1) || "overview";

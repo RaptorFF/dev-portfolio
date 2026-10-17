@@ -11,7 +11,7 @@ export const hashToken = (token) =>
 export const normalizeEmail = (email) =>
   typeof email === "string" ? email.trim().toLowerCase().slice(0, 200) : "";
 
-// Token se troši atomarno (delete ... returning), pa ga je moguće iskoristiti samo jednom.
+// Token is consumed atomically (delete ... returning), so it can only be used once.
 export async function consumeLoginToken(email, token) {
   const supabase = getSupabase();
   if (!supabase || !email || typeof token !== "string") return false;

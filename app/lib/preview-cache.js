@@ -1,5 +1,7 @@
 import { getLiveUrl } from "./project-preview";
 
+// Utility functions for caching project preview screenshots in Supabase storage.
+
 const BUCKET = "project-previews";
 const MAX_BYTES = 5 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 20000;

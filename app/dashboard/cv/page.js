@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+// Component to build and manage the user's CV, including profile, experience, education, and skills
+
 const emptyProfile = { name: "", role: "", email: "", shortBio: "" };
 const emptyCv = {
   template: "modern",
@@ -158,7 +160,9 @@ export default function CvBuilderPage() {
   function removeEntry(section, index) {
     setCv((current) => ({
       ...current,
-      [section]: current[section].filter((_, entryIndex) => entryIndex !== index),
+      [section]: current[section].filter(
+        (_, entryIndex) => entryIndex !== index,
+      ),
     }));
     setEdited(true);
   }
@@ -187,8 +191,8 @@ export default function CvBuilderPage() {
         <div className="sync-note">
           <strong>Private draft</strong>
           <p>
-            Your CV draft is saved in this browser. Download it as a PDF to
-            keep a copy on your device.
+            Your CV draft is saved in this browser. Download it as a PDF to keep
+            a copy on your device.
           </p>
         </div>
       </aside>
@@ -424,7 +428,9 @@ export default function CvBuilderPage() {
                       <span>{entry.organization}</span>
                     </div>
                     <span>
-                      {[entry.startDate, entry.endDate].filter(Boolean).join(" – ")}
+                      {[entry.startDate, entry.endDate]
+                        .filter(Boolean)
+                        .join(" – ")}
                     </span>
                     {entry.description ? <p>{entry.description}</p> : null}
                   </div>
@@ -441,7 +447,9 @@ export default function CvBuilderPage() {
                       <span>{entry.institution}</span>
                     </div>
                     <span>
-                      {[entry.startDate, entry.endDate].filter(Boolean).join(" – ")}
+                      {[entry.startDate, entry.endDate]
+                        .filter(Boolean)
+                        .join(" – ")}
                     </span>
                     {entry.description ? <p>{entry.description}</p> : null}
                   </div>

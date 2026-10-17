@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+// Custom hook for managing the portfolio editor state.
+
 const defaultProfile = {
   name: "",
   role: "",
@@ -37,7 +39,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   const [session, setSession] = useState(null);
   const prefilledFor = useRef(null);
 
-  // /api/auth/session uvek vraća 200, pa anonimni korisnici ne izazivaju 401.
+  // /api/auth/session always returns 200, so anonymous users do not trigger a 401.
   useEffect(() => {
     let isCurrent = true;
 
@@ -80,8 +82,8 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     ((githubState === "loading" || githubState === "error") &&
       githubData !== null);
 
-  // Sačuvani portfolio se učitava samo jednom i ne zavisi od GitHub-a, da osvežavanje
-  // liste repozitorijuma ne pregazi izmene koje još nisu objavljene.
+  // The saved portfolio is loaded only once and does not depend on GitHub, so refreshing
+  // the repository list does not overwrite changes that have not yet been published.
   useEffect(() => {
     if (!session) return;
     let isCurrent = true;
@@ -146,7 +148,7 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
     };
   }, [session, themes, saveTheme]);
 
-  // GitHub podaci samo popunjavaju prazna polja profila.
+  // GitHub data only fills in empty profile fields.
   useEffect(() => {
     if (!portfolioLoaded || !githubUser) return;
     if (prefilledFor.current === githubUser.login) return;
@@ -163,7 +165,8 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
         : githubUser.avatarUrl || current.avatarUrl,
       links: {
         ...current.links,
-        github: current.links.github || `https://github.com/${githubUser.login}`,
+        github:
+          current.links.github || `https://github.com/${githubUser.login}`,
       },
     }));
   }, [portfolioLoaded, githubUser]);
@@ -200,7 +203,6 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
 
         setGithubData({ user: data.user, repositories: data.repositories });
         setGithubState("connected");
-
       } catch {
         if (isCurrent) setGithubState("error");
       }
@@ -473,7 +475,9 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
   function requestPreviewRefresh(projectId) {
     setSelectedProjects((currentProjects) =>
       currentProjects.map((project) =>
-        project.id === projectId ? { ...project, refreshPreview: true } : project,
+        project.id === projectId
+          ? { ...project, refreshPreview: true }
+          : project,
       ),
     );
     setSaveStatus("");

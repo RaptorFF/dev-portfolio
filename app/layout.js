@@ -2,6 +2,8 @@ import "./globals.css";
 import ThemeInit from "./components/theme-init";
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from "./lib/themes";
 
+// Root layout component for the application, including global styles and theme initialization.
+
 export const metadata = {
   title: "Portfolio Forge - Freemium Portfolio Builder",
   description:

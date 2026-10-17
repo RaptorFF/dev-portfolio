@@ -5,6 +5,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
+// Verification page component for handling magic link sign-in.
+
 function Verify() {
   const params = useSearchParams();
   const email = params.get("email");
@@ -12,7 +14,7 @@ function Verify() {
   const [failed, setFailed] = useState(!email || !token);
   const started = useRef(false);
 
-  // Token se troši tek ovde (u browseru), da ga email skeneri ne bi potrošili otvaranjem linka.
+  // The token is only consumed here (in the browser) to prevent email scanners from using it by opening the link.
   useEffect(() => {
     if (!email || !token || started.current) return;
     started.current = true;

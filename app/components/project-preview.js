@@ -10,6 +10,7 @@ export default function ProjectPreview({ project }) {
   const index = failed.key === key ? failed.count : 0;
   const src = candidates[index];
 
+  // If all preview candidates have failed, display a placeholder with the project's initial
   return (
     <div className="project-preview">
       {src ? (

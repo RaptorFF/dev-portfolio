@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+// Home page component for the portfolio application, showcasing features, workflow, and pricing.
+
 export default function Home() {
   const features = [
     {

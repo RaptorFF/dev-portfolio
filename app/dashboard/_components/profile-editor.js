@@ -3,6 +3,7 @@ import ProfileAvatar from "../../components/profile-avatar";
 
 const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024;
 
+// Function to resize avatar images to a maximum of 512x512 pixels while maintaining aspect ratio
 function resizeAvatar(file) {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
@@ -55,7 +56,11 @@ const entryFields = {
     { name: "company", label: "Company", placeholder: "e.g. Acme Inc." },
   ],
   education: [
-    { name: "degree", label: "Degree or course", placeholder: "e.g. BSc Computer Science" },
+    {
+      name: "degree",
+      label: "Degree or course",
+      placeholder: "e.g. BSc Computer Science",
+    },
     { name: "school", label: "School", placeholder: "e.g. University name" },
   ],
 };
@@ -142,6 +147,7 @@ function ProfileEntryEditor({
   );
 }
 
+// Component to edit the user's profile, including avatar, personal details, skills, social links, and entries (experience and education)
 export default function ProfileEditor({
   profile,
   githubFallback,
@@ -325,9 +331,21 @@ export default function ProfileEditor({
       <section className="profile-list-editor">
         <h3>Professional links</h3>
         {[
-          { name: "github", label: "GitHub", placeholder: "https://github.com/username" },
-          { name: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/username" },
-          { name: "website", label: "Personal website", placeholder: "https://yourwebsite.com" },
+          {
+            name: "github",
+            label: "GitHub",
+            placeholder: "https://github.com/username",
+          },
+          {
+            name: "linkedin",
+            label: "LinkedIn",
+            placeholder: "https://linkedin.com/in/username",
+          },
+          {
+            name: "website",
+            label: "Personal website",
+            placeholder: "https://yourwebsite.com",
+          },
         ].map((link) => (
           <div className="mock-field" key={link.name}>
             <label htmlFor={`profile-link-${link.name}`}>{link.label}</label>

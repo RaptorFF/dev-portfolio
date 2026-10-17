@@ -1,5 +1,6 @@
 ﻿"use client";
 
+// Custom hook for managing the theme selection and application.
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import {
   applyTheme,
