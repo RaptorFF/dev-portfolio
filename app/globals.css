@@ -2544,12 +2544,24 @@ a {
 }
 
 .public-footer {
+  position: relative;
+  isolation: isolate;
   display: flex;
   min-height: 82px;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+}
+
+.public-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 50%;
+  z-index: -1;
+  width: 100vw;
+  transform: translateX(-50%);
   border-top: 1px solid var(--panel-border);
+  background: color-mix(in srgb, var(--page-bg) 94%, transparent);
 }
 
 .public-footer .public-brand {

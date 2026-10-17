@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import PreviewPanel from "./_components/preview-panel";
 import ProfileEditor from "./_components/profile-editor";
 import ProjectsManager from "./_components/projects-manager";
@@ -93,6 +93,15 @@ export default function DashboardPage() {
               >
                 /u/{editor.publishedSlug}
               </a>
+            ) : null}
+            {editor.saveStatus.startsWith("GitHub autorizacija je istekla") ? (
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+              >
+                Reconnect GitHub
+              </button>
             ) : null}
           </p>
         ) : null}

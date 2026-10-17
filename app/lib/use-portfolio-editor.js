@@ -300,7 +300,11 @@ export function usePortfolioEditor({ themes, selectedTheme, saveTheme }) {
       const data = await response.json();
 
       if (response.status === 401) {
-        setSaveStatus("Prijavi se da bi sačuvao portfolio.");
+        setSaveStatus(
+          data.error === "github_authorization_expired"
+            ? "GitHub autorizacija je istekla. Klikni Reconnect GitHub, pa ponovo objavi."
+            : "Prijavi se da bi sačuvao portfolio.",
+        );
         return;
       }
       if (response.status === 400 && data.error === "invalid_slug") {
