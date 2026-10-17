@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 import PreviewPanel from "./_components/preview-panel";
@@ -9,8 +10,22 @@ import { usePortfolioEditor } from "../lib/use-portfolio-editor";
 import { useTheme } from "../lib/use-theme";
 
 export default function DashboardPage() {
+  const [activeSection, setActiveSection] = useState("overview");
   const { themes, selectedTheme, saveTheme } = useTheme();
   const editor = usePortfolioEditor({ themes, selectedTheme, saveTheme });
+
+  useEffect(() => {
+    const updateActiveSection = () => {
+      const section = window.location.hash.slice(1) || "overview";
+      if (["overview", "profile", "projects"].includes(section)) {
+        setActiveSection(section);
+      }
+    };
+
+    updateActiveSection();
+    window.addEventListener("hashchange", updateActiveSection);
+    return () => window.removeEventListener("hashchange", updateActiveSection);
+  }, []);
 
   return (
     <main className="dashboard-shell">
@@ -24,11 +39,27 @@ export default function DashboardPage() {
         </Link>
 
         <nav className="dashboard-nav" aria-label="Dashboard navigation">
-          <Link className="active" href="#overview">
+          <Link
+            className={activeSection === "overview" ? "active" : ""}
+            href="#overview"
+            onClick={() => setActiveSection("overview")}
+          >
             Overview
           </Link>
-          <Link href="#profile">Profile</Link>
-          <Link href="#projects">Projects</Link>
+          <Link
+            className={activeSection === "profile" ? "active" : ""}
+            href="#profile"
+            onClick={() => setActiveSection("profile")}
+          >
+            Profile
+          </Link>
+          <Link
+            className={activeSection === "projects" ? "active" : ""}
+            href="#projects"
+            onClick={() => setActiveSection("projects")}
+          >
+            Projects
+          </Link>
           <Link href="/dashboard/cv">CV Builder</Link>
         </nav>
 
