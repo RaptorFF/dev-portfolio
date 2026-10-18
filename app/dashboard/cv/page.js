@@ -20,6 +20,13 @@ const templates = [
   { id: "minimal", label: "Minimal" },
 ];
 
+function parseSkills(value) {
+  return value
+    .split(",")
+    .map((skill) => skill.trim())
+    .filter(Boolean);
+}
+
 function CvEntryFields({ entry, fields, onChange, onRemove }) {
   return (
     <article className="cv-entry-form">
@@ -63,6 +70,7 @@ export default function CvBuilderPage() {
   );
   const [loaded, setLoaded] = useState(false);
   const [edited, setEdited] = useState(false);
+  const skills = parseSkills(skillsText);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -116,10 +124,7 @@ export default function CvBuilderPage() {
             profile,
             cv: {
               ...cv,
-              skills: skillsText
-                .split(",")
-                .map((skill) => skill.trim())
-                .filter(Boolean),
+              skills: parseSkills(skillsText),
             },
           }),
         );
@@ -241,228 +246,241 @@ export default function CvBuilderPage() {
         </div>
 
         <div className={`cv-layout cv-template-${cv.template}`}>
-          <article className="editor-card cv-editor-card">
-            <h2>Profile details</h2>
-            <div className="cv-profile-grid">
-              <label className="mock-field">
-                <span>Full name</span>
-                <input
-                  name="name"
-                  value={profile.name}
-                  onChange={updateProfile}
-                  maxLength={100}
-                  placeholder="Your name"
+          <div className="cv-editor-column">
+            <article className="editor-card cv-editor-card">
+              <h2>Profile details</h2>
+              <div className="cv-profile-grid">
+                <label className="mock-field">
+                  <span>Full name</span>
+                  <input
+                    name="name"
+                    value={profile.name}
+                    onChange={updateProfile}
+                    maxLength={100}
+                    placeholder="Your name"
+                  />
+                </label>
+                <label className="mock-field">
+                  <span>Professional title</span>
+                  <input
+                    name="role"
+                    value={profile.role}
+                    onChange={updateProfile}
+                    maxLength={200}
+                    placeholder="e.g. Frontend Developer"
+                  />
+                </label>
+                <label className="mock-field">
+                  <span>Email</span>
+                  <input
+                    name="email"
+                    type="email"
+                    value={profile.email}
+                    onChange={updateProfile}
+                    maxLength={200}
+                    placeholder="you@example.com"
+                  />
+                </label>
+                <label className="mock-field cv-summary-field">
+                  <span>Professional summary</span>
+                  <textarea
+                    name="shortBio"
+                    value={profile.shortBio}
+                    onChange={updateProfile}
+                    maxLength={1000}
+                    rows={4}
+                    placeholder="A concise summary of your experience and strengths"
+                  />
+                </label>
+              </div>
+            </article>
+
+            <article className="editor-card cv-editor-card">
+              <div className="cv-section-heading">
+                <div>
+                  <h2>Education</h2>
+                  <p>Add degrees, courses or other relevant education.</p>
+                </div>
+                <button
+                  className="button button-secondary"
+                  type="button"
+                  onClick={() =>
+                    addEntry("education", {
+                      qualification: "",
+                      institution: "",
+                      startDate: "",
+                      endDate: "",
+                      description: "",
+                    })
+                  }
+                >
+                  Add education
+                </button>
+              </div>
+              {cv.education.map((entry, index) => (
+                <CvEntryFields
+                  key={`education-${index}`}
+                  entry={entry}
+                  onChange={(field, value) =>
+                    updateEntry("education", index, field, value)
+                  }
+                  onRemove={() => removeEntry("education", index)}
+                  fields={[
+                    {
+                      name: "qualification",
+                      label: "Qualification",
+                      maxLength: 120,
+                    },
+                    {
+                      name: "institution",
+                      label: "Institution",
+                      maxLength: 120,
+                    },
+                    { name: "startDate", label: "From", maxLength: 40 },
+                    { name: "endDate", label: "To", maxLength: 40 },
+                    {
+                      name: "description",
+                      label: "Details (optional)",
+                      multiline: true,
+                      maxLength: 1000,
+                    },
+                  ]}
                 />
-              </label>
+              ))}
+            </article>
+
+            <article className="editor-card cv-editor-card">
+              <h2>Skills</h2>
               <label className="mock-field">
-                <span>Professional title</span>
-                <input
-                  name="role"
-                  value={profile.role}
-                  onChange={updateProfile}
-                  maxLength={200}
-                  placeholder="e.g. Frontend Developer"
-                />
-              </label>
-              <label className="mock-field">
-                <span>Email</span>
-                <input
-                  name="email"
-                  type="email"
-                  value={profile.email}
-                  onChange={updateProfile}
-                  maxLength={200}
-                  placeholder="you@example.com"
-                />
-              </label>
-              <label className="mock-field cv-summary-field">
-                <span>Professional summary</span>
+                <span>Separate skills with commas</span>
                 <textarea
-                  name="shortBio"
-                  value={profile.shortBio}
-                  onChange={updateProfile}
-                  maxLength={1000}
-                  rows={4}
-                  placeholder="A concise summary of your experience and strengths"
+                  value={skillsText}
+                  onChange={(event) => updateSkills(event.target.value)}
+                  rows={3}
+                  placeholder="React, JavaScript, Accessibility"
                 />
               </label>
-            </div>
-          </article>
+            </article>
 
-          <article className="editor-card cv-editor-card">
-            <div className="cv-section-heading">
-              <div>
-                <h2>Experience</h2>
-                <p>Add your recent and relevant roles.</p>
+            <article className="editor-card cv-editor-card">
+              <div className="cv-section-heading">
+                <div>
+                  <h2>Experience</h2>
+                  <p>Add your recent and relevant roles.</p>
+                </div>
+                <button
+                  className="button button-secondary"
+                  type="button"
+                  onClick={() =>
+                    addEntry("experience", {
+                      title: "",
+                      organization: "",
+                      startDate: "",
+                      endDate: "",
+                      description: "",
+                    })
+                  }
+                >
+                  Add experience
+                </button>
               </div>
-              <button
-                className="button button-secondary"
-                type="button"
-                onClick={() =>
-                  addEntry("experience", {
-                    title: "",
-                    organization: "",
-                    startDate: "",
-                    endDate: "",
-                    description: "",
-                  })
-                }
-              >
-                Add experience
-              </button>
+              {cv.experience.map((entry, index) => (
+                <CvEntryFields
+                  key={`experience-${index}`}
+                  entry={entry}
+                  onChange={(field, value) =>
+                    updateEntry("experience", index, field, value)
+                  }
+                  onRemove={() => removeEntry("experience", index)}
+                  fields={[
+                    { name: "title", label: "Job title", maxLength: 100 },
+                    {
+                      name: "organization",
+                      label: "Company",
+                      maxLength: 100,
+                    },
+                    { name: "startDate", label: "From", maxLength: 40 },
+                    { name: "endDate", label: "To", maxLength: 40 },
+                    {
+                      name: "description",
+                      label: "Responsibilities and achievements",
+                      multiline: true,
+                      maxLength: 1500,
+                    },
+                  ]}
+                />
+              ))}
+            </article>
+          </div>
+
+          <aside
+            className="preview-panel cv-preview-column"
+            aria-label="CV live preview"
+          >
+            <div className="cv-preview-heading">
+              <p className="section-kicker">Live preview</p>
+              <h2>Your CV</h2>
             </div>
-            {cv.experience.map((entry, index) => (
-              <CvEntryFields
-                key={`experience-${index}`}
-                entry={entry}
-                onChange={(field, value) =>
-                  updateEntry("experience", index, field, value)
-                }
-                onRemove={() => removeEntry("experience", index)}
-                fields={[
-                  { name: "title", label: "Job title", maxLength: 100 },
-                  {
-                    name: "organization",
-                    label: "Company",
-                    maxLength: 100,
-                  },
-                  { name: "startDate", label: "From", maxLength: 40 },
-                  { name: "endDate", label: "To", maxLength: 40 },
-                  {
-                    name: "description",
-                    label: "Responsibilities and achievements",
-                    multiline: true,
-                    maxLength: 1500,
-                  },
-                ]}
-              />
-            ))}
-          </article>
-
-          <article className="editor-card cv-editor-card">
-            <div className="cv-section-heading">
-              <div>
-                <h2>Education</h2>
-                <p>Add degrees, courses or other relevant education.</p>
-              </div>
-              <button
-                className="button button-secondary"
-                type="button"
-                onClick={() =>
-                  addEntry("education", {
-                    qualification: "",
-                    institution: "",
-                    startDate: "",
-                    endDate: "",
-                    description: "",
-                  })
-                }
-              >
-                Add education
-              </button>
-            </div>
-            {cv.education.map((entry, index) => (
-              <CvEntryFields
-                key={`education-${index}`}
-                entry={entry}
-                onChange={(field, value) =>
-                  updateEntry("education", index, field, value)
-                }
-                onRemove={() => removeEntry("education", index)}
-                fields={[
-                  {
-                    name: "qualification",
-                    label: "Qualification",
-                    maxLength: 120,
-                  },
-                  {
-                    name: "institution",
-                    label: "Institution",
-                    maxLength: 120,
-                  },
-                  { name: "startDate", label: "From", maxLength: 40 },
-                  { name: "endDate", label: "To", maxLength: 40 },
-                  {
-                    name: "description",
-                    label: "Details (optional)",
-                    multiline: true,
-                    maxLength: 1000,
-                  },
-                ]}
-              />
-            ))}
-          </article>
-
-          <article className="editor-card cv-editor-card">
-            <h2>Skills</h2>
-            <label className="mock-field">
-              <span>Separate skills with commas</span>
-              <textarea
-                value={skillsText}
-                onChange={(event) => updateSkills(event.target.value)}
-                rows={3}
-                placeholder="React, JavaScript, Accessibility"
-              />
-            </label>
-          </article>
-
-          <article className="cv-document">
-            <header className="cv-document-header">
-              <h2>{profile.name || "Your Name"}</h2>
-              {profile.role ? <h3>{profile.role}</h3> : null}
-              {profile.email ? <p>{profile.email}</p> : null}
-            </header>
-            {profile.shortBio ? (
-              <section>
-                <h3>Profile</h3>
-                <p>{profile.shortBio}</p>
-              </section>
-            ) : null}
-            {cv.experience.length ? (
-              <section>
-                <h3>Experience</h3>
-                {cv.experience.map((entry, index) => (
-                  <div className="cv-document-entry" key={`cv-exp-${index}`}>
-                    <div>
-                      <strong>{entry.title || "Job title"}</strong>
-                      <span>{entry.organization}</span>
+            <article className="cv-document">
+              <header className="cv-document-header">
+                <h2>{profile.name || "Your Name"}</h2>
+                {profile.role ? <h3>{profile.role}</h3> : null}
+                {profile.email ? <p>{profile.email}</p> : null}
+              </header>
+              {profile.shortBio ? (
+                <section>
+                  <h3>Profile</h3>
+                  <p>{profile.shortBio}</p>
+                </section>
+              ) : null}
+              {cv.education.length ? (
+                <section>
+                  <h3>Education</h3>
+                  {cv.education.map((entry, index) => (
+                    <div className="cv-document-entry" key={`cv-edu-${index}`}>
+                      <div>
+                        <strong>
+                          {entry.qualification || "Qualification"}
+                        </strong>
+                        <span>{entry.institution}</span>
+                      </div>
+                      <span>
+                        {[entry.startDate, entry.endDate]
+                          .filter(Boolean)
+                          .join(" – ")}
+                      </span>
+                      {entry.description ? <p>{entry.description}</p> : null}
                     </div>
-                    <span>
-                      {[entry.startDate, entry.endDate]
-                        .filter(Boolean)
-                        .join(" – ")}
-                    </span>
-                    {entry.description ? <p>{entry.description}</p> : null}
-                  </div>
-                ))}
-              </section>
-            ) : null}
-            {cv.education.length ? (
-              <section>
-                <h3>Education</h3>
-                {cv.education.map((entry, index) => (
-                  <div className="cv-document-entry" key={`cv-edu-${index}`}>
-                    <div>
-                      <strong>{entry.qualification || "Qualification"}</strong>
-                      <span>{entry.institution}</span>
+                  ))}
+                </section>
+              ) : null}
+              {skills.length ? (
+                <section>
+                  <h3>Skills</h3>
+                  <p>{skills.join(" · ")}</p>
+                </section>
+              ) : null}
+              {cv.experience.length ? (
+                <section>
+                  <h3>Experience</h3>
+                  {cv.experience.map((entry, index) => (
+                    <div className="cv-document-entry" key={`cv-exp-${index}`}>
+                      <div>
+                        <strong>{entry.title || "Job title"}</strong>
+                        <span>{entry.organization}</span>
+                      </div>
+                      <span>
+                        {[entry.startDate, entry.endDate]
+                          .filter(Boolean)
+                          .join(" – ")}
+                      </span>
+                      {entry.description ? <p>{entry.description}</p> : null}
                     </div>
-                    <span>
-                      {[entry.startDate, entry.endDate]
-                        .filter(Boolean)
-                        .join(" – ")}
-                    </span>
-                    {entry.description ? <p>{entry.description}</p> : null}
-                  </div>
-                ))}
-              </section>
-            ) : null}
-            {cv.skills.length ? (
-              <section>
-                <h3>Skills</h3>
-                <p>{cv.skills.join(" · ")}</p>
-              </section>
-            ) : null}
-          </article>
+                  ))}
+                </section>
+              ) : null}
+            </article>
+          </aside>
         </div>
       </section>
     </main>

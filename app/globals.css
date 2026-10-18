@@ -686,8 +686,34 @@ a {
 
 .cv-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.95fr);
+  align-items: start;
   gap: 14px;
   min-width: 0;
+}
+
+.cv-editor-column {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.cv-preview-column {
+  position: sticky;
+  top: 16px;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cv-preview-heading h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.cv-preview-heading .section-kicker {
+  margin: 0 0 4px;
 }
 
 .cv-editor-card {
@@ -769,9 +795,9 @@ a {
 }
 
 .cv-document {
-  width: min(100%, 820px);
-  margin: 12px auto 0;
-  padding: 42px;
+  width: 100%;
+  margin: 0;
+  padding: 32px;
   display: grid;
   align-content: start;
   gap: 24px;
@@ -843,6 +869,16 @@ a {
 
 .cv-document-entry p {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 1100px) {
+  .cv-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-preview-column {
+    position: static;
+  }
 }
 
 .cv-template-classic .cv-document {
@@ -1934,12 +1970,14 @@ a {
 
   .cv-dashboard-shell > .cv-sidebar,
   .cv-builder-main > :not(.cv-layout),
-  .cv-layout > :not(.cv-document) {
+  .cv-layout > :not(.cv-preview-column),
+  .cv-preview-heading {
     display: none !important;
   }
 
   .cv-builder-main,
-  .cv-layout {
+  .cv-layout,
+  .cv-preview-column {
     display: block;
     width: 100%;
     margin: 0;
