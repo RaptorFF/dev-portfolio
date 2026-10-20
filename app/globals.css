@@ -797,32 +797,71 @@ a {
 .cv-document {
   width: 100%;
   margin: 0;
-  padding: 32px;
-  display: grid;
-  align-content: start;
-  gap: 24px;
+  overflow: hidden;
   color: #20212a;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
 }
 
+.cv-document-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  min-height: 520px;
+}
+
+.cv-document-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 28px;
+  min-width: 0;
+  padding: 30px 22px;
+  color: #f8fafc;
+  background: #263b5d;
+}
+
+.cv-document-main {
+  display: grid;
+  align-content: start;
+  gap: 24px;
+  min-width: 0;
+  padding: 34px 28px;
+}
+
 .cv-document-header {
-  padding-bottom: 18px;
-  border-bottom: 2px solid #7653c5;
+  min-width: 0;
+}
+
+.cv-document-eyebrow {
+  margin: 0 0 12px;
+  color: #e7c875;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .cv-document-header h2 {
   margin: 0;
-  color: #16151b;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 2.4rem;
+  color: inherit;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
 }
 
 .cv-document-header h3 {
-  margin: 6px 0;
-  color: #7653c5;
-  font-size: 1.15rem;
+  margin: 10px 0 0;
+  color: #e7c875;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cv-document-header .cv-document-email {
+  margin: 18px 0 0;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
 }
 
 .cv-document-header p,
@@ -834,6 +873,11 @@ a {
   overflow-wrap: anywhere;
 }
 
+.cv-document-header .cv-document-eyebrow {
+  margin: 0 0 12px;
+  color: #e7c875;
+}
+
 .cv-document section {
   display: grid;
   gap: 10px;
@@ -841,10 +885,31 @@ a {
 
 .cv-document section > h3 {
   margin: 0;
-  color: #7653c5;
+  color: #263b5d;
   font-size: 0.9rem;
-  letter-spacing: 0.1em;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.cv-document-skills ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-document-skills li {
+  max-width: 100%;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: #f8fafc;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .cv-document-entry {
@@ -882,13 +947,43 @@ a {
 }
 
 .cv-template-classic .cv-document {
+  padding: 32px;
+  display: grid;
+  align-content: start;
+  gap: 24px;
   font-family: Georgia, "Times New Roman", serif;
   border-top: 8px solid #333;
+  border-radius: 4px;
+}
+
+.cv-template-classic .cv-document-columns {
+  display: contents;
+}
+
+.cv-template-classic .cv-document-sidebar,
+.cv-template-classic .cv-document-main {
+  display: contents;
 }
 
 .cv-template-classic .cv-document-header {
   text-align: center;
+  padding-bottom: 18px;
   border-color: #333;
+  border-bottom: 2px solid #333;
+  color: #16151b;
+}
+
+.cv-template-classic .cv-document-header h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.4rem;
+}
+
+.cv-template-classic .cv-document-header .cv-document-eyebrow {
+  color: #666;
+}
+
+.cv-template-classic .cv-document-header .cv-document-email {
+  color: #50505b;
 }
 
 .cv-template-classic .cv-document-header h3,
@@ -896,12 +991,45 @@ a {
   color: #333;
 }
 
+.cv-template-classic .cv-document-skills li,
+.cv-template-minimal .cv-document-skills li {
+  border-color: #d8d8dc;
+  color: #50505b;
+}
+
 .cv-template-minimal .cv-document {
+  padding: 32px;
+  display: grid;
+  align-content: start;
+  gap: 24px;
   box-shadow: none;
 }
 
+.cv-template-minimal .cv-document-columns {
+  display: contents;
+}
+
+.cv-template-minimal .cv-document-sidebar,
+.cv-template-minimal .cv-document-main {
+  display: contents;
+}
+
 .cv-template-minimal .cv-document-header {
-  border-color: #d8d8dc;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #d8d8dc;
+  color: #16151b;
+}
+
+.cv-template-minimal .cv-document-header h2 {
+  font-size: 2.4rem;
+}
+
+.cv-template-minimal .cv-document-header .cv-document-eyebrow {
+  color: #777;
+}
+
+.cv-template-minimal .cv-document-header .cv-document-email {
+  color: #50505b;
 }
 
 .cv-template-minimal .cv-document-header h3,

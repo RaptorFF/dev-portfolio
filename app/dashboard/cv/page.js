@@ -422,63 +422,86 @@ export default function CvBuilderPage() {
               <h2>Your CV</h2>
             </div>
             <article className="cv-document">
-              <header className="cv-document-header">
-                <h2>{profile.name || "Your Name"}</h2>
-                {profile.role ? <h3>{profile.role}</h3> : null}
-                {profile.email ? <p>{profile.email}</p> : null}
-              </header>
-              {profile.shortBio ? (
-                <section>
-                  <h3>Profile</h3>
-                  <p>{profile.shortBio}</p>
-                </section>
-              ) : null}
-              {cv.education.length ? (
-                <section>
-                  <h3>Education</h3>
-                  {cv.education.map((entry, index) => (
-                    <div className="cv-document-entry" key={`cv-edu-${index}`}>
-                      <div>
-                        <strong>
-                          {entry.qualification || "Qualification"}
-                        </strong>
-                        <span>{entry.institution}</span>
-                      </div>
-                      <span>
-                        {[entry.startDate, entry.endDate]
-                          .filter(Boolean)
-                          .join(" – ")}
-                      </span>
-                      {entry.description ? <p>{entry.description}</p> : null}
-                    </div>
-                  ))}
-                </section>
-              ) : null}
-              {skills.length ? (
-                <section>
-                  <h3>Skills</h3>
-                  <p>{skills.join(" · ")}</p>
-                </section>
-              ) : null}
-              {cv.experience.length ? (
-                <section>
-                  <h3>Experience</h3>
-                  {cv.experience.map((entry, index) => (
-                    <div className="cv-document-entry" key={`cv-exp-${index}`}>
-                      <div>
-                        <strong>{entry.title || "Job title"}</strong>
-                        <span>{entry.organization}</span>
-                      </div>
-                      <span>
-                        {[entry.startDate, entry.endDate]
-                          .filter(Boolean)
-                          .join(" – ")}
-                      </span>
-                      {entry.description ? <p>{entry.description}</p> : null}
-                    </div>
-                  ))}
-                </section>
-              ) : null}
+              <div className="cv-document-columns">
+                <aside className="cv-document-sidebar">
+                  <header className="cv-document-header">
+                    <p className="cv-document-eyebrow">Curriculum vitae</p>
+                    <h2>{profile.name || "Your Name"}</h2>
+                    {profile.role ? <h3>{profile.role}</h3> : null}
+                    {profile.email ? (
+                      <p className="cv-document-email">{profile.email}</p>
+                    ) : null}
+                  </header>
+                  {skills.length ? (
+                    <section className="cv-document-skills">
+                      <h3>Skills</h3>
+                      <ul>
+                        {skills.map((skill, index) => (
+                          <li key={`cv-skill-${index}`}>{skill}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                </aside>
+                <div className="cv-document-main">
+                  {profile.shortBio ? (
+                    <section>
+                      <h3>Profile</h3>
+                      <p>{profile.shortBio}</p>
+                    </section>
+                  ) : null}
+                  {cv.experience.length ? (
+                    <section>
+                      <h3>Experience</h3>
+                      {cv.experience.map((entry, index) => (
+                        <div
+                          className="cv-document-entry"
+                          key={`cv-exp-${index}`}
+                        >
+                          <div>
+                            <strong>{entry.title || "Job title"}</strong>
+                            {entry.organization ? (
+                              <span>{entry.organization}</span>
+                            ) : null}
+                          </div>
+                          <span>
+                            {[entry.startDate, entry.endDate]
+                              .filter(Boolean)
+                              .join(" – ")}
+                          </span>
+                          {entry.description ? <p>{entry.description}</p> : null}
+                        </div>
+                      ))}
+                    </section>
+                  ) : null}
+                  {cv.education.length ? (
+                    <section>
+                      <h3>Education</h3>
+                      {cv.education.map((entry, index) => (
+                        <div
+                          className="cv-document-entry"
+                          key={`cv-edu-${index}`}
+                        >
+                          <div>
+                            <strong>
+                              {entry.qualification || "Qualification"}
+                            </strong>
+                            {entry.institution ? (
+                              <span>{entry.institution}</span>
+                            ) : null}
+                          </div>
+                          <span>
+                            {[entry.startDate, entry.endDate]
+                              .filter(Boolean)
+                              .join(" – ")}
+                          </span>
+                          {entry.description ? <p>{entry.description}</p> : null}
+                        </div>
+                      ))}
+                    </section>
+                  ) : null}
+                </div>
+              </div>
             </article>
           </aside>
         </div>
