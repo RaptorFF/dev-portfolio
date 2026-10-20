@@ -741,6 +741,21 @@ a {
   text-transform: uppercase;
 }
 
+.cv-license-toggle .cv-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.cv-checkbox-row input {
+  accent-color: var(--accent);
+}
+
 .cv-summary-field {
   grid-column: 1 / -1;
 }
@@ -748,6 +763,106 @@ a {
 .cv-summary-field textarea,
 .cv-entry-grid textarea {
   min-height: 90px;
+}
+
+.cv-photo-editor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.cv-photo-editor-preview,
+.cv-photo-editor-placeholder {
+  width: 96px;
+  height: 96px;
+  flex: 0 0 96px;
+  border: 1px solid var(--panel-border);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.cv-photo-editor-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.85rem;
+}
+
+.cv-photo-controls {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cv-help-text,
+.cv-error-text {
+  font-size: 0.82rem;
+}
+
+.cv-help-text {
+  color: var(--muted);
+}
+
+.cv-error-text {
+  color: #ff9b9b;
+}
+
+.cv-rated-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.cv-rating-field {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.cv-rating-field > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cv-star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.cv-star-rating button,
+.cv-star-rating span {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #aab0bc;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.cv-star-rating button {
+  cursor: pointer;
+}
+
+.cv-star-rating button.active,
+.cv-star-rating span.active {
+  color: #e5ad36;
+}
+
+.cv-star-rating button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .cv-section-heading,
@@ -806,14 +921,14 @@ a {
 
 .cv-document-columns {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
   min-height: 520px;
 }
 
 .cv-document-sidebar {
   display: grid;
   align-content: start;
-  gap: 28px;
+  gap: 24px;
   min-width: 0;
   padding: 30px 22px;
   color: #f8fafc;
@@ -823,13 +938,26 @@ a {
 .cv-document-main {
   display: grid;
   align-content: start;
-  gap: 24px;
+  gap: 26px;
   min-width: 0;
   padding: 34px 28px;
 }
 
 .cv-document-header {
   min-width: 0;
+}
+
+.cv-document-photo {
+  display: flex;
+  justify-content: center;
+}
+
+.cv-document-photo img {
+  width: min(100%, 160px);
+  aspect-ratio: 1;
+  border: 4px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .cv-document-eyebrow {
@@ -859,7 +987,6 @@ a {
 
 .cv-document-header .cv-document-email {
   margin: 18px 0 0;
-  color: #e2e8f0;
   font-size: 0.8rem;
   overflow-wrap: anywhere;
 }
@@ -878,6 +1005,78 @@ a {
   color: #e7c875;
 }
 
+.cv-document .cv-document-sidebar section > h3 {
+  color: #f3d985;
+}
+
+.cv-document-personal {
+  gap: 14px;
+}
+
+.cv-document-personal > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cv-document-personal strong {
+  color: #fff;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cv-document-personal p,
+.cv-document-personal a {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.cv-document-personal a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cv-document-interests ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #e2e8f0;
+  font-size: 0.82rem;
+}
+
+.cv-document-languages {
+  gap: 12px !important;
+}
+
+.cv-document-language,
+.cv-document-skill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cv-document-language > span {
+  color: #f8fafc;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.cv-document-sidebar .cv-star-rating {
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+.cv-document-sidebar .cv-star-rating span {
+  font-size: 0.82rem;
+}
+
 .cv-document section {
   display: grid;
   gap: 10px;
@@ -892,24 +1091,24 @@ a {
   text-transform: uppercase;
 }
 
-.cv-document-skills ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.cv-document-main .cv-document-skills {
+  display: grid;
+  gap: 10px;
 }
 
-.cv-document-skills li {
-  max-width: 100%;
-  padding: 5px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  color: #f8fafc;
-  font-size: 0.75rem;
-  line-height: 1.3;
+.cv-document-skill {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e9ed;
+}
+
+.cv-document-skill > span {
+  color: #20212a;
+  font-size: 0.88rem;
   overflow-wrap: anywhere;
+}
+
+.cv-document-main .cv-star-rating span {
+  font-size: 1rem;
 }
 
 .cv-document-entry {
@@ -983,6 +1182,17 @@ a {
 }
 
 .cv-template-classic .cv-document-header .cv-document-email {
+  color: #50505b;
+}
+
+.cv-template-classic .cv-document-personal strong,
+.cv-template-classic .cv-document-personal p,
+.cv-template-classic .cv-document-personal a,
+.cv-template-classic .cv-document-language > span,
+.cv-template-minimal .cv-document-personal strong,
+.cv-template-minimal .cv-document-personal p,
+.cv-template-minimal .cv-document-personal a,
+.cv-template-minimal .cv-document-language > span {
   color: #50505b;
 }
 
@@ -2075,7 +2285,25 @@ a {
   }
 
   .cv-document {
+    padding: 0;
+  }
+
+  .cv-document-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-document-sidebar,
+  .cv-document-main {
     padding: 24px;
+  }
+
+  .cv-rated-entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .cv-rated-entry > .text-button {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 }
 
