@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Component to build and manage the user's CV, including profile, experience, education, and skills
 
@@ -30,9 +30,21 @@ const CV_DRAFT_KEY = "portfolio-forge-cv-draft-v1";
 const MAX_CV_PHOTO_SIZE = 5 * 1024 * 1024;
 
 const templates = [
-  { id: "modern", label: "Modern" },
-  { id: "classic", label: "Classic" },
-  { id: "minimal", label: "Minimal" },
+  {
+    id: "modern",
+    label: "Blue & Gray",
+    description: "A confident two-column layout with a cool blue sidebar.",
+  },
+  {
+    id: "classic",
+    label: "Clean Professional",
+    description: "A balanced, traditional layout with refined blue accents.",
+  },
+  {
+    id: "minimal",
+    label: "Blue & White",
+    description: "An airy, simple layout with a crisp blue header.",
+  },
 ];
 
 function resizeCvPhoto(file) {
@@ -75,7 +87,6 @@ function resizeCvPhoto(file) {
 
     image.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      URL.revokeObjectURL(objectUrl);
       reject(new Error("The selected file is not a valid image."));
     };
     image.src = objectUrl;
@@ -93,13 +104,6 @@ function normalizeSkills(skills) {
           },
     )
     .filter((skill) => skill.name);
-}
-
-function parseInterests(value) {
-  return value
-    .split(",")
-    .map((interest) => interest.trim())
-    .filter(Boolean);
 }
 
 function CvStarRating({ level, label, onChange }) {
@@ -131,50 +135,39 @@ function CvStarRating({ level, label, onChange }) {
   );
 }
 
-function CvEntryFields({ entry, fields, onChange, onRemove }) {
-  return (
-    <article className="cv-entry-form">
-      <div className="cv-entry-header">
-        <strong>{entry.title || entry.qualification || "New entry"}</strong>
-        <button className="text-button" type="button" onClick={onRemove}>
-          Remove
-        </button>
-      </div>
-      <div className="cv-entry-grid">
-        {fields.map((field) => (
-          <label className="mock-field" key={field.name}>
-            <span>{field.label}</span>
-            {field.multiline ? (
-              <textarea
-                value={entry[field.name]}
-                onChange={(event) => onChange(field.name, event.target.value)}
-                rows={3}
-                maxLength={field.maxLength}
-              />
-            ) : (
-              <input
-                value={entry[field.name]}
-                onChange={(event) => onChange(field.name, event.target.value)}
-                maxLength={field.maxLength}
-              />
-            )}
-          </label>
-        ))}
-      </div>
-    </article>
+function CvInlineField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  className = "",
+  multiline = false,
+}) {
+  const fieldProps = {
+    className: `cv-inline-field ${className}`,
+    "aria-label": label,
+    value,
+    onChange: (event) => onChange(event.target.value),
+    placeholder,
+  };
+
+  return multiline ? (
+    <textarea {...fieldProps} rows={3} />
+  ) : (
+    <input {...fieldProps} />
   );
 }
 
 export default function CvBuilderPage() {
   const [profile, setProfile] = useState(emptyProfile);
   const [cv, setCv] = useState(emptyCv);
-  const [interestsText, setInterestsText] = useState("");
   const [photoError, setPhotoError] = useState("");
   const [status, setStatus] = useState(
     "Your draft is saved automatically in this browser.",
   );
   const [loaded, setLoaded] = useState(false);
   const [edited, setEdited] = useState(false);
+  const photoInputRef = useRef(null);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -216,7 +209,6 @@ export default function CvBuilderPage() {
               ? savedCv.languages
               : [],
           });
-          setInterestsText(interests.join(", "));
         }
         setStatus("Your draft is saved automatically in this browser.");
       } catch (error) {
@@ -241,7 +233,7 @@ export default function CvBuilderPage() {
           CV_DRAFT_KEY,
           JSON.stringify({
             profile,
-            cv: { ...cv, interests: parseInterests(interestsText) },
+            cv,
           }),
         );
         setStatus("Draft saved automatically in this browser.");
@@ -252,11 +244,10 @@ export default function CvBuilderPage() {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [cv, edited, interestsText, loaded, profile]);
+  }, [cv, edited, loaded, profile]);
 
-  function updateProfile(event) {
-    const { name, value } = event.target;
-    setProfile((current) => ({ ...current, [name]: value }));
+  function updateProfileField(field, value) {
+    setProfile((current) => ({ ...current, [field]: value }));
     setEdited(true);
   }
 
@@ -288,8 +279,24 @@ export default function CvBuilderPage() {
     setEdited(true);
   }
 
-  function updateInterests(value) {
-    setInterestsText(value);
+  function updateInterest(index, value) {
+    const interests = [...cv.interests];
+    interests[index] = value;
+    setCv((current) => ({ ...current, interests }));
+    setEdited(true);
+  }
+
+  function addInterest() {
+    const interests = [...cv.interests, ""];
+    setCv((current) => ({ ...current, interests }));
+    setEdited(true);
+  }
+
+  function removeInterest(index) {
+    const interests = cv.interests.filter(
+      (_, interestIndex) => interestIndex !== index,
+    );
+    setCv((current) => ({ ...current, interests }));
     setEdited(true);
   }
 
@@ -425,416 +432,71 @@ export default function CvBuilderPage() {
           </p>
         ) : null}
 
-        <div className="cv-template-picker" aria-label="CV template">
-          <strong>Template</strong>
+        <div className="cv-template-picker" aria-label="Choose a CV template">
+          <div className="cv-template-picker-heading">
+            <strong>Choose a template</strong>
+            <span>Your details stay the same when you switch styles.</span>
+          </div>
           {templates.map((template) => (
             <button
               className={`cv-template-option ${cv.template === template.id ? "active" : ""}`}
               type="button"
               key={template.id}
+              aria-pressed={cv.template === template.id}
               onClick={() => {
                 setCv((current) => ({ ...current, template: template.id }));
                 setEdited(true);
               }}
             >
-              {template.label}
+              <span
+                className={`cv-template-thumbnail cv-thumbnail-${template.id}`}
+                aria-hidden="true"
+              >
+                <span className="cv-thumbnail-sidebar">
+                  <span className="cv-thumbnail-avatar" />
+                  <span className="cv-thumbnail-lines">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </span>
+                <span className="cv-thumbnail-content">
+                  <span className="cv-thumbnail-title" />
+                  <span className="cv-thumbnail-subtitle" />
+                  <span className="cv-thumbnail-section" />
+                  <span className="cv-thumbnail-lines">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="cv-thumbnail-section" />
+                  <span className="cv-thumbnail-lines">
+                    <i />
+                    <i />
+                  </span>
+                </span>
+              </span>
+              <span className="cv-template-option-copy">
+                <strong>{template.label}</strong>
+                <span>{template.description}</span>
+              </span>
+              <span className="cv-template-selected" aria-hidden="true">
+                {cv.template === template.id ? "Selected" : "Select"}
+              </span>
             </button>
           ))}
         </div>
 
         <div className={`cv-layout cv-template-${cv.template}`}>
-          <div className="cv-editor-column">
-            <article className="editor-card cv-editor-card">
-              <h2>Name and title</h2>
-              <div className="cv-profile-grid">
-                <label className="mock-field">
-                  <span>Full name</span>
-                  <input
-                    name="name"
-                    value={profile.name}
-                    onChange={updateProfile}
-                    maxLength={100}
-                    placeholder="Your name"
-                  />
-                </label>
-                <label className="mock-field">
-                  <span>Professional title</span>
-                  <input
-                    name="role"
-                    value={profile.role}
-                    onChange={updateProfile}
-                    maxLength={200}
-                    placeholder="e.g. Frontend Developer"
-                  />
-                </label>
-              </div>
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <h2>Personal details</h2>
-              <div className="cv-photo-editor">
-                {profile.photo ? (
-                  <Image
-                    className="cv-photo-editor-preview"
-                    src={profile.photo}
-                    alt="CV profile"
-                    width={96}
-                    height={96}
-                    unoptimized
-                  />
-                ) : (
-                  <div className="cv-photo-editor-placeholder">Photo</div>
-                )}
-                <div className="cv-photo-controls">
-                  <label className="mock-field">
-                    <span>Profile photo</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={updatePhoto}
-                    />
-                  </label>
-                  <span className="cv-help-text">
-                    JPG, PNG or WebP, up to 5 MB.
-                  </span>
-                  {photoError ? (
-                    <span className="cv-error-text" role="alert">
-                      {photoError}
-                    </span>
-                  ) : null}
-                  {profile.photo ? (
-                    <button
-                      className="text-button"
-                      type="button"
-                      onClick={() => {
-                        setProfile((current) => ({ ...current, photo: "" }));
-                        setEdited(true);
-                      }}
-                    >
-                      Remove photo
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-              <div className="cv-profile-grid">
-                <label className="mock-field">
-                  <span>Address</span>
-                  <input
-                    name="address"
-                    value={profile.address}
-                    onChange={updateProfile}
-                    maxLength={250}
-                    placeholder="Street, city, country"
-                  />
-                </label>
-                <label className="mock-field">
-                  <span>Phone number</span>
-                  <input
-                    name="phone"
-                    type="tel"
-                    value={profile.phone}
-                    onChange={updateProfile}
-                    maxLength={50}
-                    placeholder="+381 60 123 4567"
-                  />
-                </label>
-                <label className="mock-field">
-                  <span>Email address</span>
-                  <input
-                    name="email"
-                    type="email"
-                    value={profile.email}
-                    onChange={updateProfile}
-                    maxLength={200}
-                    placeholder="you@example.com"
-                  />
-                </label>
-                <label className="mock-field cv-license-toggle">
-                  <span>Driving license</span>
-                  <span className="cv-checkbox-row">
-                    <input
-                      name="hasDrivingLicense"
-                      type="checkbox"
-                      checked={profile.hasDrivingLicense}
-                      onChange={(event) => {
-                        setProfile((current) => ({
-                          ...current,
-                          hasDrivingLicense: event.target.checked,
-                        }));
-                        setEdited(true);
-                      }}
-                    />
-                    I have a driving license
-                  </span>
-                </label>
-                {profile.hasDrivingLicense ? (
-                  <label className="mock-field">
-                    <span>Categories (optional)</span>
-                    <input
-                      name="drivingLicense"
-                      value={profile.drivingLicense}
-                      onChange={updateProfile}
-                      maxLength={80}
-                      placeholder="e.g. B, AM"
-                    />
-                  </label>
-                ) : null}
-                <label className="mock-field cv-summary-field">
-                  <span>LinkedIn or other link</span>
-                  <input
-                    name="linkedin"
-                    type="url"
-                    value={profile.linkedin}
-                    onChange={updateProfile}
-                    maxLength={300}
-                    placeholder="https://linkedin.com/in/your-name"
-                  />
-                </label>
-              </div>
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <h2>About</h2>
-              <label className="mock-field">
-                <span>Professional summary</span>
-                <textarea
-                  name="shortBio"
-                  value={profile.shortBio}
-                  onChange={updateProfile}
-                  maxLength={1000}
-                  rows={4}
-                  placeholder="A concise summary of your experience and strengths"
-                />
-              </label>
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <h2>Interests</h2>
-              <label className="mock-field">
-                <span>Separate interests with commas</span>
-                <textarea
-                  value={interestsText}
-                  onChange={(event) => updateInterests(event.target.value)}
-                  rows={2}
-                  placeholder="Sport, cooking, reading"
-                />
-              </label>
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <div className="cv-section-heading">
-                <div>
-                  <h2>Languages</h2>
-                  <p>Add the languages you know and rate your level.</p>
-                </div>
-                <button
-                  className="button button-secondary"
-                  type="button"
-                  onClick={addLanguage}
-                >
-                  Add language
-                </button>
-              </div>
-              {cv.languages.map((language, index) => (
-                <article className="cv-rated-entry" key={`language-${index}`}>
-                  <label className="mock-field">
-                    <span>Language</span>
-                    <input
-                      value={language.name || ""}
-                      onChange={(event) =>
-                        updateLanguage(index, "name", event.target.value)
-                      }
-                      maxLength={80}
-                      placeholder="e.g. English"
-                    />
-                  </label>
-                  <div className="cv-rating-field">
-                    <span>Level</span>
-                    <CvStarRating
-                      label={`Language level for ${language.name || "language"}`}
-                      level={language.level || 3}
-                      onChange={(level) =>
-                        updateLanguage(index, "level", level)
-                      }
-                    />
-                  </div>
-                  <button
-                    className="text-button"
-                    type="button"
-                    onClick={() => removeLanguage(index)}
-                  >
-                    Remove
-                  </button>
-                </article>
-              ))}
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <div className="cv-section-heading">
-                <div>
-                  <h2>Education and qualification</h2>
-                  <p>Add degrees, courses or other relevant education.</p>
-                </div>
-                <button
-                  className="button button-secondary"
-                  type="button"
-                  onClick={() =>
-                    addEntry("education", {
-                      qualification: "",
-                      institution: "",
-                      startDate: "",
-                      endDate: "",
-                      description: "",
-                    })
-                  }
-                >
-                  Add education
-                </button>
-              </div>
-              {cv.education.map((entry, index) => (
-                <CvEntryFields
-                  key={`education-${index}`}
-                  entry={entry}
-                  onChange={(field, value) =>
-                    updateEntry("education", index, field, value)
-                  }
-                  onRemove={() => removeEntry("education", index)}
-                  fields={[
-                    {
-                      name: "qualification",
-                      label: "Qualification",
-                      maxLength: 120,
-                    },
-                    {
-                      name: "institution",
-                      label: "Institution",
-                      maxLength: 120,
-                    },
-                    { name: "startDate", label: "From", maxLength: 40 },
-                    { name: "endDate", label: "To", maxLength: 40 },
-                    {
-                      name: "description",
-                      label: "Details (optional)",
-                      multiline: true,
-                      maxLength: 1000,
-                    },
-                  ]}
-                />
-              ))}
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <div className="cv-section-heading">
-                <div>
-                  <h2>Skills</h2>
-                  <p>Add your skills and rate your level.</p>
-                </div>
-                <button
-                  className="button button-secondary"
-                  type="button"
-                  onClick={addSkill}
-                >
-                  Add skill
-                </button>
-              </div>
-              {cv.skills.map((skill, index) => (
-                <article className="cv-rated-entry" key={`skill-${index}`}>
-                  <label className="mock-field">
-                    <span>Skill</span>
-                    <input
-                      value={skill.name || ""}
-                      onChange={(event) =>
-                        updateSkill(index, "name", event.target.value)
-                      }
-                      maxLength={100}
-                      placeholder="e.g. React"
-                    />
-                  </label>
-                  <div className="cv-rating-field">
-                    <span>Level</span>
-                    <CvStarRating
-                      label={`Skill level for ${skill.name || "skill"}`}
-                      level={skill.level || 3}
-                      onChange={(level) =>
-                        updateSkill(index, "level", level)
-                      }
-                    />
-                  </div>
-                  <button
-                    className="text-button"
-                    type="button"
-                    onClick={() => removeSkill(index)}
-                  >
-                    Remove
-                  </button>
-                </article>
-              ))}
-            </article>
-
-            <article className="editor-card cv-editor-card">
-              <div className="cv-section-heading">
-                <div>
-                  <h2>Work experience</h2>
-                  <p>Add your recent and relevant roles.</p>
-                </div>
-                <button
-                  className="button button-secondary"
-                  type="button"
-                  onClick={() =>
-                    addEntry("experience", {
-                      title: "",
-                      organization: "",
-                      startDate: "",
-                      endDate: "",
-                      description: "",
-                    })
-                  }
-                >
-                  Add experience
-                </button>
-              </div>
-              {cv.experience.map((entry, index) => (
-                <CvEntryFields
-                  key={`experience-${index}`}
-                  entry={entry}
-                  onChange={(field, value) =>
-                    updateEntry("experience", index, field, value)
-                  }
-                  onRemove={() => removeEntry("experience", index)}
-                  fields={[
-                    { name: "title", label: "Job title", maxLength: 100 },
-                    {
-                      name: "organization",
-                      label: "Company",
-                      maxLength: 100,
-                    },
-                    { name: "startDate", label: "From", maxLength: 40 },
-                    { name: "endDate", label: "To", maxLength: 40 },
-                    {
-                      name: "description",
-                      label: "Responsibilities and achievements",
-                      multiline: true,
-                      maxLength: 1500,
-                    },
-                  ]}
-                />
-              ))}
-            </article>
-          </div>
-
           <aside
-            className="preview-panel cv-preview-column"
-            aria-label="CV live preview"
+            className="cv-document-panel"
+            aria-label="Editable CV document"
           >
-            <div className="cv-preview-heading">
-              <p className="section-kicker">Live preview</p>
-              <h2>Your CV</h2>
-            </div>
             <article className="cv-document">
               <div className="cv-document-columns">
                 <aside className="cv-document-sidebar">
-                  {profile.photo ? (
-                    <div className="cv-document-photo">
+                  <div className="cv-document-photo">
+                    {profile.photo ? (
                       <Image
                         src={profile.photo}
                         alt={`${profile.name || "Profile"} portrait`}
@@ -842,160 +504,461 @@ export default function CvBuilderPage() {
                         height={160}
                         unoptimized
                       />
-                    </div>
-                  ) : null}
+                    ) : (
+                      <span className="cv-document-photo-placeholder">
+                        Add photo
+                      </span>
+                    )}
+                    <input
+                      ref={photoInputRef}
+                      className="cv-photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      aria-label="Choose profile photo"
+                      onChange={updatePhoto}
+                    />
+                    <button
+                      className="cv-document-action cv-photo-action"
+                      type="button"
+                      onClick={() => photoInputRef.current?.click()}
+                    >
+                      {profile.photo ? "Change photo" : "Upload photo"}
+                    </button>
+                    {profile.photo ? (
+                      <button
+                        className="cv-document-action cv-photo-action"
+                        type="button"
+                        onClick={() => {
+                          setProfile((current) => ({ ...current, photo: "" }));
+                          setEdited(true);
+                        }}
+                      >
+                        Remove photo
+                      </button>
+                    ) : null}
+                    {photoError ? (
+                      <span className="cv-error-text" role="alert">
+                        {photoError}
+                      </span>
+                    ) : null}
+                  </div>
                   <section className="cv-document-personal">
                     <h3>Personal details</h3>
-                    {profile.address ? (
-                      <div>
-                        <strong>Address</strong>
-                        <p>{profile.address}</p>
-                      </div>
-                    ) : null}
-                    {profile.phone ? (
-                      <div>
-                        <strong>Phone</strong>
-                        <p>{profile.phone}</p>
-                      </div>
-                    ) : null}
-                    {profile.email ? (
-                      <div>
-                        <strong>Email</strong>
-                        <p className="cv-document-email">{profile.email}</p>
-                      </div>
-                    ) : null}
-                    {profile.hasDrivingLicense ? (
-                      <div>
-                        <strong>Driving license</strong>
-                        <p>{profile.drivingLicense || "Yes"}</p>
-                      </div>
-                    ) : null}
-                    {profile.linkedin ? (
-                      <div>
-                        <strong>LinkedIn</strong>
-                        <a
-                          href={profile.linkedin}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {profile.linkedin.replace(/^https?:\/\//, "")}
-                        </a>
-                      </div>
-                    ) : null}
-                  </section>
-                  {cv.interests.length ? (
-                    <section className="cv-document-interests">
-                      <h3>Interests</h3>
-                      <ul>
-                        {cv.interests.map((interest, index) => (
-                          <li key={`cv-interest-${index}`}>{interest}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
-                  {cv.languages.some((language) => language.name) ? (
-                    <section className="cv-document-languages">
-                      <h3>Languages</h3>
-                      {cv.languages
-                        .filter((language) => language.name)
-                        .map((language, index) => (
-                          <div
-                            className="cv-document-language"
-                            key={`cv-language-${index}`}
+                    <div>
+                      <strong>Address</strong>
+                      <CvInlineField
+                        label="Address"
+                        value={profile.address}
+                        onChange={(value) =>
+                          updateProfileField("address", value)
+                        }
+                        placeholder="Add your address"
+                      />
+                    </div>
+                    <div>
+                      <strong>Phone</strong>
+                      <CvInlineField
+                        label="Phone number"
+                        value={profile.phone}
+                        onChange={(value) => updateProfileField("phone", value)}
+                        placeholder="Add your phone"
+                      />
+                    </div>
+                    <div>
+                      <strong>Email</strong>
+                      <CvInlineField
+                        label="Email address"
+                        value={profile.email}
+                        onChange={(value) => updateProfileField("email", value)}
+                        placeholder="Add your email"
+                        className="cv-inline-email"
+                      />
+                    </div>
+                    <div>
+                      <strong>Driving license</strong>
+                      <label className="cv-inline-license">
+                        <input
+                          type="checkbox"
+                          checked={profile.hasDrivingLicense}
+                          onChange={(event) => {
+                            setProfile((current) => ({
+                              ...current,
+                              hasDrivingLicense: event.target.checked,
+                            }));
+                            setEdited(true);
+                          }}
+                        />
+                        <span>I have a driving license</span>
+                      </label>
+                      {profile.hasDrivingLicense ? (
+                        <CvInlineField
+                          label="Driving license categories"
+                          value={profile.drivingLicense}
+                          onChange={(value) =>
+                            updateProfileField("drivingLicense", value)
+                          }
+                          placeholder="Categories"
+                        />
+                      ) : null}
+                    </div>
+                    <div>
+                      <strong>LinkedIn</strong>
+                      <div className="cv-inline-link">
+                        <CvInlineField
+                          label="LinkedIn profile URL"
+                          value={profile.linkedin}
+                          onChange={(value) =>
+                            updateProfileField("linkedin", value)
+                          }
+                          placeholder="Add LinkedIn URL"
+                          className="cv-inline-email"
+                        />
+                        {profile.linkedin ? (
+                          <a
+                            href={profile.linkedin}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label="Open LinkedIn profile"
                           >
-                            <span>{language.name}</span>
-                            <CvStarRating
-                              label={`${language.name} language level: ${language.level || 3} of 5 stars`}
-                              level={language.level || 3}
-                            />
-                          </div>
-                        ))}
-                    </section>
-                  ) : null}
+                            Open
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  </section>
+                  <section className="cv-document-interests">
+                    <h3>Interests</h3>
+                    <ul>
+                      {cv.interests.map((interest, index) => (
+                        <li key={`cv-interest-${index}`}>
+                          <CvInlineField
+                            label={`Interest ${index + 1}`}
+                            value={interest}
+                            onChange={(value) => updateInterest(index, value)}
+                            placeholder="Add an interest"
+                          />
+                          <button
+                            className="cv-document-remove"
+                            type="button"
+                            aria-label={`Remove interest ${index + 1}`}
+                            onClick={() => removeInterest(index)}
+                          >
+                            ×
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="cv-document-action"
+                      type="button"
+                      onClick={addInterest}
+                    >
+                      + Add interest
+                    </button>
+                  </section>
+                  <section className="cv-document-languages">
+                    <h3>Languages</h3>
+                    {cv.languages.map((language, index) => (
+                      <div
+                        className="cv-document-language"
+                        key={`cv-language-${index}`}
+                      >
+                        <CvInlineField
+                          label={`Language ${index + 1}`}
+                          value={language.name || ""}
+                          onChange={(value) =>
+                            updateLanguage(index, "name", value)
+                          }
+                          placeholder="Add a language"
+                        />
+                        <CvStarRating
+                          label={`${language.name || "Language"} level`}
+                          level={language.level || 3}
+                          onChange={(level) =>
+                            updateLanguage(index, "level", level)
+                          }
+                        />
+                        <button
+                          className="cv-document-remove"
+                          type="button"
+                          aria-label={`Remove language ${index + 1}`}
+                          onClick={() => removeLanguage(index)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      className="cv-document-action"
+                      type="button"
+                      onClick={addLanguage}
+                    >
+                      + Add language
+                    </button>
+                  </section>
                 </aside>
                 <div className="cv-document-main">
                   <header className="cv-document-header">
                     <p className="cv-document-eyebrow">Curriculum vitae</p>
-                    <h2>{profile.name || "Your Name"}</h2>
-                    {profile.role ? <h3>{profile.role}</h3> : null}
+                    <h2>
+                      <CvInlineField
+                        label="Full name in CV"
+                        value={profile.name}
+                        onChange={(value) => updateProfileField("name", value)}
+                        placeholder="Your name"
+                        className="cv-inline-name"
+                      />
+                    </h2>
+                    <h3>
+                      <CvInlineField
+                        label="Professional title in CV"
+                        value={profile.role}
+                        onChange={(value) => updateProfileField("role", value)}
+                        placeholder="Your professional title"
+                        className="cv-inline-role"
+                      />
+                    </h3>
                   </header>
-                  {profile.shortBio ? (
-                    <section>
-                      <h3>About</h3>
-                      <p>{profile.shortBio}</p>
-                    </section>
-                  ) : null}
-                  {cv.education.length ? (
-                    <section>
-                      <h3>Education and qualification</h3>
-                      {cv.education.map((entry, index) => (
+                  <section>
+                    <h3>About</h3>
+                    <CvInlineField
+                      label="Professional summary in CV"
+                      value={profile.shortBio}
+                      onChange={(value) =>
+                        updateProfileField("shortBio", value)
+                      }
+                      placeholder="Add a short professional summary"
+                      multiline
+                      className="cv-inline-description"
+                    />
+                  </section>
+                  <section>
+                    <h3>Education and qualification</h3>
+                    {cv.education.map((entry, index) => (
                         <div
                           className="cv-document-entry"
                           key={`cv-edu-${index}`}
                         >
                           <div>
-                            <strong>
-                              {entry.qualification || "Qualification"}
-                            </strong>
-                            {entry.institution ? (
-                              <span>{entry.institution}</span>
-                            ) : null}
+                            <CvInlineField
+                              label={`Education qualification ${index + 1}`}
+                              value={entry.qualification}
+                              onChange={(value) =>
+                                updateEntry(
+                                  "education",
+                                  index,
+                                  "qualification",
+                                  value,
+                                )
+                              }
+                              placeholder="Add qualification"
+                              className="cv-inline-strong"
+                            />
+                            <CvInlineField
+                              label={`Education institution ${index + 1}`}
+                              value={entry.institution}
+                              onChange={(value) =>
+                                updateEntry(
+                                  "education",
+                                  index,
+                                  "institution",
+                                  value,
+                                )
+                              }
+                              placeholder="Add institution"
+                            />
                           </div>
-                          <span>
-                            {[entry.startDate, entry.endDate]
-                              .filter(Boolean)
-                              .join(" – ")}
-                          </span>
-                          {entry.description ? <p>{entry.description}</p> : null}
+                          <div className="cv-document-dates">
+                            <CvInlineField
+                              label={`Education start date ${index + 1}`}
+                              value={entry.startDate}
+                              onChange={(value) =>
+                                updateEntry("education", index, "startDate", value)
+                              }
+                              placeholder="From"
+                            />
+                            <span>–</span>
+                            <CvInlineField
+                              label={`Education end date ${index + 1}`}
+                              value={entry.endDate}
+                              onChange={(value) =>
+                                updateEntry("education", index, "endDate", value)
+                              }
+                              placeholder="To"
+                            />
+                          </div>
+                          <CvInlineField
+                            label={`Education details ${index + 1}`}
+                            value={entry.description}
+                            onChange={(value) =>
+                              updateEntry(
+                                "education",
+                                index,
+                                "description",
+                                value,
+                              )
+                            }
+                            placeholder="Add details"
+                            multiline
+                            className="cv-inline-description"
+                          />
+                          <button
+                            className="cv-document-remove cv-entry-remove"
+                            type="button"
+                            onClick={() => removeEntry("education", index)}
+                          >
+                            Remove
+                          </button>
                         </div>
                       ))}
-                    </section>
-                  ) : null}
-                  {cv.skills.some((skill) => skill.name) ? (
-                    <section>
-                      <h3>Skills</h3>
-                      <div className="cv-document-skills">
-                        {cv.skills
-                          .filter((skill) => skill.name)
-                          .map((skill, index) => (
+                    <button
+                      className="cv-document-action"
+                      type="button"
+                      onClick={() =>
+                        addEntry("education", {
+                          qualification: "",
+                          institution: "",
+                          startDate: "",
+                          endDate: "",
+                          description: "",
+                        })
+                      }
+                    >
+                      + Add education
+                    </button>
+                  </section>
+                  <section>
+                    <h3>Skills</h3>
+                    <div className="cv-document-skills">
+                      {cv.skills.map((skill, index) => (
                             <div
                               className="cv-document-skill"
                               key={`cv-skill-${index}`}
                             >
-                              <span>{skill.name}</span>
+                              <CvInlineField
+                                label={`Skill ${index + 1}`}
+                                value={skill.name}
+                                onChange={(value) =>
+                                  updateSkill(index, "name", value)
+                                }
+                                placeholder="Add a skill"
+                              />
                               <CvStarRating
                                 label={`${skill.name} skill level: ${skill.level || 3} of 5 stars`}
                                 level={skill.level || 3}
+                                onChange={(level) =>
+                                  updateSkill(index, "level", level)
+                                }
                               />
+                              <button
+                                className="cv-document-remove"
+                                type="button"
+                                aria-label={`Remove skill ${index + 1}`}
+                                onClick={() => removeSkill(index)}
+                              >
+                                ×
+                              </button>
                             </div>
-                          ))}
-                      </div>
-                    </section>
-                  ) : null}
-                  {cv.experience.length ? (
-                    <section>
-                      <h3>Work experience</h3>
-                      {cv.experience.map((entry, index) => (
+                      ))}
+                    </div>
+                    <button
+                      className="cv-document-action"
+                      type="button"
+                      onClick={addSkill}
+                    >
+                      + Add skill
+                    </button>
+                  </section>
+                  <section>
+                    <h3>Work experience</h3>
+                    {cv.experience.map((entry, index) => (
                         <div
                           className="cv-document-entry"
                           key={`cv-exp-${index}`}
                         >
                           <div>
-                            <strong>{entry.title || "Job title"}</strong>
-                            {entry.organization ? (
-                              <span>{entry.organization}</span>
-                            ) : null}
+                            <CvInlineField
+                              label={`Job title ${index + 1}`}
+                              value={entry.title}
+                              onChange={(value) =>
+                                updateEntry("experience", index, "title", value)
+                              }
+                              placeholder="Add job title"
+                              className="cv-inline-strong"
+                            />
+                            <CvInlineField
+                              label={`Company ${index + 1}`}
+                              value={entry.organization}
+                              onChange={(value) =>
+                                updateEntry(
+                                  "experience",
+                                  index,
+                                  "organization",
+                                  value,
+                                )
+                              }
+                              placeholder="Add company"
+                            />
                           </div>
-                          <span>
-                            {[entry.startDate, entry.endDate]
-                              .filter(Boolean)
-                              .join(" – ")}
-                          </span>
-                          {entry.description ? <p>{entry.description}</p> : null}
+                          <div className="cv-document-dates">
+                            <CvInlineField
+                              label={`Work start date ${index + 1}`}
+                              value={entry.startDate}
+                              onChange={(value) =>
+                                updateEntry("experience", index, "startDate", value)
+                              }
+                              placeholder="From"
+                            />
+                            <span>–</span>
+                            <CvInlineField
+                              label={`Work end date ${index + 1}`}
+                              value={entry.endDate}
+                              onChange={(value) =>
+                                updateEntry("experience", index, "endDate", value)
+                              }
+                              placeholder="To"
+                            />
+                          </div>
+                          <CvInlineField
+                            label={`Work experience details ${index + 1}`}
+                            value={entry.description}
+                            onChange={(value) =>
+                              updateEntry(
+                                "experience",
+                                index,
+                                "description",
+                                value,
+                              )
+                            }
+                            placeholder="Add role details"
+                            multiline
+                            className="cv-inline-description"
+                          />
+                          <button
+                            className="cv-document-remove cv-entry-remove"
+                            type="button"
+                            onClick={() => removeEntry("experience", index)}
+                          >
+                            Remove
+                          </button>
                         </div>
-                      ))}
-                    </section>
-                  ) : null}
+                    ))}
+                    <button
+                      className="cv-document-action"
+                      type="button"
+                      onClick={() =>
+                        addEntry("experience", {
+                          title: "",
+                          organization: "",
+                          startDate: "",
+                          endDate: "",
+                          description: "",
+                        })
+                      }
+                    >
+                      + Add experience
+                    </button>
+                  </section>
                 </div>
               </div>
             </article>
