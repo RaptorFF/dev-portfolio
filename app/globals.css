@@ -771,15 +771,6 @@ a {
   object-fit: cover;
 }
 
-.cv-document-eyebrow {
-  margin: 0 0 12px;
-  color: #e7c875;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .cv-document-header h2 {
   margin: 0;
   color: inherit;
@@ -809,11 +800,6 @@ a {
   color: #50505b;
   line-height: 1.6;
   overflow-wrap: anywhere;
-}
-
-.cv-document-header .cv-document-eyebrow {
-  margin: 0 0 12px;
-  color: #e7c875;
 }
 
 .cv-document .cv-document-sidebar section > h3 {
@@ -924,7 +910,7 @@ a {
 
 .cv-document-entry {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) max-content;
   gap: 4px 16px;
 }
 
@@ -978,10 +964,6 @@ a {
   font-size: 2.4rem;
 }
 
-.cv-template-classic .cv-document-header .cv-document-eyebrow {
-  color: #666;
-}
-
 .cv-template-classic .cv-document-header .cv-document-email {
   color: #50505b;
 }
@@ -1033,10 +1015,6 @@ a {
 
 .cv-template-minimal .cv-document-header h2 {
   font-size: 2.4rem;
-}
-
-.cv-template-minimal .cv-document-header .cv-document-eyebrow {
-  color: #777;
 }
 
 .cv-template-minimal .cv-document-header .cv-document-email {
@@ -1271,7 +1249,6 @@ a {
   background: #344e69;
 }
 
-.cv-template-modern .cv-document-eyebrow,
 .cv-template-modern .cv-document-header h3,
 .cv-template-modern .cv-document .cv-document-sidebar section > h3 {
   color: #c6d8e5;
@@ -1316,7 +1293,6 @@ a {
   font-size: 1.8rem;
 }
 
-.cv-template-classic .cv-document-eyebrow,
 .cv-template-classic .cv-document-header h3,
 .cv-template-classic .cv-document section > h3 {
   color: #416d94;
@@ -1359,8 +1335,7 @@ a {
 }
 
 .cv-template-minimal .cv-document-header h2,
-.cv-template-minimal .cv-document-header h3,
-.cv-template-minimal .cv-document-eyebrow {
+.cv-template-minimal .cv-document-header h3 {
   color: #fff;
 }
 
@@ -1628,19 +1603,29 @@ a {
   position: relative;
 }
 
-.cv-document-dates {
+.cv-document-entry > .cv-document-dates {
   display: flex;
+  align-self: center;
   align-items: center;
-  gap: 4px;
-  min-width: 110px;
+  gap: 0;
+  width: 84px;
+  min-width: 0;
   color: #666672;
   font-size: 0.8rem;
 }
 
 .cv-document-dates .cv-inline-field {
-  width: 58px;
+  flex: 0 0 32px;
+  width: 32px;
   color: #666672;
   font-size: 0.8rem;
+  text-align: center;
+}
+
+.cv-document-dates > span {
+  flex: 1 1 auto;
+  min-width: 20px;
+  text-align: center;
 }
 
 .cv-document-main .cv-document-remove {
@@ -2743,7 +2728,7 @@ a {
 
 @page {
   size: A4;
-  margin: 16mm;
+  margin: 14mm;
 }
 
 @media print {
@@ -2777,9 +2762,11 @@ a {
     box-shadow: none;
   }
 
-  .cv-document {
+  .cv-layout .cv-document {
+    display: block;
     width: 100%;
     max-width: none;
+    min-height: 0;
     margin: 0;
     padding: 0;
     overflow: visible;
@@ -2790,9 +2777,79 @@ a {
     -webkit-print-color-adjust: exact;
   }
 
-  .cv-document section,
-  .cv-document-entry {
+  .cv-layout .cv-document-columns {
+    display: block;
+    min-height: 0;
+  }
+
+  .cv-layout .cv-document-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: start;
+    gap: 12px 20px;
+    margin-bottom: 18px;
+    padding: 0 0 18px;
+    color: #20212a;
+    border-bottom: 1px solid #dce2e8;
+    background: transparent;
+  }
+
+  .cv-layout .cv-document-main {
+    display: block;
+    padding: 0;
+  }
+
+  .cv-layout .cv-document-header {
+    margin: 0 0 16px;
+    padding: 0 0 12px;
+    color: #20212a;
+    border-bottom: 1px solid #dce2e8;
+    background: transparent;
+    text-align: left;
+  }
+
+  .cv-layout .cv-document-header h2,
+  .cv-layout .cv-document-header h3 {
+    color: inherit;
+  }
+
+  .cv-layout .cv-document-sidebar section,
+  .cv-layout .cv-document-main section {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    margin: 0 0 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .cv-layout .cv-document-sidebar section {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cv-layout .cv-document-main section > h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .cv-document-entry,
+  .cv-document-skill {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cv-document-photo img {
+    width: 76px;
+  }
+
+  .cv-document-photo-placeholder,
+  .cv-document-action,
+  .cv-document-remove,
+  .cv-photo-input,
+  .cv-inline-link > a {
+    display: none !important;
   }
 
   .cv-inline-field {
@@ -2801,6 +2858,72 @@ a {
 
   .cv-inline-field::placeholder {
     color: transparent !important;
+  }
+
+  .cv-layout.cv-template-classic .cv-document,
+  .cv-layout.cv-template-minimal .cv-document {
+    display: grid;
+    align-content: start;
+    gap: 24px;
+    padding: 32px;
+  }
+
+  .cv-layout.cv-template-classic .cv-document {
+    border-top: 8px solid #333;
+    border-radius: 4px;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
+  }
+
+  .cv-layout.cv-template-modern .cv-document-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 24px;
+    margin: 0;
+    padding: 30px 22px;
+    color: #f8fafc;
+    border: 0;
+    background: #263b5d;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-main {
+    display: grid;
+    gap: 26px;
+    padding: 34px 28px;
+  }
+
+  .cv-layout.cv-template-classic .cv-document-columns,
+  .cv-layout.cv-template-classic .cv-document-sidebar,
+  .cv-layout.cv-template-classic .cv-document-main,
+  .cv-layout.cv-template-minimal .cv-document-columns,
+  .cv-layout.cv-template-minimal .cv-document-sidebar,
+  .cv-layout.cv-template-minimal .cv-document-main {
+    display: contents;
+  }
+
+  .cv-layout.cv-template-classic .cv-document-sidebar,
+  .cv-layout.cv-template-minimal .cv-document-sidebar {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .cv-layout.cv-template-classic .cv-document-header {
+    padding-bottom: 18px;
+    border-bottom: 2px solid #333;
+    color: #16151b;
+    text-align: center;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-header {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #d8d8dc;
+    color: #16151b;
   }
 }
 

@@ -699,7 +699,6 @@ export default function CvBuilderPage() {
                 </aside>
                 <div className="cv-document-main">
                   <header className="cv-document-header">
-                    <p className="cv-document-eyebrow">Curriculum vitae</p>
                     <h2>
                       <CvInlineField
                         label="Full name in CV"
@@ -723,11 +722,16 @@ export default function CvBuilderPage() {
                     <h3>About</h3>
                     <CvInlineField
                       label="Professional summary in CV"
-                      value={profile.shortBio}
+                      value={
+                        typeof profile.shortBio === "string" &&
+                        profile.shortBio.trim()
+                          ? profile.shortBio
+                          : ""
+                      }
                       onChange={(value) =>
                         updateProfileField("shortBio", value)
                       }
-                      placeholder="Add a short professional summary"
+                      placeholder="Add something about yourself"
                       multiline
                       className="cv-inline-description"
                     />
