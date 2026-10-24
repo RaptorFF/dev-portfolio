@@ -413,6 +413,46 @@ export default function CvBuilderPage() {
     setEdited(true);
   }
 
+  function renderSkillsSection() {
+    return (
+      <section className="cv-document-skills-section">
+        <h3>Skills</h3>
+        <div className="cv-document-skills">
+          {cv.skills.map((skill, index) => (
+            <div className="cv-document-skill" key={`cv-skill-${index}`}>
+              <CvInlineField
+                label={`Skill ${index + 1}`}
+                value={skill.name}
+                onChange={(value) => updateSkill(index, "name", value)}
+                placeholder="Add a skill"
+              />
+              <CvStarRating
+                label={`${skill.name} skill level: ${skill.level || 3} of 5 stars`}
+                level={skill.level || 3}
+                onChange={(level) => updateSkill(index, "level", level)}
+              />
+              <button
+                className="cv-document-remove"
+                type="button"
+                aria-label={`Remove skill ${index + 1}`}
+                onClick={() => removeSkill(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          className="cv-document-action"
+          type="button"
+          onClick={addSkill}
+        >
+          + Add skill
+        </button>
+      </section>
+    );
+  }
+
   return (
     <main className="dashboard-shell cv-dashboard-shell">
       <aside className="dashboard-sidebar cv-sidebar">
@@ -660,42 +700,8 @@ export default function CvBuilderPage() {
                       </div>
                     </div>
                   </section>
-                  {cv.template === "minimal" ? (
-                    <section className="cv-document-interests cv-document-references">
-                      <h3>Reference</h3>
-                      <ul>
-                        {cv.references.map((reference, index) => (
-                          <li key={`cv-reference-${index}`}>
-                            <CvInlineField
-                              label={`Reference ${index + 1}`}
-                              value={reference}
-                              onChange={(value) =>
-                                updateReference(index, value)
-                              }
-                              placeholder="Name and contact details"
-                              multiline
-                              className="cv-inline-description"
-                            />
-                            <button
-                              className="cv-document-remove"
-                              type="button"
-                              aria-label={`Remove reference ${index + 1}`}
-                              onClick={() => removeReference(index)}
-                            >
-                              ×
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                      <button
-                        className="cv-document-action"
-                        type="button"
-                        onClick={addReference}
-                      >
-                        + Add reference
-                      </button>
-                    </section>
-                  ) : (
+                  {cv.template === "minimal" ? renderSkillsSection() : null}
+                  {cv.template !== "minimal" && (
                     <section className="cv-document-interests">
                       <h3>Interests</h3>
                       <ul>
@@ -769,6 +775,42 @@ export default function CvBuilderPage() {
                       + Add language
                     </button>
                   </section>
+                  {cv.template === "minimal" ? (
+                    <section className="cv-document-interests cv-document-references">
+                      <h3>Reference</h3>
+                      <ul>
+                        {cv.references.map((reference, index) => (
+                          <li key={`cv-reference-${index}`}>
+                            <CvInlineField
+                              label={`Reference ${index + 1}`}
+                              value={reference}
+                              onChange={(value) =>
+                                updateReference(index, value)
+                              }
+                              placeholder="Name and contact details"
+                              multiline
+                              className="cv-inline-description"
+                            />
+                            <button
+                              className="cv-document-remove"
+                              type="button"
+                              aria-label={`Remove reference ${index + 1}`}
+                              onClick={() => removeReference(index)}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <button
+                        className="cv-document-action"
+                        type="button"
+                        onClick={addReference}
+                      >
+                        + Add reference
+                      </button>
+                    </section>
+                  ) : null}
                 </aside>
                 <div className="cv-document-main">
                   <header className="cv-document-header">
@@ -908,48 +950,7 @@ export default function CvBuilderPage() {
                       + Add education
                     </button>
                   </section>
-                  <section className="cv-document-skills-section">
-                    <h3>Skills</h3>
-                    <div className="cv-document-skills">
-                      {cv.skills.map((skill, index) => (
-                            <div
-                              className="cv-document-skill"
-                              key={`cv-skill-${index}`}
-                            >
-                              <CvInlineField
-                                label={`Skill ${index + 1}`}
-                                value={skill.name}
-                                onChange={(value) =>
-                                  updateSkill(index, "name", value)
-                                }
-                                placeholder="Add a skill"
-                              />
-                              <CvStarRating
-                                label={`${skill.name} skill level: ${skill.level || 3} of 5 stars`}
-                                level={skill.level || 3}
-                                onChange={(level) =>
-                                  updateSkill(index, "level", level)
-                                }
-                              />
-                              <button
-                                className="cv-document-remove"
-                                type="button"
-                                aria-label={`Remove skill ${index + 1}`}
-                                onClick={() => removeSkill(index)}
-                              >
-                                ×
-                              </button>
-                            </div>
-                      ))}
-                    </div>
-                    <button
-                      className="cv-document-action"
-                      type="button"
-                      onClick={addSkill}
-                    >
-                      + Add skill
-                    </button>
-                  </section>
+                  {cv.template !== "minimal" ? renderSkillsSection() : null}
                   <section className="cv-document-experience">
                     <h3>
                       {cv.template === "minimal"
