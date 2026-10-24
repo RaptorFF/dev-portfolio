@@ -25,6 +25,7 @@ const emptyCv = {
   skills: [],
   interests: [],
   languages: [],
+  references: [],
 };
 const CV_DRAFT_KEY = "portfolio-forge-cv-draft-v1";
 const MAX_CV_PHOTO_SIZE = 5 * 1024 * 1024;
@@ -42,8 +43,8 @@ const templates = [
   },
   {
     id: "minimal",
-    label: "Blue & White",
-    description: "An airy, simple layout with a crisp blue header.",
+    label: "Slate & Gray",
+    description: "A two-column layout with a slate header and light gray sidebar.",
   },
 ];
 
@@ -186,6 +187,11 @@ export default function CvBuilderPage() {
           const interests = Array.isArray(savedCv.interests)
             ? savedCv.interests
             : [];
+          const references = Array.isArray(savedCv.references)
+            ? savedCv.references.filter(
+                (reference) => typeof reference === "string",
+              )
+            : [];
 
           setProfile({
             ...emptyProfile,
@@ -208,6 +214,7 @@ export default function CvBuilderPage() {
             languages: Array.isArray(savedCv.languages)
               ? savedCv.languages
               : [],
+            references,
           });
         }
         setStatus("Your draft is saved automatically in this browser.");
@@ -297,6 +304,31 @@ export default function CvBuilderPage() {
       (_, interestIndex) => interestIndex !== index,
     );
     setCv((current) => ({ ...current, interests }));
+    setEdited(true);
+  }
+
+  function updateReference(index, value) {
+    const references = [...cv.references];
+    references[index] = value;
+    setCv((current) => ({ ...current, references }));
+    setEdited(true);
+  }
+
+  function addReference() {
+    setCv((current) => ({
+      ...current,
+      references: [...current.references, ""],
+    }));
+    setEdited(true);
+  }
+
+  function removeReference(index) {
+    setCv((current) => ({
+      ...current,
+      references: current.references.filter(
+        (_, referenceIndex) => referenceIndex !== index,
+      ),
+    }));
     setEdited(true);
   }
 
@@ -542,8 +574,10 @@ export default function CvBuilderPage() {
                       </span>
                     ) : null}
                   </div>
-                  <section className="cv-document-personal">
-                    <h3>Personal details</h3>
+                  <section className="cv-document-personal cv-document-contact">
+                    <h3>
+                      {cv.template === "minimal" ? "Contact" : "Personal details"}
+                    </h3>
                     <div>
                       <strong>Address</strong>
                       <CvInlineField
@@ -626,36 +660,75 @@ export default function CvBuilderPage() {
                       </div>
                     </div>
                   </section>
-                  <section className="cv-document-interests">
-                    <h3>Interests</h3>
-                    <ul>
-                      {cv.interests.map((interest, index) => (
-                        <li key={`cv-interest-${index}`}>
-                          <CvInlineField
-                            label={`Interest ${index + 1}`}
-                            value={interest}
-                            onChange={(value) => updateInterest(index, value)}
-                            placeholder="Add an interest"
-                          />
-                          <button
-                            className="cv-document-remove"
-                            type="button"
-                            aria-label={`Remove interest ${index + 1}`}
-                            onClick={() => removeInterest(index)}
-                          >
-                            ×
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      className="cv-document-action"
-                      type="button"
-                      onClick={addInterest}
-                    >
-                      + Add interest
-                    </button>
-                  </section>
+                  {cv.template === "minimal" ? (
+                    <section className="cv-document-interests cv-document-references">
+                      <h3>Reference</h3>
+                      <ul>
+                        {cv.references.map((reference, index) => (
+                          <li key={`cv-reference-${index}`}>
+                            <CvInlineField
+                              label={`Reference ${index + 1}`}
+                              value={reference}
+                              onChange={(value) =>
+                                updateReference(index, value)
+                              }
+                              placeholder="Name and contact details"
+                              multiline
+                              className="cv-inline-description"
+                            />
+                            <button
+                              className="cv-document-remove"
+                              type="button"
+                              aria-label={`Remove reference ${index + 1}`}
+                              onClick={() => removeReference(index)}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <button
+                        className="cv-document-action"
+                        type="button"
+                        onClick={addReference}
+                      >
+                        + Add reference
+                      </button>
+                    </section>
+                  ) : (
+                    <section className="cv-document-interests">
+                      <h3>Interests</h3>
+                      <ul>
+                        {cv.interests.map((interest, index) => (
+                          <li key={`cv-interest-${index}`}>
+                            <CvInlineField
+                              label={`Interest ${index + 1}`}
+                              value={interest}
+                              onChange={(value) =>
+                                updateInterest(index, value)
+                              }
+                              placeholder="Add an interest"
+                            />
+                            <button
+                              className="cv-document-remove"
+                              type="button"
+                              aria-label={`Remove interest ${index + 1}`}
+                              onClick={() => removeInterest(index)}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <button
+                        className="cv-document-action"
+                        type="button"
+                        onClick={addInterest}
+                      >
+                        + Add interest
+                      </button>
+                    </section>
+                  )}
                   <section className="cv-document-languages">
                     <h3>Languages</h3>
                     {cv.languages.map((language, index) => (
@@ -718,8 +791,8 @@ export default function CvBuilderPage() {
                       />
                     </h3>
                   </header>
-                  <section>
-                    <h3>About</h3>
+                  <section className="cv-document-profile">
+                    <h3>{cv.template === "minimal" ? "Profile" : "About"}</h3>
                     <CvInlineField
                       label="Professional summary in CV"
                       value={
@@ -736,8 +809,12 @@ export default function CvBuilderPage() {
                       className="cv-inline-description"
                     />
                   </section>
-                  <section>
-                    <h3>Education and qualification</h3>
+                  <section className="cv-document-education">
+                    <h3>
+                      {cv.template === "minimal"
+                        ? "Education"
+                        : "Education and qualification"}
+                    </h3>
                     {cv.education.map((entry, index) => (
                         <div
                           className="cv-document-entry"
@@ -831,7 +908,7 @@ export default function CvBuilderPage() {
                       + Add education
                     </button>
                   </section>
-                  <section>
+                  <section className="cv-document-skills-section">
                     <h3>Skills</h3>
                     <div className="cv-document-skills">
                       {cv.skills.map((skill, index) => (
@@ -873,8 +950,12 @@ export default function CvBuilderPage() {
                       + Add skill
                     </button>
                   </section>
-                  <section>
-                    <h3>Work experience</h3>
+                  <section className="cv-document-experience">
+                    <h3>
+                      {cv.template === "minimal"
+                        ? "Experience"
+                        : "Work experience"}
+                    </h3>
                     {cv.experience.map((entry, index) => (
                         <div
                           className="cv-document-entry"

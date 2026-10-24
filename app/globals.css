@@ -1238,7 +1238,7 @@ a {
   margin: 0 -12px 5px;
   padding: 10px 12px;
   border-radius: 0;
-  background: #315f8b;
+  background: #344e69;
 }
 
 .cv-template-modern .cv-document {
@@ -1665,6 +1665,171 @@ a {
   color: #315f8b;
 }
 
+.cv-template-minimal .cv-document-columns {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
+  grid-template-rows: 176px auto auto auto auto;
+  min-height: 800px;
+}
+
+.cv-template-minimal .cv-document-columns::before {
+  z-index: 0;
+  grid-column: 1;
+  grid-row: 2 / 6;
+  content: "";
+  background: #f1f4f7;
+}
+
+.cv-template-minimal .cv-document-sidebar,
+.cv-template-minimal .cv-document-main {
+  display: contents;
+}
+
+.cv-template-minimal .cv-document-header {
+  z-index: 1;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-height: 176px;
+  margin: 0;
+  padding: 30px 30px 30px calc(32.5% + 30px);
+  color: #fff;
+  border: 0;
+  background: #344e69;
+}
+
+.cv-template-minimal .cv-document-header h2,
+.cv-template-minimal .cv-document-header h3 {
+  color: #fff;
+}
+
+.cv-template-minimal .cv-document-header h2 {
+  font-size: 2rem;
+}
+
+.cv-template-minimal .cv-document-header h3 {
+  margin-top: 8px;
+}
+
+.cv-template-minimal .cv-document-photo {
+  position: absolute;
+  z-index: 2;
+  top: 108px;
+  left: 16.25%;
+  width: 150px;
+  transform: translateX(-50%);
+}
+
+.cv-template-minimal .cv-document-photo img,
+.cv-template-minimal .cv-document-photo-placeholder {
+  width: 128px;
+}
+
+.cv-template-minimal .cv-document-photo img {
+  border: 4px solid #fff;
+}
+
+.cv-template-minimal .cv-document-contact,
+.cv-template-minimal .cv-document-skills-section,
+.cv-template-minimal .cv-document-languages,
+.cv-template-minimal .cv-document-references,
+.cv-template-minimal .cv-document-profile,
+.cv-template-minimal .cv-document-experience,
+.cv-template-minimal .cv-document-education {
+  z-index: 1;
+  align-self: start;
+  min-width: 0;
+  margin: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid #d8dfe6;
+}
+
+.cv-template-minimal .cv-document-contact {
+  grid-column: 1;
+  grid-row: 2;
+  padding-top: 132px;
+}
+
+.cv-template-minimal .cv-document-skills-section {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.cv-template-minimal .cv-document-languages {
+  grid-column: 1;
+  grid-row: 4;
+}
+
+.cv-template-minimal .cv-document-references {
+  grid-column: 1;
+  grid-row: 5;
+}
+
+.cv-template-minimal .cv-document-profile {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.cv-template-minimal .cv-document-experience {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.cv-template-minimal .cv-document-education {
+  grid-column: 2;
+  grid-row: 4;
+}
+
+.cv-template-minimal .cv-document-contact > h3,
+.cv-template-minimal .cv-document-skills-section > h3,
+.cv-template-minimal .cv-document-languages > h3,
+.cv-template-minimal .cv-document-references > h3 {
+  color: #344e69;
+}
+
+.cv-template-minimal .cv-document-personal strong,
+.cv-template-minimal .cv-document-personal p,
+.cv-template-minimal .cv-document-personal a,
+.cv-template-minimal .cv-document-language > span,
+.cv-template-minimal .cv-document-sidebar .cv-inline-field {
+  color: #465566;
+}
+
+.cv-template-minimal .cv-document-sidebar .cv-inline-field::placeholder {
+  color: #7b8998;
+}
+
+.cv-template-minimal .cv-document-sidebar .cv-document-action,
+.cv-template-minimal .cv-document-sidebar .cv-document-remove {
+  color: #315f8b;
+  border-color: #cbd7e2;
+  background: #f6f9fc;
+}
+
+.cv-template-minimal .cv-document-sidebar .cv-document-action:hover,
+.cv-template-minimal .cv-document-sidebar .cv-document-remove:hover {
+  background: #eaf1f7;
+}
+
+.cv-template-minimal .cv-document-references ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-template-minimal .cv-document-references li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 6px;
+}
+
+.cv-template-minimal .cv-document-main .cv-inline-field {
+  color: #20212a;
+}
+
 @media (max-width: 760px) {
   .cv-template-picker {
     grid-template-columns: 1fr;
@@ -1681,6 +1846,67 @@ a {
 
   .cv-template-classic .cv-document-columns {
     grid-template-columns: 1fr;
+  }
+
+  .cv-template-minimal .cv-document-columns {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 176px auto auto auto auto auto auto auto;
+  }
+
+  .cv-template-minimal .cv-document-columns::before {
+    grid-column: 1;
+    grid-row: 2 / 6;
+  }
+
+  .cv-template-minimal .cv-document-header {
+    grid-column: 1;
+    grid-row: 1;
+    padding-left: 30px;
+    text-align: center;
+  }
+
+  .cv-template-minimal .cv-document-photo {
+    top: 108px;
+    left: 50%;
+  }
+
+  .cv-template-minimal .cv-document-contact,
+  .cv-template-minimal .cv-document-skills-section,
+  .cv-template-minimal .cv-document-languages,
+  .cv-template-minimal .cv-document-references,
+  .cv-template-minimal .cv-document-profile,
+  .cv-template-minimal .cv-document-experience,
+  .cv-template-minimal .cv-document-education {
+    grid-column: 1;
+  }
+
+  .cv-template-minimal .cv-document-contact {
+    grid-row: 2;
+    padding-top: 132px;
+  }
+
+  .cv-template-minimal .cv-document-skills-section {
+    grid-row: 3;
+  }
+
+  .cv-template-minimal .cv-document-languages {
+    grid-row: 4;
+  }
+
+  .cv-template-minimal .cv-document-references {
+    grid-row: 5;
+  }
+
+  .cv-template-minimal .cv-document-profile {
+    grid-row: 6;
+  }
+
+  .cv-template-minimal .cv-document-experience {
+    grid-row: 7;
+  }
+
+  .cv-template-minimal .cv-document-education {
+    grid-row: 8;
   }
 
   .cv-template-thumbnail {
@@ -2924,6 +3150,112 @@ a {
     padding-bottom: 18px;
     border-bottom: 1px solid #d8d8dc;
     color: #16151b;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document {
+    display: block;
+    padding: 0;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-columns {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
+    grid-template-rows: 176px auto auto auto auto;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-columns::before {
+    z-index: 0;
+    grid-column: 1;
+    grid-row: 2 / 6;
+    content: "";
+    background: #f1f4f7;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-sidebar,
+  .cv-layout.cv-template-minimal .cv-document-main {
+    display: contents;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-header {
+    z-index: 1;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: 176px;
+    margin: 0;
+    padding: 30px 30px 30px calc(32.5% + 30px);
+    color: #fff;
+    border: 0;
+    background: #344e69;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-header h2,
+  .cv-layout.cv-template-minimal .cv-document-header h3 {
+    color: #fff;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-photo {
+    position: absolute;
+    z-index: 2;
+    top: 108px;
+    left: 16.25%;
+    width: 150px;
+    transform: translateX(-50%);
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-photo img {
+    width: 76px;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-contact,
+  .cv-layout.cv-template-minimal .cv-document-skills-section,
+  .cv-layout.cv-template-minimal .cv-document-languages,
+  .cv-layout.cv-template-minimal .cv-document-references,
+  .cv-layout.cv-template-minimal .cv-document-profile,
+  .cv-layout.cv-template-minimal .cv-document-experience,
+  .cv-layout.cv-template-minimal .cv-document-education {
+    z-index: 1;
+    min-width: 0;
+    margin: 0 0 18px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #d8dfe6;
+    background: transparent;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-contact {
+    grid-column: 1;
+    grid-row: 2;
+    padding-top: 132px;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-skills-section {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-languages {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-references {
+    grid-column: 1;
+    grid-row: 5;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-profile {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-experience {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-education {
+    grid-column: 2;
+    grid-row: 4;
   }
 }
 
