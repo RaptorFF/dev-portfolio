@@ -2979,13 +2979,15 @@ a {
 
 @page {
   size: A4;
-  margin: 14mm;
+  margin: 0;
 }
 
 @media print {
   body {
     min-height: 0;
     background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .cv-dashboard-shell {
@@ -3001,8 +3003,7 @@ a {
   }
 
   .cv-builder-main,
-  .cv-layout,
-  .cv-document-panel {
+  .cv-layout {
     display: block;
     width: 100%;
     margin: 0;
@@ -3013,92 +3014,43 @@ a {
     box-shadow: none;
   }
 
-  .cv-layout .cv-document {
-    display: block;
+  .cv-document-panel {
     width: 100%;
     max-width: none;
-    min-height: 0;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .cv-document {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
     overflow: visible;
-    border: 0;
     border-radius: 0;
     box-shadow: none;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
   }
 
-  .cv-layout .cv-document-columns {
-    display: block;
-    min-height: 0;
-  }
-
-  .cv-layout .cv-document-sidebar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    align-items: start;
-    gap: 12px 20px;
-    margin-bottom: 18px;
-    padding: 0 0 18px;
-    color: #20212a;
-    border-bottom: 1px solid #dce2e8;
-    background: transparent;
-  }
-
-  .cv-layout .cv-document-main {
-    display: block;
-    padding: 0;
-  }
-
-  .cv-layout .cv-document-header {
-    margin: 0 0 16px;
-    padding: 0 0 12px;
-    color: #20212a;
-    border-bottom: 1px solid #dce2e8;
-    background: transparent;
-    text-align: left;
-  }
-
-  .cv-layout .cv-document-header h2,
-  .cv-layout .cv-document-header h3 {
-    color: inherit;
-  }
-
-  .cv-layout .cv-document-sidebar section,
-  .cv-layout .cv-document-main section {
-    display: grid;
-    gap: 8px;
-    min-width: 0;
-    margin: 0 0 18px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-  }
-
-  .cv-layout .cv-document-sidebar section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .cv-layout .cv-document-main section > h3 {
-    break-after: avoid;
-    page-break-after: avoid;
-  }
-
+  .cv-document-sidebar section,
+  .cv-document-main section,
   .cv-document-entry,
   .cv-document-skill {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  .cv-document-photo img {
-    width: 76px;
+  .cv-document-main section > h3 {
+    break-after: avoid;
+    page-break-after: avoid;
   }
 
   .cv-document-photo-placeholder,
   .cv-document-action,
   .cv-document-remove,
   .cv-photo-input,
+  .cv-inline-license input,
   .cv-inline-link > a {
     display: none !important;
   }
@@ -3111,149 +3063,30 @@ a {
     color: transparent !important;
   }
 
-  .cv-layout.cv-template-classic .cv-document,
-  .cv-layout.cv-template-minimal .cv-document {
-    display: grid;
-    align-content: start;
-    gap: 24px;
-    padding: 32px;
-  }
-
-  .cv-layout.cv-template-classic .cv-document {
-    border-top: 8px solid #333;
-    border-radius: 4px;
-  }
-
-  .cv-layout.cv-template-modern .cv-document-columns {
-    display: grid;
-    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
-  }
-
-  .cv-layout.cv-template-modern .cv-document-sidebar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-content: start;
-    gap: 24px;
-    margin: 0;
-    padding: 30px 22px;
-    color: #f8fafc;
-    border: 0;
-    background: #263b5d;
-  }
-
-  .cv-layout.cv-template-modern .cv-document-main {
-    display: grid;
-    gap: 26px;
-    padding: 34px 28px;
-  }
-
-  .cv-layout.cv-template-classic .cv-document-columns,
-  .cv-layout.cv-template-classic .cv-document-sidebar,
-  .cv-layout.cv-template-classic .cv-document-main,
-  .cv-layout.cv-template-minimal .cv-document-columns,
-  .cv-layout.cv-template-minimal .cv-document-sidebar,
-  .cv-layout.cv-template-minimal .cv-document-main {
-    display: contents;
-  }
-
-  .cv-layout.cv-template-classic .cv-document-sidebar,
-  .cv-layout.cv-template-minimal .cv-document-sidebar {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-  }
-
-  .cv-layout.cv-template-classic .cv-document-header {
-    padding-bottom: 18px;
-    border-bottom: 2px solid #333;
-    color: #16151b;
-    text-align: center;
-  }
-
-  .cv-layout.cv-template-minimal .cv-document-header {
-    padding-bottom: 18px;
-    border-bottom: 1px solid #d8d8dc;
-    color: #16151b;
-  }
-
-  .cv-layout.cv-template-minimal .cv-document {
-    display: block;
-    padding: 0;
-  }
-
   .cv-layout.cv-template-minimal .cv-document-columns {
-    position: relative;
-    display: grid;
-    align-content: start;
     grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
-    grid-template-rows: 176px auto auto auto;
+    grid-template-rows: 176px auto auto auto auto;
     min-height: 0;
   }
 
   .cv-layout.cv-template-minimal .cv-document-columns::before {
-    position: absolute;
-    z-index: 0;
-    top: 176px;
-    bottom: 0;
-    left: 0;
     width: 32.5%;
-    content: "";
-    background: #f1f4f7;
-  }
-
-  .cv-layout.cv-template-minimal .cv-document-main {
-    display: contents;
-  }
-
-  .cv-layout.cv-template-minimal .cv-document-sidebar {
-    display: grid;
-    grid-column: 1;
-    grid-row: 2 / -1;
-    align-content: start;
-    gap: 0;
-    min-width: 0;
   }
 
   .cv-layout.cv-template-minimal .cv-document-header {
-    z-index: 1;
     grid-column: 1 / -1;
     grid-row: 1;
-    min-height: 176px;
-    margin: 0;
-    padding: 30px 30px 30px calc(32.5% + 30px);
-    color: #fff;
-    border: 0;
-    background: #344e69;
+    padding-left: calc(32.5% + 30px);
+    text-align: left;
   }
 
-  .cv-layout.cv-template-minimal .cv-document-header h2,
-  .cv-layout.cv-template-minimal .cv-document-header h3 {
-    color: #fff;
+  .cv-layout.cv-template-minimal .cv-document-sidebar {
+    grid-column: 1;
+    grid-row: 2 / -1;
   }
 
   .cv-layout.cv-template-minimal .cv-document-photo {
-    position: absolute;
-    z-index: 2;
-    top: 108px;
     left: 16.25%;
-    width: 150px;
-    transform: translateX(-50%);
-  }
-
-  .cv-layout.cv-template-minimal .cv-document-photo img {
-    width: 112px;
-  }
-
-  .cv-layout.cv-template-minimal .cv-document-profile,
-  .cv-layout.cv-template-minimal .cv-document-experience,
-  .cv-layout.cv-template-minimal .cv-document-education {
-    z-index: 1;
-    min-width: 0;
-    margin: 0 0 18px;
-    padding: 18px 20px;
-    border-bottom: 1px solid #d8dfe6;
-    background: transparent;
   }
 
   .cv-layout.cv-template-minimal .cv-document-profile {
