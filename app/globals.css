@@ -1703,6 +1703,9 @@ a {
 }
 
 .cv-template-minimal .cv-document-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   z-index: 1;
   grid-column: 1 / -1;
   grid-row: 1;
@@ -1714,13 +1717,43 @@ a {
   background: #344e69;
 }
 
+.cv-layout.cv-template-minimal .cv-document-header {
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .cv-template-minimal .cv-document-header h2,
 .cv-template-minimal .cv-document-header h3 {
   color: #fff;
 }
 
 .cv-template-minimal .cv-document-header h2 {
-  font-size: 2rem;
+  color: #fff;
+  font-size: 2.6rem;
+}
+
+.cv-template-minimal .cv-document-header .cv-inline-name {
+  color: #fff;
+  font-size: inherit;
+}
+
+.cv-template-minimal .cv-document-main .cv-document-header .cv-inline-name,
+.cv-template-minimal .cv-document-main .cv-document-header .cv-inline-role {
+  color: #fff;
+}
+
+.cv-layout.cv-template-minimal .cv-document-header .cv-inline-name,
+.cv-layout.cv-template-minimal .cv-document-header .cv-inline-role {
+  color: #fff;
+}
+
+.cv-layout.cv-template-minimal .cv-document-header .cv-inline-name::placeholder,
+.cv-layout.cv-template-minimal .cv-document-header .cv-inline-role::placeholder {
+  color: #fff;
+  opacity: 1;
 }
 
 .cv-template-minimal .cv-document-header h3 {
@@ -1732,13 +1765,13 @@ a {
   z-index: 2;
   top: 108px;
   left: 16.25%;
-  width: 150px;
+  width: 180px;
   transform: translateX(-50%);
 }
 
 .cv-template-minimal .cv-document-photo img,
 .cv-template-minimal .cv-document-photo-placeholder {
-  width: 128px;
+  width: 160px;
 }
 
 .cv-template-minimal .cv-document-photo img {
@@ -1761,7 +1794,7 @@ a {
 }
 
 .cv-template-minimal .cv-document-contact {
-  padding-top: 132px;
+  padding-top: 164px;
 }
 
 .cv-template-minimal .cv-document-main .cv-document-profile,
@@ -3209,7 +3242,7 @@ a {
   }
 
   .cv-layout.cv-template-minimal .cv-document-photo img {
-    width: 76px;
+    width: 112px;
   }
 
   .cv-layout.cv-template-minimal .cv-document-profile,
