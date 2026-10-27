@@ -3109,10 +3109,34 @@ a {
     color: transparent !important;
   }
 
+  .cv-layout.cv-template-modern .cv-document-columns {
+    position: relative;
+    min-height: 296mm;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-columns::before {
+    position: absolute;
+    z-index: 0;
+    inset: 0 auto -1mm 0;
+    width: 32.5%;
+    content: "";
+    background: #344e69;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-sidebar,
+  .cv-layout.cv-template-modern .cv-document-main {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-sidebar {
+    background: transparent;
+  }
+
   .cv-layout.cv-template-minimal .cv-document-columns {
     grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.62fr);
     grid-template-rows: 176px auto auto auto auto;
-    min-height: 0;
+    min-height: 296mm;
   }
 
   .cv-layout.cv-template-minimal .cv-document-columns::before {
