@@ -1915,23 +1915,41 @@ a {
 
   .cv-template-minimal .cv-document-columns {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 176px auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto;
   }
 
   .cv-template-minimal .cv-document-columns::before {
+    top: 0;
     width: 100%;
   }
 
   .cv-template-minimal .cv-document-header {
     grid-column: 1;
     grid-row: 1;
-    padding-left: 30px;
+    height: auto;
+    min-height: 0;
+    padding: 28px 20px;
     text-align: center;
+  }
+
+  .cv-template-minimal .cv-document-header h2 {
+    font-size: clamp(1.7rem, 8vw, 2.4rem);
   }
 
   .cv-template-minimal .cv-document-sidebar {
     grid-column: 1;
     grid-row: 2;
+  }
+
+  .cv-template-minimal .cv-document-photo {
+    position: static;
+    width: min(100%, 160px);
+    margin: 20px auto 0;
+    transform: none;
+  }
+
+  .cv-template-minimal .cv-document-contact {
+    padding-top: 20px;
   }
 
   .cv-template-minimal .cv-document-main {
