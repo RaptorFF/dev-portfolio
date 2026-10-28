@@ -34,7 +34,7 @@ const templates = [
   {
     id: "modern",
     label: "Blue & Gray",
-    description: "A confident two-column layout with a cool blue sidebar.",
+    description: "A confident two-column layout with a slate gray sidebar.",
   },
   {
     id: "classic",
@@ -44,7 +44,7 @@ const templates = [
   {
     id: "minimal",
     label: "Slate & Gray",
-    description: "A two-column layout with a slate header and light gray sidebar.",
+    description: "A two-column layout with a slate header and dark gray sidebar.",
   },
 ];
 

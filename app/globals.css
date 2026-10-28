@@ -624,6 +624,7 @@ a {
 }
 
 .cv-dashboard-shell {
+  --cv-modern-sidebar-bg: #4b5563;
   grid-template-columns: 260px minmax(0, 1fr);
 }
 
@@ -1066,7 +1067,11 @@ a {
   align-items: center;
   gap: 10px;
   padding: 12px 7px;
-  background: #344e69;
+  background: #374151;
+}
+
+.cv-thumbnail-modern .cv-thumbnail-sidebar {
+  background: var(--cv-modern-sidebar-bg);
 }
 
 .cv-thumbnail-avatar {
@@ -1098,7 +1103,7 @@ a {
 .cv-thumbnail-title {
   width: 78%;
   height: 9px;
-  background: #344e69;
+  background: var(--cv-modern-sidebar-bg);
 }
 
 .cv-thumbnail-subtitle {
@@ -1197,7 +1202,7 @@ a {
   left: 0;
   height: 30%;
   content: "";
-  background: #344e69;
+  background: #374151;
 }
 
 .cv-thumbnail-minimal .cv-thumbnail-sidebar {
@@ -1207,7 +1212,7 @@ a {
   grid-row: 2;
   justify-content: flex-start;
   padding: 12px 7px 8px;
-  background: #f1f4f7;
+  background: #d1d5db;
 }
 
 .cv-thumbnail-minimal .cv-thumbnail-avatar {
@@ -1224,7 +1229,7 @@ a {
 }
 
 .cv-thumbnail-minimal .cv-thumbnail-sidebar .cv-thumbnail-lines i {
-  background: #aeb9c4;
+  background: #6b7280;
 }
 
 .cv-thumbnail-minimal .cv-thumbnail-content {
@@ -1256,7 +1261,7 @@ a {
 }
 
 .cv-template-modern .cv-document-sidebar {
-  background: #344e69;
+  background: var(--cv-modern-sidebar-bg);
 }
 
 .cv-template-modern .cv-document-header h3,
@@ -1352,8 +1357,6 @@ a {
 .cv-template-minimal .cv-document-header h2 {
   font-size: 2rem;
 }
-
-
 
 .cv-template-minimal .cv-document-personal,
 .cv-template-minimal .cv-document-interests,
@@ -1673,6 +1676,16 @@ a {
   color: #315f8b;
 }
 
+.cv-template-modern .cv-star-rating .active,
+.cv-template-minimal .cv-document-languages .cv-star-rating .active,
+.cv-template-minimal .cv-star-rating .active {
+  color: #e5ad36;
+}
+
+.cv-template-minimal .cv-document-languages .cv-star-rating button:not(.active) {
+  color: #aab0bc;
+}
+
 .cv-template-minimal .cv-document-columns {
   position: relative;
   display: grid;
@@ -1690,7 +1703,7 @@ a {
   left: 0;
   width: 30%;
   content: "";
-  background: #f1f4f7;
+  background: #d1d5db;
 }
 
 .cv-template-minimal .cv-document-sidebar {
@@ -1722,7 +1735,7 @@ a {
   padding: 30px 30px 30px calc(30% + 30px);
   color: #fff;
   border: 0;
-  background: #344e69;
+  background: #374151;
 }
 
 .cv-layout.cv-template-minimal .cv-document-header {
@@ -1759,7 +1772,9 @@ a {
 }
 
 .cv-layout.cv-template-minimal .cv-document-header .cv-inline-name::placeholder,
-.cv-layout.cv-template-minimal .cv-document-header .cv-inline-role::placeholder {
+.cv-layout.cv-template-minimal
+  .cv-document-header
+  .cv-inline-role::placeholder {
   color: #fff;
   opacity: 1;
 }
@@ -1837,18 +1852,21 @@ a {
 .cv-template-minimal .cv-document-skills-section > h3,
 .cv-template-minimal .cv-document-languages > h3,
 .cv-template-minimal .cv-document-references > h3 {
-  color: #344e69;
+  color: #374151;
 }
 
 .cv-template-minimal .cv-document-sidebar .cv-document-contact > h3::after,
-.cv-template-minimal .cv-document-sidebar .cv-document-skills-section > h3::after,
+.cv-template-minimal
+  .cv-document-sidebar
+  .cv-document-skills-section
+  > h3::after,
 .cv-template-minimal .cv-document-sidebar .cv-document-languages > h3::after,
 .cv-template-minimal .cv-document-sidebar .cv-document-references > h3::after {
   display: block;
   width: 80%;
   height: 1px;
   margin-top: 8px;
-  background: #aab9c8;
+  background: #9ca3af;
   content: "";
 }
 
@@ -1857,11 +1875,11 @@ a {
 .cv-template-minimal .cv-document-personal a,
 .cv-template-minimal .cv-document-language > span,
 .cv-template-minimal .cv-document-sidebar .cv-inline-field {
-  color: #465566;
+  color: #374151;
 }
 
 .cv-template-minimal .cv-document-sidebar .cv-inline-field::placeholder {
-  color: #7b8998;
+  color: #6b7280;
 }
 
 .cv-template-minimal .cv-document-sidebar .cv-document-action,
@@ -2889,7 +2907,6 @@ a {
   .cv-document-main {
     padding: 24px;
   }
-
 }
 
 @page {
@@ -2989,7 +3006,7 @@ a {
     inset: 0 auto -1mm 0;
     width: 32.5%;
     content: "";
-    background: #344e69;
+    background: var(--cv-modern-sidebar-bg);
   }
 
   .cv-layout.cv-template-modern .cv-document-sidebar,
@@ -3022,6 +3039,20 @@ a {
   .cv-layout.cv-template-minimal .cv-document-sidebar {
     grid-column: 1;
     grid-row: 2 / -1;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-photo {
+    position: absolute;
+    z-index: 2;
+    top: -68px;
+    left: 50%;
+    width: 180px;
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-contact {
+    padding-top: 164px;
   }
 
   .cv-layout.cv-template-minimal .cv-document-profile {
