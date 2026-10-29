@@ -1374,6 +1374,32 @@ a {
   color: var(--cv-minimal-heading-color);
 }
 
+.cv-template-minimal .cv-document-section-heading {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 9px;
+}
+
+.cv-template-minimal .cv-document-section-heading::after {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.cv-template-minimal .cv-document-section-icon {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  width: 18px;
+  height: 18px;
+  box-sizing: content-box;
+  padding: 4px;
+  border-radius: 50%;
+  color: #fff;
+  background: #374151;
+}
+
 .cv-template-minimal .cv-document-main section > h3::after,
 .cv-template-minimal .cv-document-sidebar section > h3::after {
   display: block;
@@ -1913,6 +1939,12 @@ a {
 .cv-template-minimal .cv-document-education {
   grid-column: 2;
   grid-row: 4;
+}
+
+.cv-template-minimal .cv-document-main .cv-document-profile > :not(h3),
+.cv-template-minimal .cv-document-main .cv-document-experience > :not(h3),
+.cv-template-minimal .cv-document-main .cv-document-education > :not(h3) {
+  margin-left: 35px;
 }
 
 .cv-template-minimal .cv-document-contact > h3,

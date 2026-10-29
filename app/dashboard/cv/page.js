@@ -836,7 +836,36 @@ export default function CvBuilderPage() {
                     </h3>
                   </header>
                   <section className="cv-document-profile">
-                    <h3>{cv.template === "minimal" ? "Profile" : "About"}</h3>
+                    <h3
+                      className={
+                        cv.template === "minimal"
+                          ? "cv-document-section-heading"
+                          : undefined
+                      }
+                    >
+                      {cv.template === "minimal" ? (
+                        <>
+                          <svg
+                            className="cv-document-section-icon"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+                          </svg>
+                          <span>Profile</span>
+                        </>
+                      ) : (
+                        "About"
+                      )}
+                    </h3>
                     <CvInlineField
                       label="Professional summary in CV"
                       value={
@@ -854,10 +883,36 @@ export default function CvBuilderPage() {
                     />
                   </section>
                   <section className="cv-document-education">
-                    <h3>
-                      {cv.template === "minimal"
-                        ? "Education"
-                        : "Education and qualification"}
+                    <h3
+                      className={
+                        cv.template === "minimal"
+                          ? "cv-document-section-heading"
+                          : undefined
+                      }
+                    >
+                      {cv.template === "minimal" ? (
+                        <>
+                          <svg
+                            className="cv-document-section-icon"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="m2 10 10-5 10 5-10 5-10-5Z" />
+                            <path d="M6 12v5c3.5 3 8.5 3 12 0v-5" />
+                            <path d="M22 10v6" />
+                          </svg>
+                          <span>Education</span>
+                        </>
+                      ) : (
+                        "Education and qualification"
+                      )}
                     </h3>
                     {cv.education.map((entry, index) => (
                         <div
@@ -963,10 +1018,36 @@ export default function CvBuilderPage() {
                   </section>
                   {cv.template !== "minimal" ? renderSkillsSection() : null}
                   <section className="cv-document-experience">
-                    <h3>
-                      {cv.template === "minimal"
-                        ? "Experience"
-                        : "Work experience"}
+                    <h3
+                      className={
+                        cv.template === "minimal"
+                          ? "cv-document-section-heading"
+                          : undefined
+                      }
+                    >
+                      {cv.template === "minimal" ? (
+                        <>
+                          <svg
+                            className="cv-document-section-icon"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <rect x="3" y="7" width="18" height="14" rx="2" />
+                            <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M3 12h18M10 12v2h4v-2" />
+                          </svg>
+                          <span>Experience</span>
+                        </>
+                      ) : (
+                        "Work experience"
+                      )}
                     </h3>
                     {cv.experience.map((entry, index) => (
                         <div
