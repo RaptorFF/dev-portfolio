@@ -169,6 +169,8 @@ export default function CvBuilderPage() {
   const [loaded, setLoaded] = useState(false);
   const [edited, setEdited] = useState(false);
   const photoInputRef = useRef(null);
+  const isReorderedEntryLayout =
+    cv.template === "modern" || cv.template === "minimal";
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -862,7 +864,7 @@ export default function CvBuilderPage() {
                           className="cv-document-entry"
                           key={`cv-edu-${index}`}
                         >
-                          <div>
+                          <div className="cv-document-entry-primary">
                             <CvInlineField
                               label={`Education qualification ${index + 1}`}
                               value={entry.qualification}
@@ -875,7 +877,11 @@ export default function CvBuilderPage() {
                                 )
                               }
                               placeholder="Add qualification"
-                              className="cv-inline-strong"
+                              className={
+                                isReorderedEntryLayout
+                                  ? ""
+                                  : "cv-inline-strong"
+                              }
                             />
                             <CvInlineField
                               label={`Education institution ${index + 1}`}
@@ -889,6 +895,11 @@ export default function CvBuilderPage() {
                                 )
                               }
                               placeholder="Add institution"
+                              className={
+                                isReorderedEntryLayout
+                                  ? "cv-inline-institution cv-inline-strong"
+                                  : ""
+                              }
                             />
                           </div>
                           <div className="cv-document-dates">
@@ -962,7 +973,7 @@ export default function CvBuilderPage() {
                           className="cv-document-entry"
                           key={`cv-exp-${index}`}
                         >
-                          <div>
+                          <div className="cv-document-entry-primary">
                             <CvInlineField
                               label={`Job title ${index + 1}`}
                               value={entry.title}
@@ -970,7 +981,11 @@ export default function CvBuilderPage() {
                                 updateEntry("experience", index, "title", value)
                               }
                               placeholder="Add job title"
-                              className="cv-inline-strong"
+                              className={
+                                isReorderedEntryLayout
+                                  ? ""
+                                  : "cv-inline-strong"
+                              }
                             />
                             <CvInlineField
                               label={`Company ${index + 1}`}
@@ -984,6 +999,11 @@ export default function CvBuilderPage() {
                                 )
                               }
                               placeholder="Add company"
+                              className={
+                                isReorderedEntryLayout
+                                  ? "cv-inline-organization cv-inline-strong"
+                                  : ""
+                              }
                             />
                           </div>
                           <div className="cv-document-dates">
