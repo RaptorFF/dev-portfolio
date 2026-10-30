@@ -1412,6 +1412,52 @@ a {
   transform-origin: top;
 }
 
+.cv-template-minimal .cv-document-main section {
+  position: relative;
+}
+
+.cv-template-minimal .cv-document-main section::before {
+  position: absolute;
+  top: 46px;
+  bottom: 0;
+  left: 40.5px;
+  width: 1px;
+  background: #6b7280;
+  content: "";
+}
+
+.cv-template-minimal .cv-document-main section > :not(h3) {
+  margin-left: 35px;
+}
+
+.cv-template-minimal .cv-document-profile::after {
+  position: absolute;
+  top: calc(50% + 22.5px);
+  left: 37px;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border: 1px solid #374151;
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.cv-template-minimal .cv-document-experience .cv-document-entry::before,
+.cv-template-minimal .cv-document-education .cv-document-entry::before {
+  position: absolute;
+  top: 7px;
+  left: -26px;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border: 1px solid #374151;
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+}
+
 .cv-template-minimal .cv-document-skill {
   border-bottom: 0;
 }
