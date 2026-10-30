@@ -1463,7 +1463,6 @@ a {
   padding: 2px 0;
   color: inherit;
   border: 0;
-  border-bottom: 1px solid transparent;
   border-radius: 0;
   outline: 0;
   background: transparent;
@@ -1471,15 +1470,11 @@ a {
   line-height: inherit;
   text-align: inherit;
   overflow-wrap: anywhere;
-  transition: border-color 140ms ease;
-}
-
-.cv-inline-field:hover {
-  border-bottom-color: rgba(97, 142, 179, 0.55);
 }
 
 .cv-inline-field:focus-visible {
-  border-bottom-color: #4b82ad;
+  outline: 1px solid #4b82ad;
+  outline-offset: 2px;
 }
 
 .cv-inline-field::placeholder {
@@ -1500,7 +1495,8 @@ a {
 
 .cv-inline-description {
   min-height: 3.6em;
-  resize: vertical;
+  overflow: hidden;
+  resize: none;
   white-space: pre-wrap;
 }
 
@@ -2000,6 +1996,10 @@ a {
 
 .cv-template-minimal .cv-document-main .cv-inline-field {
   color: #20212a;
+}
+
+.cv-template-minimal .cv-document-main .cv-document-profile > .cv-inline-field {
+  width: auto;
 }
 
 @media (max-width: 760px) {

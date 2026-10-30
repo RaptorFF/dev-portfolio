@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // Component to build and manage the user's CV, including profile, experience, education, and skills
 
@@ -144,6 +144,16 @@ function CvInlineField({
   className = "",
   multiline = false,
 }) {
+  const textareaRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!multiline || !textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [multiline, value]);
+
   const fieldProps = {
     className: `cv-inline-field ${className}`,
     "aria-label": label,
@@ -153,7 +163,7 @@ function CvInlineField({
   };
 
   return multiline ? (
-    <textarea {...fieldProps} rows={3} />
+    <textarea {...fieldProps} ref={textareaRef} rows={3} />
   ) : (
     <input {...fieldProps} />
   );
