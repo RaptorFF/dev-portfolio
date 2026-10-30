@@ -48,6 +48,14 @@ const templates = [
   },
 ];
 
+function hasText(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function hasAnyText(...values) {
+  return values.some(hasText);
+}
+
 function resizeCvPhoto(file) {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
@@ -163,13 +171,19 @@ function CvInlineField({
   };
 
   return multiline ? (
-    <textarea {...fieldProps} ref={textareaRef} rows={3} />
+    <textarea {...fieldProps} ref={textareaRef} rows={1} />
   ) : (
     <input {...fieldProps} />
   );
 }
 
-function CvBulletListField({ label, value, onChange, placeholder }) {
+function CvBulletListField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  className = "",
+}) {
   const textareaRefs = useRef([]);
   const pendingFocus = useRef(null);
   const lines = String(value || "")
@@ -200,7 +214,7 @@ function CvBulletListField({ label, value, onChange, placeholder }) {
   }
 
   return (
-    <div className="cv-document-role-details">
+    <div className={`cv-document-role-details ${className}`}>
       {lines.map((line, index) => (
         <div className="cv-document-role-line" key={index}>
           <span className="cv-document-role-bullet" aria-hidden="true" />
@@ -518,11 +532,20 @@ export default function CvBuilderPage() {
 
   function renderSkillsSection() {
     return (
-      <section className="cv-document-skills-section">
+      <section
+        className={`cv-document-skills-section ${
+          cv.skills.some((skill) => hasText(skill.name)) ? "" : "cv-print-empty"
+        }`}
+      >
         <h3>Skills</h3>
         <div className="cv-document-skills">
           {cv.skills.map((skill, index) => (
-            <div className="cv-document-skill" key={`cv-skill-${index}`}>
+            <div
+              className={`cv-document-skill ${
+                hasText(skill.name) ? "" : "cv-print-empty"
+              }`}
+              key={`cv-skill-${index}`}
+            >
               <CvInlineField
                 label={`Skill ${index + 1}`}
                 value={skill.name}
@@ -717,11 +740,26 @@ export default function CvBuilderPage() {
                       </span>
                     ) : null}
                   </div>
-                  <section className="cv-document-personal cv-document-contact">
+                  <section
+                    className={`cv-document-personal cv-document-contact ${
+                      hasAnyText(
+                        profile.address,
+                        profile.phone,
+                        profile.email,
+                        profile.linkedin,
+                      ) || profile.hasDrivingLicense
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                  >
                     <h3>
                       {cv.template === "minimal" ? "Contact" : "Personal details"}
                     </h3>
-                    <div>
+                    <div
+                      className={
+                        hasText(profile.address) ? "" : "cv-print-empty"
+                      }
+                    >
                       <strong>Address</strong>
                       <CvInlineField
                         label="Address"
@@ -732,7 +770,9 @@ export default function CvBuilderPage() {
                         placeholder="Add your address"
                       />
                     </div>
-                    <div>
+                    <div
+                      className={hasText(profile.phone) ? "" : "cv-print-empty"}
+                    >
                       <strong>Phone</strong>
                       <CvInlineField
                         label="Phone number"
@@ -741,7 +781,9 @@ export default function CvBuilderPage() {
                         placeholder="Add your phone"
                       />
                     </div>
-                    <div>
+                    <div
+                      className={hasText(profile.email) ? "" : "cv-print-empty"}
+                    >
                       <strong>Email</strong>
                       <CvInlineField
                         label="Email address"
@@ -751,7 +793,11 @@ export default function CvBuilderPage() {
                         className="cv-inline-email"
                       />
                     </div>
-                    <div>
+                    <div
+                      className={
+                        profile.hasDrivingLicense ? "" : "cv-print-empty"
+                      }
+                    >
                       <strong>Driving license</strong>
                       <label className="cv-inline-license">
                         <input
@@ -775,10 +821,19 @@ export default function CvBuilderPage() {
                             updateProfileField("drivingLicense", value)
                           }
                           placeholder="Categories"
+                          className={
+                            hasText(profile.drivingLicense)
+                              ? ""
+                              : "cv-print-empty"
+                          }
                         />
                       ) : null}
                     </div>
-                    <div>
+                    <div
+                      className={
+                        hasText(profile.linkedin) ? "" : "cv-print-empty"
+                      }
+                    >
                       <strong>LinkedIn</strong>
                       <div className="cv-inline-link">
                         <CvInlineField
@@ -805,11 +860,20 @@ export default function CvBuilderPage() {
                   </section>
                   {cv.template === "minimal" ? renderSkillsSection() : null}
                   {cv.template !== "minimal" && (
-                    <section className="cv-document-interests">
+                    <section
+                      className={`cv-document-interests ${
+                        cv.interests.some(hasText) ? "" : "cv-print-empty"
+                      }`}
+                    >
                       <h3>Interests</h3>
                       <ul>
                         {cv.interests.map((interest, index) => (
-                          <li key={`cv-interest-${index}`}>
+                          <li
+                            className={
+                              hasText(interest) ? "" : "cv-print-empty"
+                            }
+                            key={`cv-interest-${index}`}
+                          >
                             <CvInlineField
                               label={`Interest ${index + 1}`}
                               value={interest}
@@ -838,11 +902,19 @@ export default function CvBuilderPage() {
                       </button>
                     </section>
                   )}
-                  <section className="cv-document-languages">
+                  <section
+                    className={`cv-document-languages ${
+                      cv.languages.some((language) => hasText(language.name))
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                  >
                     <h3>Languages</h3>
                     {cv.languages.map((language, index) => (
                       <div
-                        className="cv-document-language"
+                        className={`cv-document-language ${
+                          hasText(language.name) ? "" : "cv-print-empty"
+                        }`}
                         key={`cv-language-${index}`}
                       >
                         <CvInlineField
@@ -879,11 +951,20 @@ export default function CvBuilderPage() {
                     </button>
                   </section>
                   {cv.template === "minimal" ? (
-                    <section className="cv-document-interests cv-document-references">
+                    <section
+                      className={`cv-document-interests cv-document-references ${
+                        cv.references.some(hasText) ? "" : "cv-print-empty"
+                      }`}
+                    >
                       <h3>Reference</h3>
                       <ul>
                         {cv.references.map((reference, index) => (
-                          <li key={`cv-reference-${index}`}>
+                          <li
+                            className={
+                              hasText(reference) ? "" : "cv-print-empty"
+                            }
+                            key={`cv-reference-${index}`}
+                          >
                             <CvInlineField
                               label={`Reference ${index + 1}`}
                               value={reference}
@@ -936,7 +1017,11 @@ export default function CvBuilderPage() {
                       />
                     </h3>
                   </header>
-                  <section className="cv-document-profile">
+                  <section
+                    className={`cv-document-profile ${
+                      hasText(profile.shortBio) ? "" : "cv-print-empty"
+                    }`}
+                  >
                     <h3
                       className={
                         cv.template === "minimal"
@@ -983,7 +1068,21 @@ export default function CvBuilderPage() {
                       className="cv-inline-description"
                     />
                   </section>
-                  <section className="cv-document-education">
+                  <section
+                    className={`cv-document-education ${
+                      cv.education.some((entry) =>
+                        hasAnyText(
+                          entry.qualification,
+                          entry.institution,
+                          entry.startDate,
+                          entry.endDate,
+                          entry.description,
+                        ),
+                      )
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                  >
                     <h3
                       className={
                         cv.template === "minimal"
@@ -1017,7 +1116,17 @@ export default function CvBuilderPage() {
                     </h3>
                     {cv.education.map((entry, index) => (
                         <div
-                          className="cv-document-entry"
+                          className={`cv-document-entry ${
+                            hasAnyText(
+                              entry.qualification,
+                              entry.institution,
+                              entry.startDate,
+                              entry.endDate,
+                              entry.description,
+                            )
+                              ? ""
+                              : "cv-print-empty"
+                          }`}
                           key={`cv-edu-${index}`}
                         >
                           <div className="cv-document-entry-primary">
@@ -1058,7 +1167,13 @@ export default function CvBuilderPage() {
                               }
                             />
                           </div>
-                          <div className="cv-document-dates">
+                          <div
+                            className={`cv-document-dates ${
+                              hasAnyText(entry.startDate, entry.endDate)
+                                ? ""
+                                : "cv-print-empty"
+                            }`}
+                          >
                             <CvInlineField
                               label={`Education start date ${index + 1}`}
                               value={entry.startDate}
@@ -1090,7 +1205,11 @@ export default function CvBuilderPage() {
                             }
                             placeholder="Add details"
                             multiline
-                            className="cv-inline-description"
+                            className={`cv-inline-description cv-education-description ${
+                              hasText(entry.description)
+                                ? ""
+                                : "cv-print-empty"
+                            }`}
                           />
                           <button
                             className="cv-document-remove cv-entry-remove"
@@ -1118,7 +1237,21 @@ export default function CvBuilderPage() {
                     </button>
                   </section>
                   {cv.template !== "minimal" ? renderSkillsSection() : null}
-                  <section className="cv-document-experience">
+                  <section
+                    className={`cv-document-experience ${
+                      cv.experience.some((entry) =>
+                        hasAnyText(
+                          entry.title,
+                          entry.organization,
+                          entry.startDate,
+                          entry.endDate,
+                          entry.description,
+                        ),
+                      )
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                  >
                     <h3
                       className={
                         cv.template === "minimal"
@@ -1152,7 +1285,17 @@ export default function CvBuilderPage() {
                     </h3>
                     {cv.experience.map((entry, index) => (
                         <div
-                          className="cv-document-entry"
+                          className={`cv-document-entry ${
+                            hasAnyText(
+                              entry.title,
+                              entry.organization,
+                              entry.startDate,
+                              entry.endDate,
+                              entry.description,
+                            )
+                              ? ""
+                              : "cv-print-empty"
+                          }`}
                           key={`cv-exp-${index}`}
                         >
                           <div className="cv-document-entry-primary">
@@ -1188,7 +1331,13 @@ export default function CvBuilderPage() {
                               }
                             />
                           </div>
-                          <div className="cv-document-dates">
+                          <div
+                            className={`cv-document-dates ${
+                              hasAnyText(entry.startDate, entry.endDate)
+                                ? ""
+                                : "cv-print-empty"
+                            }`}
+                          >
                             <CvInlineField
                               label={`Work start date ${index + 1}`}
                               value={entry.startDate}
@@ -1219,6 +1368,11 @@ export default function CvBuilderPage() {
                               )
                             }
                             placeholder="Add role details"
+                            className={
+                              hasText(entry.description)
+                                ? ""
+                                : "cv-print-empty"
+                            }
                           />
                           <button
                             className="cv-document-remove cv-entry-remove"

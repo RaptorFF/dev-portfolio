@@ -1498,6 +1498,19 @@ a {
   border-left: 0;
 }
 
+.cv-template-minimal .cv-document-experience .cv-document-entry-primary {
+  gap: 0;
+}
+
+.cv-template-minimal
+  .cv-document-experience
+  .cv-document-entry-primary
+  .cv-inline-field {
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1.15;
+}
+
 .cv-template-minimal .cv-document-skill {
   border-bottom: 0;
 }
@@ -1584,6 +1597,10 @@ a {
   overflow: hidden;
   resize: none;
   white-space: pre-wrap;
+}
+
+.cv-document-entry .cv-education-description {
+  min-height: 1.6em;
 }
 
 .cv-inline-strong {
@@ -3090,6 +3107,10 @@ a {
 }
 
 @media print {
+  .cv-print-empty {
+    display: none !important;
+  }
+
   body {
     min-height: 0;
     background: #fff;
