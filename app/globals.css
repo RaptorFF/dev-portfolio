@@ -901,6 +901,37 @@ a {
   grid-column: 1 / -1;
 }
 
+.cv-document-role-details {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cv-document-role-line {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cv-document-role-bullet {
+  width: 4px;
+  height: 4px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #374151;
+}
+
+.cv-document-entry
+  .cv-document-role-line
+  > .cv-inline-description.cv-role-detail-line {
+  grid-column: 2;
+  min-height: 1.6em;
+  padding: 2px 0;
+}
+
 .cv-template-classic .cv-document {
   padding: 32px;
   display: grid;
@@ -1456,6 +1487,15 @@ a {
   border-radius: 50%;
   background: #fff;
   content: "";
+}
+
+.cv-template-minimal
+  .cv-document-experience
+  .cv-document-entry
+  > .cv-document-role-details {
+  width: calc(100% - 14px);
+  margin-left: 14px;
+  border-left: 0;
 }
 
 .cv-template-minimal .cv-document-skill {
