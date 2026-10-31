@@ -1295,7 +1295,10 @@ a {
   background: var(--cv-modern-sidebar-bg);
 }
 
-.cv-template-modern .cv-document-header h3,
+.cv-template-modern .cv-document-header h3 {
+  color: #315f8b;
+}
+
 .cv-template-modern .cv-document .cv-document-sidebar section > h3 {
   color: #c6d8e5;
 }
