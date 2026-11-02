@@ -31,19 +31,20 @@ export const MAX_CV_PHOTO_SIZE = 5 * 1024 * 1024;
 
 export const templates = [
   {
-    id: "modern",
-    label: "Blue & Gray",
-    description: "A confident two-column layout with a slate gray sidebar.",
-  },
-  {
     id: "classic",
     label: "Clean Professional",
     description: "A balanced, traditional layout with refined blue accents.",
   },
   {
+    id: "modern",
+    label: "Modern Sidebar",
+    description: "A clean two-column layout with a customizable sidebar color.",
+  },
+  {
     id: "minimal",
-    label: "Slate & Gray",
-    description: "A two-column layout with a slate header and dark gray sidebar.",
+    label: "Color-Accented",
+    description:
+      "A distinctive layout with customizable header and sidebar colors.",
   },
 ];
 
