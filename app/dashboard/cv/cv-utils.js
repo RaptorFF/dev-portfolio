@@ -13,6 +13,11 @@ export const emptyProfile = {
 
 export const emptyCv = {
   template: "modern",
+  colors: {
+    modernSidebar: "#4b5563",
+    minimalHeader: "#315f8b",
+    minimalSidebar: "#d1d5db",
+  },
   experience: [],
   education: [],
   skills: [],
@@ -41,6 +46,37 @@ export const templates = [
     description: "A two-column layout with a slate header and dark gray sidebar.",
   },
 ];
+
+export function normalizeCvColors(colors) {
+  const isHexColor = (value) =>
+    typeof value === "string" && /^#[\da-f]{6}$/i.test(value);
+
+  return {
+    modernSidebar: isHexColor(colors?.modernSidebar)
+      ? colors.modernSidebar
+      : emptyCv.colors.modernSidebar,
+    minimalHeader: isHexColor(colors?.minimalHeader)
+      ? colors.minimalHeader
+      : emptyCv.colors.minimalHeader,
+    minimalSidebar: isHexColor(colors?.minimalSidebar)
+      ? colors.minimalSidebar
+      : emptyCv.colors.minimalSidebar,
+  };
+}
+
+export function getContrastColor(hexColor, darkColor = "#20212a") {
+  const value = Number.parseInt(hexColor.slice(1), 16);
+  const channels = [16, 8, 0].map((shift) => ((value >> shift) & 0xff) / 255);
+  const luminance = channels.reduce((sum, channel, index) => {
+    const linear =
+      channel <= 0.04045
+        ? channel / 12.92
+        : ((channel + 0.055) / 1.055) ** 2.4;
+    return sum + linear * [0.2126, 0.7152, 0.0722][index];
+  }, 0);
+
+  return luminance > 0.179 ? darkColor : "#ffffff";
+}
 
 export function hasText(value) {
   return typeof value === "string" && value.trim().length > 0;

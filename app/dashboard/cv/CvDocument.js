@@ -1,6 +1,11 @@
 import Image from "next/image";
 import { CvBulletListField, CvInlineField, CvStarRating } from "./CvFields";
-import { hasAnyText, hasText } from "./cv-utils";
+import {
+  getContrastColor,
+  hasAnyText,
+  hasText,
+  normalizeCvColors,
+} from "./cv-utils";
 
 function CvSkillsSection({ skills, addEntry, updateEntry, removeEntry }) {
   return (
@@ -67,8 +72,27 @@ export default function CvDocument({
   updateTextList,
   addTextItem,
 }) {
+  const colors = normalizeCvColors(cv.colors);
+
   return (
-    <div className={`cv-layout cv-template-${cv.template}`}>
+    <div
+      className={`cv-layout cv-template-${cv.template}`}
+      style={{
+        "--cv-modern-sidebar-bg": colors.modernSidebar,
+        "--cv-modern-sidebar-foreground": getContrastColor(
+          colors.modernSidebar,
+        ),
+        "--cv-minimal-header-bg": colors.minimalHeader,
+        "--cv-minimal-header-foreground": getContrastColor(
+          colors.minimalHeader,
+        ),
+        "--cv-minimal-sidebar-bg": colors.minimalSidebar,
+        "--cv-minimal-sidebar-foreground": getContrastColor(
+          colors.minimalSidebar,
+          "#374151",
+        ),
+      }}
+    >
       <aside
         className="cv-document-panel"
         aria-label="Editable CV document"

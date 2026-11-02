@@ -8,6 +8,7 @@ import {
   emptyCv,
   emptyProfile,
   MAX_CV_PHOTO_SIZE,
+  normalizeCvColors,
   normalizeSkills,
   resizeCvPhoto,
   templates,
@@ -23,6 +24,7 @@ export default function CvBuilderPage() {
   const [loaded, setLoaded] = useState(false);
   const [edited, setEdited] = useState(false);
   const photoInputRef = useRef(null);
+  const cvColors = normalizeCvColors(cv.colors);
   const isReorderedEntryLayout =
     cv.template === "modern" || cv.template === "minimal";
 
@@ -59,6 +61,7 @@ export default function CvBuilderPage() {
           setCv({
             ...emptyCv,
             ...savedCv,
+            colors: normalizeCvColors(savedCv.colors),
             experience: Array.isArray(savedCv.experience)
               ? savedCv.experience
               : [],
@@ -118,6 +121,17 @@ export default function CvBuilderPage() {
     setCv((current) => ({
       ...current,
       [section]: updateList(current[section]),
+    }));
+    setEdited(true);
+  }
+
+  function updateTemplateColor(colorKey, value) {
+    setCv((current) => ({
+      ...current,
+      colors: {
+        ...normalizeCvColors(current.colors),
+        [colorKey]: value,
+      },
     }));
     setEdited(true);
   }
@@ -282,6 +296,56 @@ export default function CvBuilderPage() {
             </button>
           ))}
         </div>
+
+        {cv.template !== "classic" ? (
+          <section className="cv-color-controls" aria-label="Template colors">
+            <strong>Customize template colors</strong>
+            <div className="cv-color-control-list">
+              {cv.template === "modern" ? (
+                <label className="cv-color-control">
+                  <span>Sidebar</span>
+                  <input
+                    type="color"
+                    value={cvColors.modernSidebar}
+                    onChange={(event) =>
+                      updateTemplateColor("modernSidebar", event.target.value)
+                    }
+                    aria-label="Sidebar color"
+                  />
+                </label>
+              ) : null}
+              {cv.template === "minimal" ? (
+                <>
+                  <label className="cv-color-control">
+                    <span>Header</span>
+                    <input
+                      type="color"
+                      value={cvColors.minimalHeader}
+                      onChange={(event) =>
+                        updateTemplateColor("minimalHeader", event.target.value)
+                      }
+                      aria-label="Header color"
+                    />
+                  </label>
+                  <label className="cv-color-control">
+                    <span>Sidebar</span>
+                    <input
+                      type="color"
+                      value={cvColors.minimalSidebar}
+                      onChange={(event) =>
+                        updateTemplateColor(
+                          "minimalSidebar",
+                          event.target.value,
+                        )
+                      }
+                      aria-label="Sidebar color"
+                    />
+                  </label>
+                </>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
 
         <CvDocument
           profile={profile}
