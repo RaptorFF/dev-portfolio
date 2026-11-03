@@ -7,14 +7,20 @@ import {
   normalizeCvColors,
 } from "./cv-utils";
 
-function CvSkillsSection({ skills, addEntry, updateEntry, removeEntry }) {
+function CvSkillsSection({
+  skills,
+  addEntry,
+  updateEntry,
+  removeEntry,
+  template,
+}) {
   return (
     <section
       className={`cv-document-skills-section ${
         skills.some((skill) => hasText(skill.name)) ? "" : "cv-print-empty"
       }`}
     >
-      <h3>Skills</h3>
+      <h3>{template === "classic" ? "Additional information" : "Skills"}</h3>
       <div className="cv-document-skills">
         {skills.map((skill, index) => (
           <div
@@ -73,6 +79,15 @@ export default function CvDocument({
   addTextItem,
 }) {
   const colors = normalizeCvColors(cv.colors);
+  const hasContactDetails =
+    cv.template === "classic"
+      ? hasAnyText(profile.address, profile.phone, profile.email)
+      : hasAnyText(
+          profile.address,
+          profile.phone,
+          profile.email,
+          profile.linkedin,
+        ) || profile.hasDrivingLicense;
 
   return (
     <div
@@ -93,10 +108,7 @@ export default function CvDocument({
         ),
       }}
     >
-      <aside
-        className="cv-document-panel"
-        aria-label="Editable CV document"
-      >
+      <aside className="cv-document-panel" aria-label="Editable CV document">
         <article className="cv-document">
           <div className="cv-document-columns">
             <aside className="cv-document-sidebar">
@@ -149,37 +161,24 @@ export default function CvDocument({
               </div>
               <section
                 className={`cv-document-personal cv-document-contact ${
-                  hasAnyText(
-                    profile.address,
-                    profile.phone,
-                    profile.email,
-                    profile.linkedin,
-                  ) || profile.hasDrivingLicense
-                    ? ""
-                    : "cv-print-empty"
+                  hasContactDetails ? "" : "cv-print-empty"
                 }`}
               >
                 <h3>
                   {cv.template === "minimal" ? "Contact" : "Personal details"}
                 </h3>
                 <div
-                  className={
-                    hasText(profile.address) ? "" : "cv-print-empty"
-                  }
+                  className={hasText(profile.address) ? "" : "cv-print-empty"}
                 >
                   <strong>Address</strong>
                   <CvInlineField
                     label="Address"
                     value={profile.address}
-                    onChange={(value) =>
-                      updateProfileField("address", value)
-                    }
+                    onChange={(value) => updateProfileField("address", value)}
                     placeholder="Add your address"
                   />
                 </div>
-                <div
-                  className={hasText(profile.phone) ? "" : "cv-print-empty"}
-                >
+                <div className={hasText(profile.phone) ? "" : "cv-print-empty"}>
                   <strong>Phone</strong>
                   <CvInlineField
                     label="Phone number"
@@ -188,9 +187,7 @@ export default function CvDocument({
                     placeholder="Add your phone"
                   />
                 </div>
-                <div
-                  className={hasText(profile.email) ? "" : "cv-print-empty"}
-                >
+                <div className={hasText(profile.email) ? "" : "cv-print-empty"}>
                   <strong>Email</strong>
                   <CvInlineField
                     label="Email address"
@@ -201,9 +198,7 @@ export default function CvDocument({
                   />
                 </div>
                 <div
-                  className={
-                    profile.hasDrivingLicense ? "" : "cv-print-empty"
-                  }
+                  className={profile.hasDrivingLicense ? "" : "cv-print-empty"}
                 >
                   <strong>Driving license</strong>
                   <label className="cv-inline-license">
@@ -229,17 +224,13 @@ export default function CvDocument({
                       }
                       placeholder="Categories"
                       className={
-                        hasText(profile.drivingLicense)
-                          ? ""
-                          : "cv-print-empty"
+                        hasText(profile.drivingLicense) ? "" : "cv-print-empty"
                       }
                     />
                   ) : null}
                 </div>
                 <div
-                  className={
-                    hasText(profile.linkedin) ? "" : "cv-print-empty"
-                  }
+                  className={hasText(profile.linkedin) ? "" : "cv-print-empty"}
                 >
                   <strong>LinkedIn</strong>
                   <div className="cv-inline-link">
@@ -271,6 +262,7 @@ export default function CvDocument({
                   addEntry={addEntry}
                   updateEntry={updateEntry}
                   removeEntry={removeEntry}
+                  template={cv.template}
                 />
               ) : null}
               {cv.template !== "minimal" && (
@@ -283,9 +275,7 @@ export default function CvDocument({
                   <ul>
                     {cv.interests.map((interest, index) => (
                       <li
-                        className={
-                          hasText(interest) ? "" : "cv-print-empty"
-                        }
+                        className={hasText(interest) ? "" : "cv-print-empty"}
                         key={`cv-interest-${index}`}
                       >
                         <CvInlineField
@@ -359,9 +349,7 @@ export default function CvDocument({
                 <button
                   className="cv-document-action"
                   type="button"
-                  onClick={() =>
-                    addEntry("languages", { name: "", level: 3 })
-                  }
+                  onClick={() => addEntry("languages", { name: "", level: 3 })}
                 >
                   + Add language
                 </button>
@@ -376,9 +364,7 @@ export default function CvDocument({
                   <ul>
                     {cv.references.map((reference, index) => (
                       <li
-                        className={
-                          hasText(reference) ? "" : "cv-print-empty"
-                        }
+                        className={hasText(reference) ? "" : "cv-print-empty"}
                         key={`cv-reference-${index}`}
                       >
                         <CvInlineField
@@ -464,6 +450,8 @@ export default function CvDocument({
                       </svg>
                       <span>Profile</span>
                     </>
+                  ) : cv.template === "classic" ? (
+                    "Summary"
                   ) : (
                     "About"
                   )}
@@ -476,9 +464,7 @@ export default function CvDocument({
                       ? profile.shortBio
                       : ""
                   }
-                  onChange={(value) =>
-                    updateProfileField("shortBio", value)
-                  }
+                  onChange={(value) => updateProfileField("shortBio", value)}
                   placeholder="Add something about yourself"
                   multiline
                   className="cv-inline-description"
@@ -526,116 +512,104 @@ export default function CvDocument({
                       </svg>
                       <span>Education</span>
                     </>
+                  ) : cv.template === "classic" ? (
+                    "Education"
                   ) : (
                     "Education and qualification"
                   )}
                 </h3>
                 {cv.education.map((entry, index) => (
-                    <div
-                      className={`cv-document-entry ${
-                        hasAnyText(
-                          entry.qualification,
-                          entry.institution,
-                          entry.startDate,
-                          entry.endDate,
-                          entry.description,
-                        )
-                          ? ""
-                          : "cv-print-empty"
-                      }`}
-                      key={`cv-edu-${index}`}
-                    >
-                      <div className="cv-document-entry-primary">
-                        <CvInlineField
-                          label={`Education qualification ${index + 1}`}
-                          value={entry.qualification}
-                          onChange={(value) =>
-                            updateEntry(
-                              "education",
-                              index,
-                              "qualification",
-                              value,
-                            )
-                          }
-                          placeholder="Add qualification"
-                          className={
-                            isReorderedEntryLayout
-                              ? ""
-                              : "cv-inline-strong"
-                          }
-                        />
-                        <CvInlineField
-                          label={`Education institution ${index + 1}`}
-                          value={entry.institution}
-                          onChange={(value) =>
-                            updateEntry(
-                              "education",
-                              index,
-                              "institution",
-                              value,
-                            )
-                          }
-                          placeholder="Add institution"
-                          className={
-                            isReorderedEntryLayout
-                              ? "cv-inline-institution cv-inline-strong"
-                              : ""
-                          }
-                        />
-                      </div>
-                      <div
-                        className={`cv-document-dates ${
-                          hasAnyText(entry.startDate, entry.endDate)
-                            ? ""
-                            : "cv-print-empty"
-                        }`}
-                      >
-                        <CvInlineField
-                          label={`Education start date ${index + 1}`}
-                          value={entry.startDate}
-                          onChange={(value) =>
-                            updateEntry("education", index, "startDate", value)
-                          }
-                          placeholder="From"
-                        />
-                        <span>–</span>
-                        <CvInlineField
-                          label={`Education end date ${index + 1}`}
-                          value={entry.endDate}
-                          onChange={(value) =>
-                            updateEntry("education", index, "endDate", value)
-                          }
-                          placeholder="To"
-                        />
-                      </div>
+                  <div
+                    className={`cv-document-entry ${
+                      hasAnyText(
+                        entry.qualification,
+                        entry.institution,
+                        entry.startDate,
+                        entry.endDate,
+                        entry.description,
+                      )
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                    key={`cv-edu-${index}`}
+                  >
+                    <div className="cv-document-entry-primary">
                       <CvInlineField
-                        label={`Education details ${index + 1}`}
-                        value={entry.description}
+                        label={`Education qualification ${index + 1}`}
+                        value={entry.qualification}
                         onChange={(value) =>
                           updateEntry(
                             "education",
                             index,
-                            "description",
+                            "qualification",
                             value,
                           )
                         }
-                        placeholder="Add details"
-                        multiline
-                        className={`cv-inline-description cv-education-description ${
-                          hasText(entry.description)
-                            ? ""
-                            : "cv-print-empty"
-                        }`}
+                        placeholder="Add qualification"
+                        className={
+                          isReorderedEntryLayout ? "" : "cv-inline-strong"
+                        }
                       />
-                      <button
-                        className="cv-document-remove cv-entry-remove"
-                        type="button"
-                        onClick={() => removeEntry("education", index)}
-                      >
-                        Remove
-                      </button>
+                      <CvInlineField
+                        label={`Education institution ${index + 1}`}
+                        value={entry.institution}
+                        onChange={(value) =>
+                          updateEntry("education", index, "institution", value)
+                        }
+                        placeholder="Add institution"
+                        className={
+                          isReorderedEntryLayout
+                            ? "cv-inline-institution cv-inline-strong"
+                            : ""
+                        }
+                      />
                     </div>
-                  ))}
+                    <div
+                      className={`cv-document-dates ${
+                        hasAnyText(entry.startDate, entry.endDate)
+                          ? ""
+                          : "cv-print-empty"
+                      }`}
+                    >
+                      <CvInlineField
+                        label={`Education start date ${index + 1}`}
+                        value={entry.startDate}
+                        onChange={(value) =>
+                          updateEntry("education", index, "startDate", value)
+                        }
+                        placeholder="From"
+                      />
+                      <span>–</span>
+                      <CvInlineField
+                        label={`Education end date ${index + 1}`}
+                        value={entry.endDate}
+                        onChange={(value) =>
+                          updateEntry("education", index, "endDate", value)
+                        }
+                        placeholder="To"
+                      />
+                    </div>
+                    <CvInlineField
+                      label={`Education details ${index + 1}`}
+                      value={entry.description}
+                      onChange={(value) =>
+                        updateEntry("education", index, "description", value)
+                      }
+                      placeholder="Add details"
+                      multiline
+                      className={`cv-inline-description cv-education-description ${
+                        hasText(entry.description) ? "" : "cv-print-empty"
+                      }`}
+                    />
+                    <button
+                      className="cv-document-remove cv-entry-remove"
+                      type="button"
+                      onClick={() => removeEntry("education", index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
                 <button
                   className="cv-document-action"
                   type="button"
@@ -658,6 +632,7 @@ export default function CvDocument({
                   addEntry={addEntry}
                   updateEntry={updateEntry}
                   removeEntry={removeEntry}
+                  template={cv.template}
                 />
               ) : null}
               <section
@@ -707,104 +682,95 @@ export default function CvDocument({
                   )}
                 </h3>
                 {cv.experience.map((entry, index) => (
-                    <div
-                      className={`cv-document-entry ${
-                        hasAnyText(
-                          entry.title,
-                          entry.organization,
-                          entry.startDate,
-                          entry.endDate,
-                          entry.description,
-                        )
-                          ? ""
-                          : "cv-print-empty"
-                      }`}
-                      key={`cv-exp-${index}`}
-                    >
-                      <div className="cv-document-entry-primary">
-                        <CvInlineField
-                          label={`Job title ${index + 1}`}
-                          value={entry.title}
-                          onChange={(value) =>
-                            updateEntry("experience", index, "title", value)
-                          }
-                          placeholder="Add job title"
-                          className={
-                            isReorderedEntryLayout
-                              ? ""
-                              : "cv-inline-strong"
-                          }
-                        />
-                        <CvInlineField
-                          label={`Company ${index + 1}`}
-                          value={entry.organization}
-                          onChange={(value) =>
-                            updateEntry(
-                              "experience",
-                              index,
-                              "organization",
-                              value,
-                            )
-                          }
-                          placeholder="Add company"
-                          className={
-                            isReorderedEntryLayout
-                              ? "cv-inline-organization cv-inline-strong"
-                              : ""
-                          }
-                        />
-                      </div>
-                      <div
-                        className={`cv-document-dates ${
-                          hasAnyText(entry.startDate, entry.endDate)
-                            ? ""
-                            : "cv-print-empty"
-                        }`}
-                      >
-                        <CvInlineField
-                          label={`Work start date ${index + 1}`}
-                          value={entry.startDate}
-                          onChange={(value) =>
-                            updateEntry("experience", index, "startDate", value)
-                          }
-                          placeholder="From"
-                        />
-                        <span>–</span>
-                        <CvInlineField
-                          label={`Work end date ${index + 1}`}
-                          value={entry.endDate}
-                          onChange={(value) =>
-                            updateEntry("experience", index, "endDate", value)
-                          }
-                          placeholder="To"
-                        />
-                      </div>
-                      <CvBulletListField
-                        label={`Work experience details ${index + 1}`}
-                        value={entry.description}
+                  <div
+                    className={`cv-document-entry ${
+                      hasAnyText(
+                        entry.title,
+                        entry.organization,
+                        entry.startDate,
+                        entry.endDate,
+                        entry.description,
+                      )
+                        ? ""
+                        : "cv-print-empty"
+                    }`}
+                    key={`cv-exp-${index}`}
+                  >
+                    <div className="cv-document-entry-primary">
+                      <CvInlineField
+                        label={`Job title ${index + 1}`}
+                        value={entry.title}
+                        onChange={(value) =>
+                          updateEntry("experience", index, "title", value)
+                        }
+                        placeholder="Add job title"
+                        className={
+                          isReorderedEntryLayout ? "" : "cv-inline-strong"
+                        }
+                      />
+                      <CvInlineField
+                        label={`Company ${index + 1}`}
+                        value={entry.organization}
                         onChange={(value) =>
                           updateEntry(
                             "experience",
                             index,
-                            "description",
+                            "organization",
                             value,
                           )
                         }
-                        placeholder="Add role details"
+                        placeholder="Add company"
                         className={
-                          hasText(entry.description)
-                            ? ""
-                            : "cv-print-empty"
+                          isReorderedEntryLayout
+                            ? "cv-inline-organization cv-inline-strong"
+                            : ""
                         }
                       />
-                      <button
-                        className="cv-document-remove cv-entry-remove"
-                        type="button"
-                        onClick={() => removeEntry("experience", index)}
-                      >
-                        Remove
-                      </button>
                     </div>
+                    <div
+                      className={`cv-document-dates ${
+                        hasAnyText(entry.startDate, entry.endDate)
+                          ? ""
+                          : "cv-print-empty"
+                      }`}
+                    >
+                      <CvInlineField
+                        label={`Work start date ${index + 1}`}
+                        value={entry.startDate}
+                        onChange={(value) =>
+                          updateEntry("experience", index, "startDate", value)
+                        }
+                        placeholder="From"
+                      />
+                      <span>–</span>
+                      <CvInlineField
+                        label={`Work end date ${index + 1}`}
+                        value={entry.endDate}
+                        onChange={(value) =>
+                          updateEntry("experience", index, "endDate", value)
+                        }
+                        placeholder="To"
+                      />
+                    </div>
+                    <CvBulletListField
+                      label={`Work experience details ${index + 1}`}
+                      value={entry.description}
+                      onChange={(value) =>
+                        updateEntry("experience", index, "description", value)
+                      }
+                      placeholder="Add role details"
+                      className={
+                        hasText(entry.description) ? "" : "cv-print-empty"
+                      }
+                    />
+                    <button
+                      className="cv-document-remove cv-entry-remove"
+                      type="button"
+                      onClick={() => removeEntry("experience", index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 ))}
                 <button
                   className="cv-document-action"

@@ -262,29 +262,72 @@ export default function CvBuilderPage() {
                 className={`cv-template-thumbnail cv-thumbnail-${template.id}`}
                 aria-hidden="true"
               >
-                <span className="cv-thumbnail-sidebar">
-                  <span className="cv-thumbnail-avatar" />
-                  <span className="cv-thumbnail-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                </span>
-                <span className="cv-thumbnail-content">
-                  <span className="cv-thumbnail-title" />
-                  <span className="cv-thumbnail-subtitle" />
-                  <span className="cv-thumbnail-section" />
-                  <span className="cv-thumbnail-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  <span className="cv-thumbnail-section" />
-                  <span className="cv-thumbnail-lines">
-                    <i />
-                    <i />
-                  </span>
-                </span>
+                {template.id === "classic" ? (
+                  <>
+                    <span className="cv-thumbnail-classic-header">
+                      <span className="cv-thumbnail-avatar" />
+                      <span className="cv-thumbnail-classic-identity">
+                        <span className="cv-thumbnail-title" />
+                        <span className="cv-thumbnail-subtitle" />
+                        <span className="cv-thumbnail-classic-contact">
+                          <i />
+                          <i />
+                          <i />
+                        </span>
+                      </span>
+                    </span>
+                    <span className="cv-thumbnail-classic-content">
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-classic-lines">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-classic-lines">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-classic-lines">
+                        <i />
+                        <i />
+                      </span>
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-classic-lines">
+                        <i />
+                        <i />
+                      </span>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="cv-thumbnail-sidebar">
+                      <span className="cv-thumbnail-avatar" />
+                      <span className="cv-thumbnail-lines">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                    </span>
+                    <span className="cv-thumbnail-content">
+                      <span className="cv-thumbnail-title" />
+                      <span className="cv-thumbnail-subtitle" />
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-lines">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      <span className="cv-thumbnail-section" />
+                      <span className="cv-thumbnail-lines">
+                        <i />
+                        <i />
+                      </span>
+                    </span>
+                  </>
+                )}
               </span>
               <span className="cv-template-option-copy">
                 <strong>{template.label}</strong>
