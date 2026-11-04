@@ -3614,6 +3614,11 @@ a {
   margin: 0;
 }
 
+@page cv-modern {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
   .cv-print-empty {
     display: none !important;
@@ -3656,8 +3661,6 @@ a {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
   }
 
   .cv-document {
@@ -3747,7 +3750,7 @@ a {
     page-break-inside: avoid;
   }
 
-  .cv-document section {
+  .cv-layout.cv-template-classic .cv-document section {
     break-inside: avoid-page;
     page-break-inside: avoid;
   }
@@ -3812,22 +3815,32 @@ a {
 
   .cv-layout.cv-template-modern .cv-document-columns {
     position: relative;
-    min-height: 296mm;
+    min-height: 0;
   }
 
-  .cv-layout.cv-template-modern .cv-document-columns::before {
-    position: absolute;
+  .cv-layout.cv-template-modern::before {
+    position: fixed;
     z-index: 0;
-    inset: 0 auto -1mm 0;
+    inset: 0 auto 0 0;
     width: 32.5%;
     content: "";
     background: var(--cv-modern-sidebar-bg);
+  }
+
+  .cv-layout.cv-template-modern {
+    page: cv-modern;
   }
 
   .cv-layout.cv-template-modern .cv-document-sidebar,
   .cv-layout.cv-template-modern .cv-document-main {
     position: relative;
     z-index: 1;
+  }
+
+  .cv-layout.cv-template-modern .cv-document-main {
+    padding-top: 12mm;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 
   .cv-layout.cv-template-modern .cv-document-sidebar {
@@ -3837,10 +3850,12 @@ a {
   .cv-layout.cv-template-minimal .cv-document-columns {
     grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.68fr);
     grid-template-rows: 176px auto auto auto auto;
-    min-height: 296mm;
+    min-height: 0;
   }
 
   .cv-layout.cv-template-minimal .cv-document-columns::before {
+    position: fixed;
+    inset: -12mm auto 0 0;
     width: 30%;
   }
 
@@ -3852,8 +3867,12 @@ a {
   }
 
   .cv-layout.cv-template-minimal .cv-document-sidebar {
-    grid-column: 1;
-    grid-row: 2 / -1;
+    position: absolute;
+    top: 176px;
+    left: 0;
+    width: 30%;
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .cv-layout.cv-template-minimal .cv-document-photo {
