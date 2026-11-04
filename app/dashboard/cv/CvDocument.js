@@ -278,14 +278,24 @@ export default function CvDocument({
                         className={hasText(interest) ? "" : "cv-print-empty"}
                         key={`cv-interest-${index}`}
                       >
-                        <CvInlineField
-                          label={`Interest ${index + 1}`}
-                          value={interest}
-                          onChange={(value) =>
-                            updateTextList("interests", index, value)
-                          }
-                          placeholder="Add an interest"
-                        />
+                        <div className="cv-document-bullet-field">
+                          {cv.template === "classic" ? (
+                            <span
+                              className="cv-document-bullet"
+                              aria-hidden="true"
+                            >
+                              &#8226;
+                            </span>
+                          ) : null}
+                          <CvInlineField
+                            label={`Interest ${index + 1}`}
+                            value={interest}
+                            onChange={(value) =>
+                              updateTextList("interests", index, value)
+                            }
+                            placeholder="Add an interest"
+                          />
+                        </div>
                         <button
                           className="cv-document-remove"
                           type="button"
@@ -321,10 +331,10 @@ export default function CvDocument({
                     }`}
                     key={`cv-language-${index}`}
                   >
-                    <div className="cv-document-language-name">
+                    <div className="cv-document-bullet-field">
                       {cv.template === "classic" ? (
                         <span
-                          className="cv-document-language-bullet"
+                          className="cv-document-bullet"
                           aria-hidden="true"
                         >
                           &#8226;

@@ -1415,7 +1415,7 @@ a {
 .cv-template-classic .cv-document-personal p,
 .cv-template-classic .cv-document-personal a,
 .cv-template-classic .cv-document-language > span,
-.cv-template-classic .cv-document-language-bullet {
+.cv-template-classic .cv-document-bullet {
   color: #465566;
 }
 
@@ -1701,7 +1701,7 @@ a {
   flex: 0 0 auto;
 }
 
-.cv-document-language-name {
+.cv-document-bullet-field {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
@@ -1709,7 +1709,7 @@ a {
   min-width: 0;
 }
 
-.cv-document-language-name .cv-inline-field {
+.cv-document-bullet-field .cv-inline-field {
   width: 100%;
 }
 
@@ -2433,12 +2433,12 @@ a {
   grid-row: 6;
 }
 
-.cv-template-classic .cv-document-interests {
+.cv-template-classic .cv-document-languages {
   grid-column: 1 / -1;
   grid-row: 7;
 }
 
-.cv-template-classic .cv-document-languages {
+.cv-template-classic .cv-document-interests {
   grid-column: 1 / -1;
   grid-row: 8;
 }
@@ -2511,7 +2511,12 @@ a {
   grid-column: 2;
 }
 
-.cv-layout.cv-template-classic .cv-document-language-name .cv-inline-field {
+.cv-layout.cv-template-classic .cv-document-bullet-field {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.cv-layout.cv-template-classic .cv-document-bullet-field .cv-inline-field {
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -3602,6 +3607,10 @@ a {
 
 @page {
   size: A4;
+  margin: 12mm 0 0;
+}
+
+@page :first {
   margin: 0;
 }
 
@@ -3732,17 +3741,25 @@ a {
     line-height: 1.4;
   }
 
-  .cv-document-sidebar section,
-  .cv-document-main section,
   .cv-document-entry,
   .cv-document-skill {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  .cv-document-main section > h3 {
-    break-after: avoid;
+  .cv-document section {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .cv-document section > h3 {
+    break-after: avoid-page;
     page-break-after: avoid;
+  }
+
+  .cv-document section > h3 + * {
+    break-before: avoid-page;
+    page-break-before: avoid;
   }
 
   .cv-document-photo-placeholder,
