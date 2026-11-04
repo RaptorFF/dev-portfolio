@@ -20,7 +20,7 @@ function CvSkillsSection({
         skills.some((skill) => hasText(skill.name)) ? "" : "cv-print-empty"
       }`}
     >
-      <h3>{template === "classic" ? "Additional information" : "Skills"}</h3>
+      <h3>{template === "classic" ? "Additional skills" : "Skills"}</h3>
       <div className="cv-document-skills">
         {skills.map((skill, index) => (
           <div
@@ -321,14 +321,24 @@ export default function CvDocument({
                     }`}
                     key={`cv-language-${index}`}
                   >
-                    <CvInlineField
-                      label={`Language ${index + 1}`}
-                      value={language.name || ""}
-                      onChange={(value) =>
-                        updateEntry("languages", index, "name", value)
-                      }
-                      placeholder="Add a language"
-                    />
+                    <div className="cv-document-language-name">
+                      {cv.template === "classic" ? (
+                        <span
+                          className="cv-document-language-bullet"
+                          aria-hidden="true"
+                        >
+                          &#8226;
+                        </span>
+                      ) : null}
+                      <CvInlineField
+                        label={`Language ${index + 1}`}
+                        value={language.name || ""}
+                        onChange={(value) =>
+                          updateEntry("languages", index, "name", value)
+                        }
+                        placeholder="Add a language"
+                      />
+                    </div>
                     <CvStarRating
                       label={`${language.name || "Language"} level`}
                       level={language.level || 3}

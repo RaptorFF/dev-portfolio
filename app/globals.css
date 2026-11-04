@@ -1414,7 +1414,8 @@ a {
 .cv-template-classic .cv-document-personal strong,
 .cv-template-classic .cv-document-personal p,
 .cv-template-classic .cv-document-personal a,
-.cv-template-classic .cv-document-language > span {
+.cv-template-classic .cv-document-language > span,
+.cv-template-classic .cv-document-language-bullet {
   color: #465566;
 }
 
@@ -1700,8 +1701,16 @@ a {
   flex: 0 0 auto;
 }
 
-.cv-document-language .cv-inline-field {
-  flex: 1 1 auto;
+.cv-document-language-name {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cv-document-language-name .cv-inline-field {
+  width: 100%;
 }
 
 .cv-document-entry .cv-inline-description {
@@ -2500,6 +2509,11 @@ a {
 
 .cv-template-classic .cv-document-skill > .cv-inline-field {
   grid-column: 2;
+}
+
+.cv-layout.cv-template-classic .cv-document-language-name .cv-inline-field {
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .cv-template-classic .cv-document-skill > .cv-star-rating {
