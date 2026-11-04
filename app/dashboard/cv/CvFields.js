@@ -56,7 +56,21 @@ export function CvInlineField({
   };
 
   return multiline ? (
-    <textarea {...fieldProps} ref={textareaRef} rows={1} />
+    <>
+      <textarea
+        {...fieldProps}
+        className={`${fieldProps.className} cv-inline-multiline-field`}
+        ref={textareaRef}
+        rows={1}
+      />
+      <div
+        className={`${fieldProps.className} cv-inline-print-value`}
+        aria-hidden="true"
+        style={{ display: "none" }}
+      >
+        {value}
+      </div>
+    </>
   ) : (
     <input {...fieldProps} />
   );
@@ -153,6 +167,13 @@ export function CvBulletListField({
               }
             }}
           />
+          <div
+            className="cv-inline-field cv-inline-description cv-role-detail-line cv-role-detail-print-value"
+            aria-hidden="true"
+            style={{ display: "none" }}
+          >
+            {line}
+          </div>
         </div>
       ))}
     </div>

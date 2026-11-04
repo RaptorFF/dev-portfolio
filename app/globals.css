@@ -936,6 +936,10 @@ a {
   padding: 2px 0;
 }
 
+.cv-role-detail-print-value {
+  display: none;
+}
+
 .cv-template-classic .cv-document {
   padding: 32px;
   display: grid;
@@ -1665,6 +1669,10 @@ a {
   overflow: hidden;
   resize: none;
   white-space: pre-wrap;
+}
+
+.cv-inline-print-value {
+  display: none;
 }
 
 .cv-document-entry .cv-education-description {
@@ -3619,6 +3627,11 @@ a {
   margin: 0;
 }
 
+@page cv-minimal {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
   .cv-print-empty {
     display: none !important;
@@ -3778,6 +3791,28 @@ a {
     border-bottom-color: transparent !important;
   }
 
+  .cv-inline-multiline-field {
+    display: none !important;
+  }
+
+  .cv-document-role-line > .cv-role-detail-line {
+    display: none !important;
+  }
+
+  .cv-inline-print-value {
+    display: block !important;
+    height: auto;
+    overflow: visible;
+    white-space: pre-wrap;
+  }
+
+  .cv-role-detail-print-value {
+    display: block !important;
+    height: auto;
+    overflow: visible;
+    white-space: pre-wrap;
+  }
+
   .cv-inline-field::placeholder {
     color: transparent !important;
   }
@@ -3831,6 +3866,10 @@ a {
     page: cv-modern;
   }
 
+  .cv-layout.cv-template-minimal {
+    page: cv-minimal;
+  }
+
   .cv-layout.cv-template-modern .cv-document-sidebar,
   .cv-layout.cv-template-modern .cv-document-main {
     position: relative;
@@ -3855,8 +3894,17 @@ a {
 
   .cv-layout.cv-template-minimal .cv-document-columns::before {
     position: fixed;
-    inset: -12mm auto 0 0;
+    inset: 0 auto 0 0;
     width: 30%;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-columns::after {
+    position: fixed;
+    z-index: 0;
+    inset: 0 0 0 30%;
+    border-left: 1px solid #d8dfe6;
+    content: "";
+    background: #fff;
   }
 
   .cv-layout.cv-template-minimal .cv-document-header {
@@ -3902,6 +3950,13 @@ a {
   .cv-layout.cv-template-minimal .cv-document-education {
     grid-column: 2;
     grid-row: 4;
+  }
+
+  .cv-layout.cv-template-minimal .cv-document-profile,
+  .cv-layout.cv-template-minimal .cv-document-experience,
+  .cv-layout.cv-template-minimal .cv-document-education {
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 }
 
