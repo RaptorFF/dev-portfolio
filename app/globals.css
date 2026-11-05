@@ -3694,6 +3694,31 @@ a {
     border-radius: 0;
   }
 
+  .cv-layout.cv-template-classic.cv-template-classic-no-photo .cv-document {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cv-layout.cv-template-classic-no-photo .cv-document-photo {
+    display: none !important;
+  }
+
+  .cv-layout.cv-template-classic-no-photo .cv-document-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .cv-layout.cv-template-classic-no-photo
+    .cv-document
+    section.cv-document-personal {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: left;
+  }
+
   .cv-layout.cv-template-classic .cv-document-profile,
   .cv-layout.cv-template-classic .cv-document-profile > .cv-inline-description,
   .cv-layout.cv-template-classic .cv-document-entry,

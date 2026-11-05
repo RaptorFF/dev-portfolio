@@ -91,7 +91,11 @@ export default function CvDocument({
 
   return (
     <div
-      className={`cv-layout cv-template-${cv.template}`}
+      className={`cv-layout cv-template-${cv.template}${
+        cv.template === "classic" && !profile.photo
+          ? " cv-template-classic-no-photo"
+          : ""
+      }`}
       style={{
         "--cv-modern-sidebar-bg": colors.modernSidebar,
         "--cv-modern-sidebar-foreground": getContrastColor(
