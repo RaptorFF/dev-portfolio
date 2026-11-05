@@ -1,5 +1,10 @@
 import Image from "next/image";
-import { CvBulletListField, CvInlineField, CvStarRating } from "./CvFields";
+import {
+  CvBulletListField,
+  CvDateRange,
+  CvInlineField,
+  CvStarRating,
+} from "./CvFields";
 import {
   getContrastColor,
   hasAnyText,
@@ -20,7 +25,7 @@ function CvSkillsSection({
         skills.some((skill) => hasText(skill.name)) ? "" : "cv-print-empty"
       }`}
     >
-      <h3>{template === "classic" ? "Additional skills" : "Skills"}</h3>
+      <h3>{template === "classic" ? "Key skills" : "Skills"}</h3>
       <div className="cv-document-skills">
         {skills.map((skill, index) => (
           <div
@@ -35,11 +40,15 @@ function CvSkillsSection({
               onChange={(value) => updateEntry("skills", index, "name", value)}
               placeholder="Add a skill"
             />
-            <CvStarRating
-              label={`${skill.name} skill level: ${skill.level || 3} of 5 stars`}
-              level={skill.level || 3}
-              onChange={(level) => updateEntry("skills", index, "level", level)}
-            />
+            {template !== "classic" ? (
+              <CvStarRating
+                label={`${skill.name} skill level: ${skill.level || 3} of 5 stars`}
+                level={skill.level || 3}
+                onChange={(level) =>
+                  updateEntry("skills", index, "level", level)
+                }
+              />
+            ) : null}
             <button
               className="cv-document-remove"
               type="button"
@@ -269,7 +278,7 @@ export default function CvDocument({
                   template={cv.template}
                 />
               ) : null}
-              {cv.template !== "minimal" && (
+              {cv.template === "modern" && (
                 <section
                   className={`cv-document-interests ${
                     cv.interests.some(hasText) ? "" : "cv-print-empty"
@@ -320,13 +329,14 @@ export default function CvDocument({
                   </button>
                 </section>
               )}
-              <section
-                className={`cv-document-languages ${
-                  cv.languages.some((language) => hasText(language.name))
-                    ? ""
-                    : "cv-print-empty"
-                }`}
-              >
+              {cv.template !== "classic" ? (
+                <section
+                  className={`cv-document-languages ${
+                    cv.languages.some((language) => hasText(language.name))
+                      ? ""
+                      : "cv-print-empty"
+                  }`}
+                >
                 <h3>Languages</h3>
                 {cv.languages.map((language, index) => (
                   <div
@@ -377,7 +387,8 @@ export default function CvDocument({
                 >
                   + Add language
                 </button>
-              </section>
+                </section>
+              ) : null}
               {cv.template === "minimal" ? (
                 <section
                   className={`cv-document-interests cv-document-references ${
@@ -588,31 +599,23 @@ export default function CvDocument({
                         }
                       />
                     </div>
-                    <div
-                      className={`cv-document-dates ${
+                    <CvDateRange
+                      className={
                         hasAnyText(entry.startDate, entry.endDate)
                           ? ""
                           : "cv-print-empty"
-                      }`}
-                    >
-                      <CvInlineField
-                        label={`Education start date ${index + 1}`}
-                        value={entry.startDate}
-                        onChange={(value) =>
-                          updateEntry("education", index, "startDate", value)
-                        }
-                        placeholder="From"
-                      />
-                      <span>–</span>
-                      <CvInlineField
-                        label={`Education end date ${index + 1}`}
-                        value={entry.endDate}
-                        onChange={(value) =>
-                          updateEntry("education", index, "endDate", value)
-                        }
-                        placeholder="To"
-                      />
-                    </div>
+                      }
+                      startLabel={`Education start date ${index + 1}`}
+                      startValue={entry.startDate}
+                      onStartChange={(value) =>
+                        updateEntry("education", index, "startDate", value)
+                      }
+                      endLabel={`Education end date ${index + 1}`}
+                      endValue={entry.endDate}
+                      onEndChange={(value) =>
+                        updateEntry("education", index, "endDate", value)
+                      }
+                    />
                     <CvInlineField
                       label={`Education details ${index + 1}`}
                       value={entry.description}
@@ -747,35 +750,29 @@ export default function CvDocument({
                         className={
                           isReorderedEntryLayout
                             ? "cv-inline-organization cv-inline-strong"
-                            : ""
+                            : cv.template === "classic"
+                              ? "cv-inline-strong"
+                              : ""
                         }
                       />
                     </div>
-                    <div
-                      className={`cv-document-dates ${
+                    <CvDateRange
+                      className={
                         hasAnyText(entry.startDate, entry.endDate)
                           ? ""
                           : "cv-print-empty"
-                      }`}
-                    >
-                      <CvInlineField
-                        label={`Work start date ${index + 1}`}
-                        value={entry.startDate}
-                        onChange={(value) =>
-                          updateEntry("experience", index, "startDate", value)
-                        }
-                        placeholder="From"
-                      />
-                      <span>–</span>
-                      <CvInlineField
-                        label={`Work end date ${index + 1}`}
-                        value={entry.endDate}
-                        onChange={(value) =>
-                          updateEntry("experience", index, "endDate", value)
-                        }
-                        placeholder="To"
-                      />
-                    </div>
+                      }
+                      startLabel={`Work start date ${index + 1}`}
+                      startValue={entry.startDate}
+                      onStartChange={(value) =>
+                        updateEntry("experience", index, "startDate", value)
+                      }
+                      endLabel={`Work end date ${index + 1}`}
+                      endValue={entry.endDate}
+                      onEndChange={(value) =>
+                        updateEntry("experience", index, "endDate", value)
+                      }
+                    />
                     <CvBulletListField
                       label={`Work experience details ${index + 1}`}
                       value={entry.description}

@@ -76,6 +76,158 @@ export function CvInlineField({
   );
 }
 
+const CV_MONTH_PREFIXES = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
+const CV_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function parseCvMonth(value) {
+  const date = typeof value === "string" ? value.trim() : "";
+  let match = /^(\d{4})-(\d{1,2})$/.exec(date);
+
+  if (match) {
+    const month = Number(match[2]);
+    return month >= 1 && month <= 12
+      ? { year: Number(match[1]), month }
+      : null;
+  }
+
+  match = /^(\d{1,2})[/. -]+(\d{4})$/.exec(date);
+  if (match) {
+    const month = Number(match[1]);
+    return month >= 1 && month <= 12
+      ? { year: Number(match[2]), month }
+      : null;
+  }
+
+  match = /^([a-z]+)[\s,./-]+(\d{4})$/i.exec(date);
+  if (!match) return null;
+
+  const month = CV_MONTH_PREFIXES.indexOf(match[1].slice(0, 3).toLowerCase());
+  return month >= 0 ? { year: Number(match[2]), month: month + 1 } : null;
+}
+
+function formatCvMonth(value) {
+  const date = parseCvMonth(value);
+  return date
+    ? CV_MONTH_FORMATTER.format(new Date(Date.UTC(date.year, date.month - 1, 1)))
+    : value;
+}
+
+function CvMonthDateField({ label, value, onChange, placeholder }) {
+  const date = parseCvMonth(value);
+  const inputValue = date
+    ? `${date.year}-${String(date.month).padStart(2, "0")}`
+    : "";
+  const displayValue = typeof value === "string" ? value.trim() : "";
+
+  return (
+    <span className="cv-date-field">
+      <span
+        className={`cv-date-value ${
+          displayValue ? "" : "cv-date-placeholder"
+        }`}
+        aria-hidden="true"
+      >
+        {displayValue ? formatCvMonth(displayValue) : placeholder}
+      </span>
+      <svg
+        className="cv-date-calendar"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 10h18" />
+      </svg>
+      <input
+        className="cv-date-month-input"
+        type="month"
+        aria-label={label}
+        value={inputValue}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </span>
+  );
+}
+
+export function CvDateRange({
+  className = "",
+  startLabel,
+  startValue,
+  onStartChange,
+  endLabel,
+  endValue,
+  onEndChange,
+}) {
+  const previousEndValue = useRef("");
+  const isPresent =
+    typeof endValue === "string" && endValue.trim().toLowerCase() === "present";
+
+  return (
+    <div className={`cv-document-dates ${className}`}>
+      <CvMonthDateField
+        label={startLabel}
+        value={startValue}
+        onChange={onStartChange}
+        placeholder="From"
+      />
+      <span aria-hidden="true">–</span>
+      {isPresent ? null : (
+        <CvMonthDateField
+          label={endLabel}
+          value={endValue}
+          onChange={(value) => {
+            previousEndValue.current = value;
+            onEndChange(value);
+          }}
+          placeholder="To"
+        />
+      )}
+      <label className="cv-date-current-toggle">
+        <input
+          type="checkbox"
+          checked={isPresent}
+          onChange={(event) => {
+            if (event.target.checked) {
+              previousEndValue.current = endValue || "";
+              onEndChange("Present");
+            } else {
+              onEndChange(previousEndValue.current);
+            }
+          }}
+        />
+        <span>Present</span>
+      </label>
+      {isPresent ? (
+        <span className="cv-date-present-print">Present</span>
+      ) : null}
+    </div>
+  );
+}
+
 export function CvBulletListField({
   label,
   value,

@@ -33,7 +33,7 @@ export const templates = [
   {
     id: "classic",
     label: "Clean Professional",
-    description: "A clean single-column layout with a photo and blue accents.",
+    description: "A clean single-column layout with an optional photo.",
   },
   {
     id: "modern",
