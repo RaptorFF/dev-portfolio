@@ -291,24 +291,14 @@ export default function CvDocument({
                         className={hasText(interest) ? "" : "cv-print-empty"}
                         key={`cv-interest-${index}`}
                       >
-                        <div className="cv-document-bullet-field">
-                          {cv.template === "classic" ? (
-                            <span
-                              className="cv-document-bullet"
-                              aria-hidden="true"
-                            >
-                              &#8226;
-                            </span>
-                          ) : null}
-                          <CvInlineField
-                            label={`Interest ${index + 1}`}
-                            value={interest}
-                            onChange={(value) =>
-                              updateTextList("interests", index, value)
-                            }
-                            placeholder="Add an interest"
-                          />
-                        </div>
+                        <CvInlineField
+                          label={`Interest ${index + 1}`}
+                          value={interest}
+                          onChange={(value) =>
+                            updateTextList("interests", index, value)
+                          }
+                          placeholder="Add an interest"
+                        />
                         <button
                           className="cv-document-remove"
                           type="button"
@@ -345,24 +335,14 @@ export default function CvDocument({
                     }`}
                     key={`cv-language-${index}`}
                   >
-                    <div className="cv-document-bullet-field">
-                      {cv.template === "classic" ? (
-                        <span
-                          className="cv-document-bullet"
-                          aria-hidden="true"
-                        >
-                          &#8226;
-                        </span>
-                      ) : null}
-                      <CvInlineField
-                        label={`Language ${index + 1}`}
-                        value={language.name || ""}
-                        onChange={(value) =>
-                          updateEntry("languages", index, "name", value)
-                        }
-                        placeholder="Add a language"
-                      />
-                    </div>
+                    <CvInlineField
+                      label={`Language ${index + 1}`}
+                      value={language.name || ""}
+                      onChange={(value) =>
+                        updateEntry("languages", index, "name", value)
+                      }
+                      placeholder="Add a language"
+                    />
                     <CvStarRating
                       label={`${language.name || "Language"} level`}
                       level={language.level || 3}

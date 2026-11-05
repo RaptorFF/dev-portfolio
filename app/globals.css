@@ -766,15 +766,6 @@ a {
   line-height: 1.4;
 }
 
-.cv-document-header p,
-.cv-document section p,
-.cv-document-entry p {
-  margin: 6px 0 0;
-  color: #50505b;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
 .cv-document .cv-document-sidebar section > h3 {
   color: #f3d985;
 }
@@ -796,7 +787,6 @@ a {
   text-transform: uppercase;
 }
 
-.cv-document-personal p,
 .cv-document-personal a {
   margin: 0;
   color: #e2e8f0;
@@ -832,12 +822,6 @@ a {
   min-width: 0;
 }
 
-.cv-document-language > span {
-  color: #f8fafc;
-  font-size: 0.82rem;
-  overflow-wrap: anywhere;
-}
-
 .cv-document-sidebar .cv-star-rating {
   flex: 0 0 auto;
   gap: 0;
@@ -871,12 +855,6 @@ a {
   border-bottom: 1px solid #e8e9ed;
 }
 
-.cv-document-skill > span {
-  color: #20212a;
-  font-size: 0.88rem;
-  overflow-wrap: anywhere;
-}
-
 .cv-document-main .cv-star-rating span {
   font-size: 1rem;
 }
@@ -892,17 +870,9 @@ a {
   gap: 2px;
 }
 
-.cv-document-entry strong {
-  color: #20212a;
-}
-
 .cv-document-entry span {
   color: #666672;
   font-size: 0.9rem;
-}
-
-.cv-document-entry p {
-  grid-column: 1 / -1;
 }
 
 .cv-document-role-details {
@@ -973,25 +943,15 @@ a {
 }
 
 .cv-template-classic .cv-document-personal strong,
-.cv-template-classic .cv-document-personal p,
 .cv-template-classic .cv-document-personal a,
-.cv-template-classic .cv-document-language > span,
 .cv-template-minimal .cv-document-personal strong,
-.cv-template-minimal .cv-document-personal p,
-.cv-template-minimal .cv-document-personal a,
-.cv-template-minimal .cv-document-language > span {
+.cv-template-minimal .cv-document-personal a {
   color: #50505b;
 }
 
 .cv-template-classic .cv-document-header h3,
 .cv-template-classic .cv-document section > h3 {
   color: #333;
-}
-
-.cv-template-classic .cv-document-skills li,
-.cv-template-minimal .cv-document-skills li {
-  border-color: #d8d8dc;
-  color: #50505b;
 }
 
 .cv-template-minimal .cv-document {
@@ -1354,9 +1314,7 @@ a {
 
 .cv-template-modern .cv-document-sidebar .cv-inline-field,
 .cv-template-modern .cv-document-sidebar .cv-document-personal strong,
-.cv-template-modern .cv-document-sidebar .cv-document-personal p,
-.cv-template-modern .cv-document-sidebar .cv-document-personal a,
-.cv-template-modern .cv-document-sidebar .cv-document-language > span {
+.cv-template-modern .cv-document-sidebar .cv-document-personal a {
   color: var(--cv-modern-sidebar-foreground);
 }
 
@@ -1416,10 +1374,7 @@ a {
 }
 
 .cv-template-classic .cv-document-personal strong,
-.cv-template-classic .cv-document-personal p,
-.cv-template-classic .cv-document-personal a,
-.cv-template-classic .cv-document-language > span,
-.cv-template-classic .cv-document-bullet {
+.cv-template-classic .cv-document-personal a {
   color: #465566;
 }
 
@@ -1620,9 +1575,7 @@ a {
 }
 
 .cv-template-minimal .cv-document-personal strong,
-.cv-template-minimal .cv-document-personal p,
-.cv-template-minimal .cv-document-personal a,
-.cv-template-minimal .cv-document-language > span {
+.cv-template-minimal .cv-document-personal a {
   color: #465566;
 }
 
@@ -1707,18 +1660,6 @@ a {
 
 .cv-inline-link > a {
   flex: 0 0 auto;
-}
-
-.cv-document-bullet-field {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.cv-document-bullet-field .cv-inline-field {
-  width: 100%;
 }
 
 .cv-document-entry .cv-inline-description {
@@ -2224,9 +2165,7 @@ a {
 }
 
 .cv-template-minimal .cv-document-personal strong,
-.cv-template-minimal .cv-document-personal p,
 .cv-template-minimal .cv-document-personal a,
-.cv-template-minimal .cv-document-language > span,
 .cv-template-minimal .cv-document-sidebar .cv-inline-field {
   color: var(--cv-minimal-sidebar-foreground);
 }
@@ -2494,7 +2433,6 @@ a {
 }
 
 .cv-template-classic .cv-document-personal .cv-inline-field,
-.cv-template-classic .cv-document-personal p,
 .cv-template-classic .cv-document-personal a {
   color: #373b40;
   font-size: 0.88rem;
@@ -2881,16 +2819,6 @@ a {
 
 .cv-template-classic .cv-document-skill > .cv-inline-field {
   grid-column: 2;
-}
-
-.cv-layout.cv-template-classic .cv-document-bullet-field {
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.cv-layout.cv-template-classic .cv-document-bullet-field .cv-inline-field {
-  font-size: 1rem;
-  line-height: 1.5;
 }
 
 .cv-template-classic .cv-document-skill > .cv-star-rating {
@@ -4179,7 +4107,6 @@ a {
   }
 
   .cv-layout.cv-template-classic .cv-document-personal .cv-inline-field,
-  .cv-layout.cv-template-classic .cv-document-personal p,
   .cv-layout.cv-template-classic .cv-document-personal a {
     font-size: 13px;
     line-height: 1.4;
