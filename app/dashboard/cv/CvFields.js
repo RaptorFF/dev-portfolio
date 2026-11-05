@@ -138,7 +138,7 @@ function CvMonthDateField({ label, value, onChange, placeholder }) {
   const displayValue = typeof value === "string" ? value.trim() : "";
 
   return (
-    <span className="cv-date-field">
+    <span className={`cv-date-field ${displayValue ? "" : "cv-date-empty"}`}>
       <span
         className={`cv-date-value ${
           displayValue ? "" : "cv-date-placeholder"
@@ -147,26 +147,12 @@ function CvMonthDateField({ label, value, onChange, placeholder }) {
       >
         {displayValue ? formatCvMonth(displayValue) : placeholder}
       </span>
-      <svg
-        className="cv-date-calendar"
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <rect x="3" y="5" width="18" height="16" rx="2" />
-        <path d="M16 3v4M8 3v4M3 10h18" />
-      </svg>
       <input
         className="cv-date-month-input"
         type="month"
         aria-label={label}
         value={inputValue}
+        onClick={(event) => event.currentTarget.showPicker?.()}
         onChange={(event) => onChange(event.target.value)}
       />
     </span>
@@ -194,7 +180,9 @@ export function CvDateRange({
         onChange={onStartChange}
         placeholder="From"
       />
-      <span aria-hidden="true">–</span>
+      <span className="cv-date-separator" aria-hidden="true">
+        –
+      </span>
       {isPresent ? null : (
         <CvMonthDateField
           label={endLabel}

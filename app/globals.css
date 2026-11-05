@@ -1897,19 +1897,33 @@ a {
 .cv-date-field {
   position: relative;
   display: inline-flex;
-  flex: 0 0 5em;
+  flex: 0 0 6em;
   align-items: center;
-  width: 5em;
+  width: 6em;
   min-width: 0;
+}
+
+.cv-document-dates > .cv-date-field.cv-date-empty {
+  flex: 0 0 3.75em;
+  width: 3.75em;
+}
+
+.cv-date-field.cv-date-empty .cv-date-value {
+  text-align: center;
 }
 
 .cv-date-value {
   display: block;
   width: 100%;
-  padding: 2px 14px 2px 0;
+  padding: 2px 0;
   overflow: hidden;
   text-align: right;
   white-space: nowrap;
+}
+
+.cv-document-dates > .cv-date-field ~ .cv-date-field:not(.cv-date-empty)
+  .cv-date-value {
+  text-align: left;
 }
 
 .cv-date-placeholder {
@@ -1933,15 +1947,6 @@ a {
 .cv-date-field:focus-within {
   outline: 1px solid #4b82ad;
   outline-offset: 2px;
-}
-
-.cv-date-calendar {
-  position: absolute;
-  top: 50%;
-  right: 1px;
-  pointer-events: none;
-  opacity: 0.65;
-  transform: translateY(-50%);
 }
 
 .cv-date-current-toggle {
@@ -1975,6 +1980,11 @@ a {
   color: #666672;
   font-size: 0.8rem;
   text-align: center;
+}
+
+.cv-document-dates > span.cv-date-separator {
+  flex: 0 0 0.75em;
+  min-width: 0;
 }
 
 .cv-document-main .cv-document-remove {
@@ -2593,11 +2603,6 @@ a {
   justify-self: end;
   width: auto;
   white-space: nowrap;
-}
-
-.cv-template-classic .cv-document-dates .cv-date-field {
-  flex-basis: 5em;
-  width: 5em;
 }
 
 .cv-template-classic .cv-document-dates .cv-date-value {
@@ -4137,7 +4142,6 @@ a {
   }
 
   .cv-date-month-input,
-  .cv-date-calendar,
   .cv-date-current-toggle,
   .cv-date-placeholder {
     display: none !important;
