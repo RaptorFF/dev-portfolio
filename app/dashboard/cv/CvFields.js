@@ -47,6 +47,23 @@ export function CvInlineField({
     textarea.style.height = `${textarea.scrollHeight}px`;
   }, [multiline, value]);
 
+  useLayoutEffect(() => {
+    if (!multiline || !textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+    let previousWidth = textarea.getBoundingClientRect().width;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width === previousWidth) return;
+
+      previousWidth = entry.contentRect.width;
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    });
+
+    observer.observe(textarea);
+    return () => observer.disconnect();
+  }, [multiline]);
+
   const fieldProps = {
     className: `cv-inline-field ${className}`,
     "aria-label": label,
