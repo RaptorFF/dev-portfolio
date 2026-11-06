@@ -2343,7 +2343,9 @@ a {
 }
 
 .cv-template-classic .cv-document-photo img {
-  border: 0;
+  border: 6px solid #fff;
+  outline: 1px solid #d6dee7;
+  box-shadow: 0 4px 12px rgba(31, 45, 61, 0.18);
 }
 
 .cv-template-classic .cv-document-photo-placeholder {
