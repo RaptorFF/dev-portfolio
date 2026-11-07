@@ -882,34 +882,6 @@ a {
   min-width: 0;
 }
 
-.cv-document-role-line {
-  display: grid;
-  grid-template-columns: 8px minmax(0, 1fr);
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.cv-document-role-bullet {
-  width: 4px;
-  height: 4px;
-  margin: 0 auto;
-  border-radius: 50%;
-  background: #374151;
-}
-
-.cv-document-entry
-  .cv-document-role-line
-  > .cv-inline-description.cv-role-detail-line {
-  grid-column: 2;
-  min-height: 1.6em;
-  padding: 2px 0;
-}
-
-.cv-role-detail-print-value {
-  display: none;
-}
-
 .cv-template-classic .cv-document {
   padding: 32px;
   display: grid;
@@ -1626,6 +1598,83 @@ a {
 
 .cv-inline-print-value {
   display: none;
+}
+
+.cv-rich-text {
+  position: relative;
+  min-width: 0;
+}
+
+.cv-rich-text-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 6px;
+  padding: 6px;
+  border: 1px solid #d7dce2;
+  border-radius: 8px;
+  background: #fff;
+  color: #20212a;
+}
+
+.cv-rich-text-toolbar button,
+.cv-rich-text-toolbar select {
+  min-height: 30px;
+  padding: 4px 7px;
+  border: 1px solid #d7dce2;
+  border-radius: 5px;
+  background: #fff;
+  color: #20212a;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.cv-rich-text-toolbar button:hover,
+.cv-rich-text-toolbar select:hover {
+  background: #f1f5f9;
+}
+
+.cv-rich-text-color {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #20212a;
+  font-size: 0.75rem;
+}
+
+.cv-rich-text-color input {
+  width: 30px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid #d7dce2;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.cv-rich-text-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.cv-inline-multiline-field:empty::before {
+  color: #8693a0;
+  content: attr(data-placeholder);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.cv-rich-text-bullets .cv-inline-multiline-field ul,
+.cv-rich-text-bullets .cv-inline-print-value ul {
+  margin: 0;
+  padding-left: 1.2em;
 }
 
 .cv-document-entry .cv-education-description {
@@ -2551,14 +2600,6 @@ a {
 
 .cv-template-classic .cv-document-role-details {
   gap: 0;
-}
-
-.cv-template-classic .cv-document-role-line {
-  gap: 5px;
-}
-
-.cv-template-classic .cv-document-role-bullet {
-  background: #174b73;
 }
 
 .cv-template-classic .cv-document section > h3 {
@@ -4148,22 +4189,15 @@ a {
     border-bottom-color: transparent !important;
   }
 
+  .cv-rich-text-toolbar {
+    display: none !important;
+  }
+
   .cv-inline-multiline-field {
     display: none !important;
   }
 
-  .cv-document-role-line > textarea.cv-role-detail-line {
-    display: none !important;
-  }
-
   .cv-inline-print-value {
-    display: block !important;
-    height: auto;
-    overflow: visible;
-    white-space: pre-wrap;
-  }
-
-  .cv-role-detail-print-value {
     display: block !important;
     height: auto;
     overflow: visible;

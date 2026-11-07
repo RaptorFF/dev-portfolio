@@ -1,4 +1,317 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+
+const CV_RICH_TEXT_TAGS = new Set([
+  "B",
+  "BR",
+  "DIV",
+  "EM",
+  "FONT",
+  "I",
+  "LI",
+  "OL",
+  "P",
+  "SPAN",
+  "STRONG",
+  "U",
+  "UL",
+]);
+const CV_FONT_FAMILIES = new Set([
+  "Arial",
+  "Georgia",
+  "Tahoma",
+  "Times New Roman",
+  "Verdana",
+]);
+const CV_FONT_SIZES = {
+  1: "12px",
+  2: "14px",
+  3: "16px",
+  4: "18px",
+  5: "24px",
+};
+
+function sanitizeCvRichText(value) {
+  if (typeof window === "undefined") return "";
+
+  const source = String(value || "");
+  const parser = new DOMParser();
+  const parsed = parser.parseFromString(source, "text/html");
+  const output = document.createElement("div");
+
+  function copyNode(node, parent) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      parent.append(document.createTextNode(node.textContent || ""));
+      return;
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+    const tag = node.tagName;
+    if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME") return;
+    if (!CV_RICH_TEXT_TAGS.has(tag)) {
+      Array.from(node.childNodes).forEach((child) => copyNode(child, parent));
+      return;
+    }
+
+    const cleanTag = tag === "FONT" ? "SPAN" : tag.toLowerCase();
+    const cleanNode = document.createElement(cleanTag);
+    if (tag === "FONT") {
+      const family = node.getAttribute("face");
+      const size = CV_FONT_SIZES[node.getAttribute("size")];
+      const color = node.getAttribute("color");
+      if (family && CV_FONT_FAMILIES.has(family)) {
+        cleanNode.style.fontFamily = family;
+      }
+      if (size) cleanNode.style.fontSize = size;
+      if (color && /^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(color)) {
+        cleanNode.style.color = color;
+      }
+    }
+
+    const styles = node.style;
+    if (styles) {
+      const color = styles.color;
+      const fontSize = styles.fontSize;
+      const fontFamily = styles.fontFamily.replaceAll('"', "").split(",")[0].trim();
+      if (color && /^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(color)) {
+        cleanNode.style.color = color;
+      }
+      if (/^(?:12|14|16|18|24)px$/.test(fontSize)) {
+        cleanNode.style.fontSize = fontSize;
+      }
+      if (CV_FONT_FAMILIES.has(fontFamily)) {
+        cleanNode.style.fontFamily = fontFamily;
+      }
+    }
+
+    Array.from(node.childNodes).forEach((child) =>
+      copyNode(child, cleanNode),
+    );
+    parent.append(cleanNode);
+  }
+
+  Array.from(parsed.body.childNodes).forEach((child) =>
+    copyNode(child, output),
+  );
+
+  return output.innerHTML;
+}
+
+function prepareCvRichText(value, bulletList) {
+  const source = typeof value === "string" ? value : "";
+  if (typeof document === "undefined") return source;
+  const hasSupportedMarkup =
+    /<\/?(?:b|br|div|em|font|i|li|ol|p|span|strong|u|ul)\b/i.test(source);
+
+  if (bulletList && source && !hasSupportedMarkup) {
+    const list = document.createElement("ul");
+    source.split(/\r?\n/).forEach((line) => {
+      const item = document.createElement("li");
+      item.textContent = line.replace(/^\s*•\s?/, "");
+      list.append(item);
+    });
+    return sanitizeCvRichText(list.outerHTML);
+  }
+
+  return sanitizeCvRichText(source);
+}
+
+function CvRichTextEditor({
+  label,
+  value,
+  onChange,
+  placeholder,
+  className = "",
+  bulletList = false,
+}) {
+  const editorRef = useRef(null);
+  const printRef = useRef(null);
+  const savedSelection = useRef(null);
+  const [active, setActive] = useState(false);
+  const safeValue = prepareCvRichText(value, bulletList);
+  const emptyContent = bulletList ? "<ul><li><br></li></ul>" : "";
+
+  useLayoutEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    if (sanitizeCvRichText(editor.innerHTML) !== safeValue) {
+      editor.innerHTML = safeValue || emptyContent;
+    }
+    if (printRef.current) printRef.current.innerHTML = safeValue;
+  }, [emptyContent, safeValue]);
+
+  function saveSelection() {
+    const selection = window.getSelection();
+    const editor = editorRef.current;
+    if (
+      selection?.rangeCount &&
+      editor?.contains(selection.getRangeAt(0).commonAncestorContainer)
+    ) {
+      savedSelection.current = selection.getRangeAt(0).cloneRange();
+    }
+  }
+
+  function restoreSelection() {
+    const selection = window.getSelection();
+    if (!selection || !savedSelection.current) return;
+    selection.removeAllRanges();
+    selection.addRange(savedSelection.current);
+  }
+
+  function applyCommand(command, commandValue) {
+    editorRef.current?.focus();
+    restoreSelection();
+    document.execCommand(command, false, commandValue);
+    saveSelection();
+    onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
+  }
+
+  function handleInput() {
+    saveSelection();
+    onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
+  }
+
+  function insertPlainText(event) {
+    if (!event.clipboardData) return;
+    event.preventDefault();
+    document.execCommand(
+      "insertText",
+      false,
+      event.clipboardData.getData("text/plain"),
+    );
+    handleInput();
+  }
+
+  const toolbarProps = {
+    onMouseDown: (event) => {
+      saveSelection();
+      if (
+        event.target.tagName !== "SELECT" &&
+        event.target.tagName !== "INPUT"
+      ) {
+        event.preventDefault();
+      }
+    },
+  };
+
+  return (
+    <div
+      className={`cv-rich-text ${bulletList ? "cv-rich-text-bullets" : ""}`}
+      onFocusCapture={() => setActive(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setActive(false);
+          if (editorRef.current) {
+            editorRef.current.innerHTML =
+              prepareCvRichText(editorRef.current.innerHTML, bulletList) ||
+              emptyContent;
+          }
+        }
+      }}
+    >
+      {active ? (
+        <div
+          {...toolbarProps}
+          className="cv-rich-text-toolbar"
+          role="toolbar"
+          aria-label={`${label} formatting`}
+        >
+          <label>
+            <span className="cv-rich-text-visually-hidden">Font</span>
+            <select
+              aria-label="Font"
+              defaultValue=""
+              onChange={(event) => {
+                if (event.target.value) {
+                  applyCommand("fontName", event.target.value);
+                  event.target.value = "";
+                }
+              }}
+            >
+              <option value="">Font</option>
+              {[...CV_FONT_FAMILIES].map((font) => (
+                <option key={font} value={font}>
+                  {font}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span className="cv-rich-text-visually-hidden">Font size</span>
+            <select
+              aria-label="Font size"
+              defaultValue=""
+              onChange={(event) => {
+                const size = event.target.value;
+                if (size) {
+                  applyCommand("fontSize", size);
+                  event.target.value = "";
+                }
+              }}
+            >
+              <option value="">Size</option>
+              {[
+                ["1", "12"],
+                ["2", "14"],
+                ["3", "16"],
+                ["4", "18"],
+                ["5", "24"],
+              ].map(([value, labelValue]) => (
+                <option key={value} value={value}>
+                  {labelValue}px
+                </option>
+              ))}
+            </select>
+          </label>
+          {[
+            ["bold", "Bold", "B"],
+            ["italic", "Italic", "I"],
+            ["underline", "Underline", "U"],
+            ["insertUnorderedList", "Bulleted list", "• List"],
+          ].map(([command, labelValue, text]) => (
+            <button
+              key={command}
+              type="button"
+              aria-label={labelValue}
+              title={labelValue}
+              onClick={() => applyCommand(command)}
+            >
+              {text}
+            </button>
+          ))}
+          <label className="cv-rich-text-color">
+            <span>Text color</span>
+            <input
+              type="color"
+              aria-label="Text color"
+              defaultValue="#20212a"
+              onChange={(event) => applyCommand("foreColor", event.target.value)}
+            />
+          </label>
+        </div>
+      ) : null}
+      <div
+        ref={editorRef}
+        className={`cv-inline-field cv-inline-multiline-field ${className}`}
+        role="textbox"
+        aria-label={label}
+        aria-multiline="true"
+        contentEditable
+        suppressContentEditableWarning
+        data-placeholder={placeholder}
+        onInput={handleInput}
+        onKeyUp={saveSelection}
+        onMouseUp={saveSelection}
+        onPaste={insertPlainText}
+      />
+      <div
+        ref={printRef}
+        className="cv-inline-field cv-inline-print-value"
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
 
 export function CvStarRating({ level, label, onChange }) {
   return (
@@ -37,33 +350,6 @@ export function CvInlineField({
   className = "",
   multiline = false,
 }) {
-  const textareaRef = useRef(null);
-
-  useLayoutEffect(() => {
-    if (!multiline || !textareaRef.current) return;
-
-    const textarea = textareaRef.current;
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [multiline, value]);
-
-  useLayoutEffect(() => {
-    if (!multiline || !textareaRef.current) return;
-
-    const textarea = textareaRef.current;
-    let previousWidth = textarea.getBoundingClientRect().width;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry.contentRect.width === previousWidth) return;
-
-      previousWidth = entry.contentRect.width;
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    });
-
-    observer.observe(textarea);
-    return () => observer.disconnect();
-  }, [multiline]);
-
   const fieldProps = {
     className: `cv-inline-field ${className}`,
     "aria-label": label,
@@ -73,21 +359,13 @@ export function CvInlineField({
   };
 
   return multiline ? (
-    <>
-      <textarea
-        {...fieldProps}
-        className={`${fieldProps.className} cv-inline-multiline-field`}
-        ref={textareaRef}
-        rows={1}
-      />
-      <div
-        className={`${fieldProps.className} cv-inline-print-value`}
-        aria-hidden="true"
-        style={{ display: "none" }}
-      >
-        {value}
-      </div>
-    </>
+    <CvRichTextEditor
+      label={label}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={className}
+    />
   ) : (
     <input {...fieldProps} />
   );
@@ -240,99 +518,16 @@ export function CvBulletListField({
   placeholder,
   className = "",
 }) {
-  const textareaRefs = useRef([]);
-  const pendingFocus = useRef(null);
-  const lines = String(value || "")
-    .split(/\r?\n/)
-    .map((line) => line.replace(/^\s*•\s?/, ""));
-
-  useLayoutEffect(() => {
-    textareaRefs.current.forEach((textarea) => {
-      if (!textarea) return;
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    });
-
-    if (pendingFocus.current) {
-      const { index, position } = pendingFocus.current;
-      const textarea = textareaRefs.current[index];
-      if (textarea) {
-        textarea.focus();
-        textarea.setSelectionRange(position, position);
-      }
-      pendingFocus.current = null;
-    }
-  }, [value]);
-
-  function updateLines(nextLines, focus) {
-    pendingFocus.current = focus || null;
-    onChange(nextLines.join("\n"));
-  }
-
   return (
     <div className={`cv-document-role-details ${className}`}>
-      {lines.map((line, index) => (
-        <div className="cv-document-role-line" key={index}>
-          <span className="cv-document-role-bullet" aria-hidden="true" />
-          <textarea
-            ref={(textarea) => {
-              textareaRefs.current[index] = textarea;
-            }}
-            className="cv-inline-field cv-inline-description cv-role-detail-line"
-            aria-label={`${label}, item ${index + 1}`}
-            placeholder={index === 0 ? placeholder : ""}
-            value={line}
-            rows={1}
-            onChange={(event) => {
-              const nextLines = [...lines];
-              nextLines[index] = event.target.value;
-              updateLines(nextLines);
-            }}
-            onKeyDown={(event) => {
-              const textarea = event.currentTarget;
-              if (event.key === "Enter") {
-                event.preventDefault();
-                const before = line.slice(0, textarea.selectionStart);
-                const after = line.slice(textarea.selectionEnd);
-                const nextLines = [...lines];
-                nextLines.splice(index, 1, before, after);
-                updateLines(nextLines, { index: index + 1, position: 0 });
-              } else if (
-                event.key === "Backspace" &&
-                index > 0 &&
-                textarea.selectionStart === 0 &&
-                textarea.selectionEnd === 0
-              ) {
-                event.preventDefault();
-                const previousLine = lines[index - 1];
-                const nextLines = [...lines];
-                nextLines.splice(index - 1, 2, previousLine + line);
-                updateLines(nextLines, {
-                  index: index - 1,
-                  position: previousLine.length,
-                });
-              } else if (
-                event.key === "Delete" &&
-                index < lines.length - 1 &&
-                textarea.selectionStart === line.length &&
-                textarea.selectionEnd === line.length
-              ) {
-                event.preventDefault();
-                const nextLines = [...lines];
-                nextLines.splice(index, 2, line + lines[index + 1]);
-                updateLines(nextLines, { index, position: line.length });
-              }
-            }}
-          />
-          <div
-            className="cv-inline-field cv-inline-description cv-role-detail-line cv-role-detail-print-value"
-            aria-hidden="true"
-            style={{ display: "none" }}
-          >
-            {line}
-          </div>
-        </div>
-      ))}
+      <CvRichTextEditor
+        label={label}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="cv-inline-description"
+        bulletList
+      />
     </div>
   );
 }

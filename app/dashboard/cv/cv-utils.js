@@ -80,7 +80,16 @@ export function getContrastColor(hexColor, darkColor = "#20212a") {
 }
 
 export function hasText(value) {
-  return typeof value === "string" && value.trim().length > 0;
+  return (
+    typeof value === "string" &&
+    value
+      .replace(
+        /<\/?(?:b|br|div|em|font|i|li|ol|p|span|strong|u|ul)\b[^>]*>/gi,
+        "",
+      )
+      .replace(/&nbsp;|&#160;/gi, " ")
+      .trim().length > 0
+  );
 }
 
 export function hasAnyText(...values) {
