@@ -30,6 +30,15 @@ const CV_FONT_SIZES = {
   5: "24px",
 };
 
+function getCvColorInputValue(color) {
+  const channels = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(color);
+  if (!channels) return "#000000";
+  return `#${channels
+    .slice(1)
+    .map((channel) => Number(channel).toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
 function sanitizeCvRichText(value) {
   if (typeof window === "undefined") return "";
 
@@ -161,8 +170,24 @@ function CvRichTextEditor({
   function updateFormatState() {
     const selection = window.getSelection();
     const editor = editorRef.current;
+    if (!editor) return;
     const selectionInEditor =
       selection?.rangeCount && editor?.contains(selection.anchorNode);
+    const anchorNode = selectionInEditor ? selection.anchorNode : editor;
+    const anchorElement =
+      anchorNode?.nodeType === Node.ELEMENT_NODE
+        ? anchorNode
+        : anchorNode?.parentElement;
+    const currentFontSize = window.getComputedStyle(
+      anchorElement || editor,
+    ).fontSize;
+    const fontSize =
+      Object.entries(CV_FONT_SIZES).find(
+        ([, value]) => value === currentFontSize,
+      )?.[0] || "";
+    const color = getCvColorInputValue(
+      window.getComputedStyle(anchorElement || editor).color,
+    );
 
     setFormatState({
       bold: Boolean(selectionInEditor && document.queryCommandState("bold")),
@@ -173,6 +198,9 @@ function CvRichTextEditor({
       insertUnorderedList: Boolean(
         selectionInEditor && document.queryCommandState("insertUnorderedList"),
       ),
+      fontSize,
+      fontSizePx: currentFontSize,
+      color,
     });
   }
 
@@ -240,8 +268,9 @@ function CvRichTextEditor({
   }
 
   function handleInput() {
+    setPlaceholderSuppressed(false);
     setPlaceholderVisible(
-      !editorRef.current?.textContent?.trim() && !placeholderSuppressed,
+      !editorRef.current?.textContent?.trim(),
     );
     saveSelection();
     onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
@@ -329,6 +358,12 @@ function CvRichTextEditor({
               }}
             >
               <option value="">Size</option>
+              {formatState.fontSizePx &&
+              !Object.values(CV_FONT_SIZES).includes(formatState.fontSizePx) ? (
+                <option value="current" disabled>
+                  ✓ {formatState.fontSizePx}
+                </option>
+              ) : null}
               {[
                 ["1", "12"],
                 ["2", "14"],
@@ -337,7 +372,9 @@ function CvRichTextEditor({
                 ["5", "24"],
               ].map(([value, labelValue]) => (
                 <option key={value} value={value}>
-                  {labelValue}px
+                  {formatState.fontSize === value
+                    ? `✓ ${labelValue}px`
+                    : `${labelValue}px`}
                 </option>
               ))}
             </select>
@@ -372,7 +409,7 @@ function CvRichTextEditor({
             <input
               type="color"
               aria-label="Text color"
-              defaultValue="#20212a"
+              value={formatState.color || "#000000"}
               onChange={(event) => applyCommand("foreColor", event.target.value)}
             />
           </label>

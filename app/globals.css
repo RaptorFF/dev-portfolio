@@ -870,7 +870,7 @@ a {
   gap: 2px;
 }
 
-.cv-document-entry span {
+.cv-document-entry .cv-document-dates span {
   color: #666672;
   font-size: 0.9rem;
 }
@@ -1687,10 +1687,11 @@ a {
   pointer-events: none;
 }
 
-.cv-inline-multiline-field ul,
-.cv-inline-print-value ul {
+.cv-rich-text .cv-inline-multiline-field ul,
+.cv-rich-text .cv-inline-print-value ul {
   margin: 0;
-  padding-left: 1.5em;
+  padding-left: 2em;
+  list-style-position: outside;
   list-style-type: disc;
 }
 
