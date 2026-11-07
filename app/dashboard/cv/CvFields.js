@@ -129,8 +129,15 @@ function CvRichTextEditor({
   const toolbarFrame = useRef(null);
   const [active, setActive] = useState(false);
   const [placeholderVisible, setPlaceholderVisible] = useState(true);
-  const safeValue = prepareCvRichText(value, bulletList);
-  const emptyContent = bulletList ? "<ul><li><br></li></ul>" : "";
+  const [placeholderSuppressed, setPlaceholderSuppressed] = useState(false);
+  const [formatState, setFormatState] = useState({});
+  const [plainTextMode, setPlainTextMode] = useState(false);
+  const safeValue = prepareCvRichText(
+    value,
+    bulletList && !plainTextMode,
+  );
+  const emptyContent =
+    bulletList && !plainTextMode ? "<ul><li><br></li></ul>" : "";
 
   function showToolbar() {
     if (toolbarFrame.current !== null) {
@@ -139,6 +146,7 @@ function CvRichTextEditor({
     toolbarFrame.current = window.requestAnimationFrame(() => {
       toolbarFrame.current = null;
       setActive(true);
+      updateFormatState();
     });
   }
 
@@ -150,16 +158,45 @@ function CvRichTextEditor({
     setActive(false);
   }
 
+  function updateFormatState() {
+    const selection = window.getSelection();
+    const editor = editorRef.current;
+    const selectionInEditor =
+      selection?.rangeCount && editor?.contains(selection.anchorNode);
+
+    setFormatState({
+      bold: Boolean(selectionInEditor && document.queryCommandState("bold")),
+      italic: Boolean(selectionInEditor && document.queryCommandState("italic")),
+      underline: Boolean(
+        selectionInEditor && document.queryCommandState("underline"),
+      ),
+      insertUnorderedList: Boolean(
+        selectionInEditor && document.queryCommandState("insertUnorderedList"),
+      ),
+    });
+  }
+
   useLayoutEffect(() => {
     const editor = editorRef.current;
     if (!editor) return;
 
-    if (sanitizeCvRichText(editor.innerHTML) !== safeValue) {
+    if (
+      sanitizeCvRichText(editor.innerHTML) !== safeValue ||
+      (bulletList && !plainTextMode && !safeValue && !editor.innerHTML)
+    ) {
       editor.innerHTML = safeValue || emptyContent;
     }
-    setPlaceholderVisible(!editor.textContent?.trim());
+    setPlaceholderVisible(
+      !editor.textContent?.trim() && !placeholderSuppressed,
+    );
     if (printRef.current) printRef.current.innerHTML = safeValue;
-  }, [emptyContent, safeValue]);
+  }, [
+    bulletList,
+    emptyContent,
+    plainTextMode,
+    placeholderSuppressed,
+    safeValue,
+  ]);
 
   useLayoutEffect(
     () => () => {
@@ -178,6 +215,7 @@ function CvRichTextEditor({
       editor?.contains(selection.getRangeAt(0).commonAncestorContainer)
     ) {
       savedSelection.current = selection.getRangeAt(0).cloneRange();
+      updateFormatState();
     }
   }
 
@@ -192,12 +230,19 @@ function CvRichTextEditor({
     editorRef.current?.focus();
     restoreSelection();
     document.execCommand(command, false, commandValue);
+    if (command === "insertUnorderedList") {
+      const listActive = document.queryCommandState(command);
+      setPlaceholderSuppressed(listActive);
+      if (bulletList) setPlainTextMode(!listActive);
+    }
     saveSelection();
     onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
   }
 
   function handleInput() {
-    setPlaceholderVisible(!editorRef.current?.textContent?.trim());
+    setPlaceholderVisible(
+      !editorRef.current?.textContent?.trim() && !placeholderSuppressed,
+    );
     saveSelection();
     onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
   }
@@ -234,7 +279,10 @@ function CvRichTextEditor({
           hideToolbar();
           if (editorRef.current) {
             editorRef.current.innerHTML =
-              prepareCvRichText(editorRef.current.innerHTML, bulletList) ||
+              prepareCvRichText(
+                editorRef.current.innerHTML,
+                bulletList && !plainTextMode,
+              ) ||
               emptyContent;
           }
         }
@@ -304,10 +352,19 @@ function CvRichTextEditor({
               key={command}
               type="button"
               aria-label={labelValue}
+              aria-pressed={formatState[command] || false}
               title={labelValue}
               onClick={() => applyCommand(command)}
             >
-              {text}
+              {command === "bold" ? (
+                <strong>{text}</strong>
+              ) : command === "italic" ? (
+                <em>{text}</em>
+              ) : command === "underline" ? (
+                <u>{text}</u>
+              ) : (
+                text
+              )}
             </button>
           ))}
           <label className="cv-rich-text-color">

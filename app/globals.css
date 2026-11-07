@@ -1637,6 +1637,18 @@ a {
   background: #f1f5f9;
 }
 
+.cv-rich-text-toolbar button[aria-pressed="true"] {
+  border-color: #2563eb;
+  background: #dbeafe;
+  color: #1e40af;
+  box-shadow: inset 0 0 0 1px #2563eb;
+}
+
+.cv-rich-text-toolbar button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
 .cv-rich-text-color {
   display: inline-flex;
   align-items: center;
@@ -1675,10 +1687,18 @@ a {
   pointer-events: none;
 }
 
-.cv-rich-text-bullets .cv-inline-multiline-field ul,
-.cv-rich-text-bullets .cv-inline-print-value ul {
+.cv-inline-multiline-field ul,
+.cv-inline-print-value ul {
   margin: 0;
-  padding-left: 1.2em;
+  padding-left: 1.5em;
+  list-style-type: disc;
+}
+
+.cv-inline-multiline-field ol,
+.cv-inline-print-value ol {
+  margin: 0;
+  padding-left: 1.5em;
+  list-style-type: decimal;
 }
 
 .cv-document-entry .cv-education-description {
