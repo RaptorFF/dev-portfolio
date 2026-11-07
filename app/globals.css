@@ -1590,6 +1590,7 @@ a {
 }
 
 .cv-inline-description {
+  position: relative;
   min-height: 3.6em;
   overflow: hidden;
   resize: none;
@@ -1664,7 +1665,10 @@ a {
   clip-path: inset(50%);
 }
 
-.cv-inline-multiline-field:empty::before {
+.cv-inline-multiline-field[data-placeholder-visible="true"]::before {
+  position: absolute;
+  top: 2px;
+  left: 0;
   color: #8693a0;
   content: attr(data-placeholder);
   opacity: 0.85;

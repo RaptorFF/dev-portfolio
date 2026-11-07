@@ -388,7 +388,7 @@ export default function CvDocument({
                           onChange={(value) =>
                             updateTextList("references", index, value)
                           }
-                          placeholder="Name and contact details"
+                          placeholder="Add a reference's name and contact details"
                           multiline
                           className="cv-inline-description"
                         />
@@ -480,7 +480,13 @@ export default function CvDocument({
                       : ""
                   }
                   onChange={(value) => updateProfileField("shortBio", value)}
-                  placeholder="Add something about yourself"
+                  placeholder={
+                    cv.template === "classic"
+                      ? "Add your professional summary"
+                      : cv.template === "minimal"
+                        ? "Add a short profile about yourself"
+                        : "Add something about yourself"
+                  }
                   multiline
                   className="cv-inline-description"
                 />
@@ -602,7 +608,7 @@ export default function CvDocument({
                       onChange={(value) =>
                         updateEntry("education", index, "description", value)
                       }
-                      placeholder="Add details"
+                      placeholder="Add your education details or achievements"
                       multiline
                       className={`cv-inline-description cv-education-description ${
                         hasText(entry.description) ? "" : "cv-print-empty"
@@ -759,7 +765,7 @@ export default function CvDocument({
                       onChange={(value) =>
                         updateEntry("experience", index, "description", value)
                       }
-                      placeholder="Add role details"
+                      placeholder="Add your responsibilities and achievements"
                       className={
                         hasText(entry.description) ? "" : "cv-print-empty"
                       }

@@ -126,9 +126,29 @@ function CvRichTextEditor({
   const editorRef = useRef(null);
   const printRef = useRef(null);
   const savedSelection = useRef(null);
+  const toolbarFrame = useRef(null);
   const [active, setActive] = useState(false);
+  const [placeholderVisible, setPlaceholderVisible] = useState(true);
   const safeValue = prepareCvRichText(value, bulletList);
   const emptyContent = bulletList ? "<ul><li><br></li></ul>" : "";
+
+  function showToolbar() {
+    if (toolbarFrame.current !== null) {
+      window.cancelAnimationFrame(toolbarFrame.current);
+    }
+    toolbarFrame.current = window.requestAnimationFrame(() => {
+      toolbarFrame.current = null;
+      setActive(true);
+    });
+  }
+
+  function hideToolbar() {
+    if (toolbarFrame.current !== null) {
+      window.cancelAnimationFrame(toolbarFrame.current);
+      toolbarFrame.current = null;
+    }
+    setActive(false);
+  }
 
   useLayoutEffect(() => {
     const editor = editorRef.current;
@@ -137,8 +157,18 @@ function CvRichTextEditor({
     if (sanitizeCvRichText(editor.innerHTML) !== safeValue) {
       editor.innerHTML = safeValue || emptyContent;
     }
+    setPlaceholderVisible(!editor.textContent?.trim());
     if (printRef.current) printRef.current.innerHTML = safeValue;
   }, [emptyContent, safeValue]);
+
+  useLayoutEffect(
+    () => () => {
+      if (toolbarFrame.current !== null) {
+        window.cancelAnimationFrame(toolbarFrame.current);
+      }
+    },
+    [],
+  );
 
   function saveSelection() {
     const selection = window.getSelection();
@@ -167,6 +197,7 @@ function CvRichTextEditor({
   }
 
   function handleInput() {
+    setPlaceholderVisible(!editorRef.current?.textContent?.trim());
     saveSelection();
     onChange(sanitizeCvRichText(editorRef.current?.innerHTML));
   }
@@ -197,10 +228,10 @@ function CvRichTextEditor({
   return (
     <div
       className={`cv-rich-text ${bulletList ? "cv-rich-text-bullets" : ""}`}
-      onFocusCapture={() => setActive(true)}
+      onFocusCapture={showToolbar}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
-          setActive(false);
+          hideToolbar();
           if (editorRef.current) {
             editorRef.current.innerHTML =
               prepareCvRichText(editorRef.current.innerHTML, bulletList) ||
@@ -299,6 +330,7 @@ function CvRichTextEditor({
         contentEditable
         suppressContentEditableWarning
         data-placeholder={placeholder}
+        data-placeholder-visible={placeholderVisible}
         onInput={handleInput}
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}
