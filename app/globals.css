@@ -2149,15 +2149,17 @@ a {
 .cv-template-minimal .cv-document-photo {
   position: absolute;
   z-index: 2;
-  top: -68px;
+  top: -90px;
   left: 50%;
   width: 180px;
   transform: translateX(-50%);
 }
 
+.cv-template-modern .cv-document-photo img,
+.cv-template-modern .cv-document-photo-placeholder,
 .cv-template-minimal .cv-document-photo img,
 .cv-template-minimal .cv-document-photo-placeholder {
-  width: 160px;
+  width: min(100%, 180px);
 }
 
 .cv-template-minimal .cv-document-photo img {
@@ -2341,7 +2343,7 @@ a {
 
   .cv-template-minimal .cv-document-photo {
     position: static;
-    width: min(100%, 160px);
+    width: min(100%, 180px);
     margin: 20px auto 0;
     transform: none;
   }
@@ -4342,7 +4344,7 @@ a {
   .cv-layout.cv-template-minimal .cv-document-photo {
     position: absolute;
     z-index: 2;
-    top: -68px;
+    top: -90px;
     left: 50%;
     width: 180px;
     margin: 0;
