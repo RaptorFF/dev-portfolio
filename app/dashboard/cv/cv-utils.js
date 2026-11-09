@@ -14,6 +14,7 @@ export const emptyProfile = {
 export const emptyCv = {
   template: "modern",
   colors: {
+    classicBackground: "#ffffff",
     modernSidebar: "#4b5563",
     minimalHeader: "#315f8b",
     minimalSidebar: "#d1d5db",
@@ -33,7 +34,8 @@ export const templates = [
   {
     id: "classic",
     label: "Clean Professional",
-    description: "A clean single-column layout with an optional photo.",
+    description:
+      "A clean single-column layout with an optional photo and customizable background.",
   },
   {
     id: "modern",
@@ -53,6 +55,9 @@ export function normalizeCvColors(colors) {
     typeof value === "string" && /^#[\da-f]{6}$/i.test(value);
 
   return {
+    classicBackground: isHexColor(colors?.classicBackground)
+      ? colors.classicBackground
+      : emptyCv.colors.classicBackground,
     modernSidebar: isHexColor(colors?.modernSidebar)
       ? colors.modernSidebar
       : emptyCv.colors.modernSidebar,

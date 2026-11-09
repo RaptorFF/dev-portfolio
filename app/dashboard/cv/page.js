@@ -340,55 +340,83 @@ export default function CvBuilderPage() {
           ))}
         </div>
 
-        {cv.template !== "classic" ? (
-          <section className="cv-color-controls" aria-label="Template colors">
-            <strong>Customize template colors</strong>
-            <div className="cv-color-control-list">
-              {cv.template === "modern" ? (
+        <section className="cv-color-controls" aria-label="Template colors">
+          <strong>Customize template colors</strong>
+          <div className="cv-color-control-list">
+            {cv.template === "classic" ? (
+              <>
+                <label className="cv-color-control">
+                  <span>Background</span>
+                  <input
+                    type="color"
+                    value={cvColors.classicBackground}
+                    onChange={(event) =>
+                      updateTemplateColor(
+                        "classicBackground",
+                        event.target.value,
+                      )
+                    }
+                    aria-label="Background color"
+                  />
+                </label>
+                <button
+                  className="cv-color-reset"
+                  type="button"
+                  onClick={() =>
+                    updateTemplateColor(
+                      "classicBackground",
+                      emptyCv.colors.classicBackground,
+                    )
+                  }
+                >
+                  Reset to default
+                </button>
+              </>
+            ) : null}
+            {cv.template === "modern" ? (
+              <label className="cv-color-control">
+                <span>Sidebar</span>
+                <input
+                  type="color"
+                  value={cvColors.modernSidebar}
+                  onChange={(event) =>
+                    updateTemplateColor("modernSidebar", event.target.value)
+                  }
+                  aria-label="Sidebar color"
+                />
+              </label>
+            ) : null}
+            {cv.template === "minimal" ? (
+              <>
+                <label className="cv-color-control">
+                  <span>Header</span>
+                  <input
+                    type="color"
+                    value={cvColors.minimalHeader}
+                    onChange={(event) =>
+                      updateTemplateColor("minimalHeader", event.target.value)
+                    }
+                    aria-label="Header color"
+                  />
+                </label>
                 <label className="cv-color-control">
                   <span>Sidebar</span>
                   <input
                     type="color"
-                    value={cvColors.modernSidebar}
+                    value={cvColors.minimalSidebar}
                     onChange={(event) =>
-                      updateTemplateColor("modernSidebar", event.target.value)
+                      updateTemplateColor(
+                        "minimalSidebar",
+                        event.target.value,
+                      )
                     }
                     aria-label="Sidebar color"
                   />
                 </label>
-              ) : null}
-              {cv.template === "minimal" ? (
-                <>
-                  <label className="cv-color-control">
-                    <span>Header</span>
-                    <input
-                      type="color"
-                      value={cvColors.minimalHeader}
-                      onChange={(event) =>
-                        updateTemplateColor("minimalHeader", event.target.value)
-                      }
-                      aria-label="Header color"
-                    />
-                  </label>
-                  <label className="cv-color-control">
-                    <span>Sidebar</span>
-                    <input
-                      type="color"
-                      value={cvColors.minimalSidebar}
-                      onChange={(event) =>
-                        updateTemplateColor(
-                          "minimalSidebar",
-                          event.target.value,
-                        )
-                      }
-                      aria-label="Sidebar color"
-                    />
-                  </label>
-                </>
-              ) : null}
-            </div>
-          </section>
-        ) : null}
+              </>
+            ) : null}
+          </div>
+        </section>
 
         <CvDocument
           profile={profile}

@@ -883,6 +883,7 @@ a {
 }
 
 .cv-template-classic .cv-document {
+  background: var(--cv-classic-background, #fff);
   padding: 32px;
   display: grid;
   align-content: start;
@@ -1021,6 +1022,27 @@ a {
   border-radius: 6px;
   background: transparent;
   cursor: pointer;
+}
+
+.cv-color-reset {
+  padding: 6px 10px;
+  color: var(--muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.cv-color-reset:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.cv-color-reset:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .cv-template-option {
@@ -2640,6 +2662,17 @@ a {
 
 .cv-template-classic .cv-document {
   font-size: 0.82rem;
+  color: var(--cv-classic-foreground, #20212a);
+}
+
+.cv-template-classic .cv-document-header {
+  color: var(--cv-classic-foreground, #20212a);
+}
+
+.cv-template-classic .cv-document-header h3,
+.cv-template-classic .cv-document-main .cv-inline-field,
+.cv-template-classic .cv-document-entry .cv-document-dates span {
+  color: var(--cv-classic-foreground, #20212a);
 }
 
 .cv-template-classic .cv-document-experience,

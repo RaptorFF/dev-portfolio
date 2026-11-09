@@ -106,6 +106,8 @@ export default function CvDocument({
           : ""
       }`}
       style={{
+        "--cv-classic-background": colors.classicBackground,
+        "--cv-classic-foreground": getContrastColor(colors.classicBackground),
         "--cv-modern-sidebar-bg": colors.modernSidebar,
         "--cv-modern-sidebar-foreground": getContrastColor(
           colors.modernSidebar,
