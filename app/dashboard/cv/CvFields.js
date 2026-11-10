@@ -475,6 +475,7 @@ export function CvInlineField({
   placeholder,
   className = "",
   multiline = false,
+  wrap = false,
 }) {
   const fieldProps = {
     className: `cv-inline-field ${className}`,
@@ -492,8 +493,52 @@ export function CvInlineField({
       placeholder={placeholder}
       className={className}
     />
+  ) : wrap ? (
+    <CvInlineWrappedField
+      {...fieldProps}
+      value={value}
+      onChange={onChange}
+    />
   ) : (
     <input {...fieldProps} />
+  );
+}
+
+function CvInlineWrappedField({
+  className,
+  label,
+  value,
+  onChange,
+  placeholder,
+}) {
+  const fieldRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const field = fieldRef.current;
+    if (!field) return;
+    field.style.height = "auto";
+    field.style.height = `${field.scrollHeight}px`;
+  }, [value]);
+
+  return (
+    <>
+      <textarea
+        ref={fieldRef}
+        className={`cv-inline-wrapped-field ${className}`}
+        aria-label={label}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        rows={1}
+        wrap="soft"
+      />
+      <div
+        className={`cv-inline-field cv-inline-print-value ${className}`}
+        aria-hidden="true"
+      >
+        {value}
+      </div>
+    </>
   );
 }
 

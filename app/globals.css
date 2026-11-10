@@ -1590,6 +1590,14 @@ a {
   overflow-wrap: anywhere;
 }
 
+.cv-inline-wrapped-field {
+  box-sizing: border-box;
+  min-height: 1.4em;
+  overflow: hidden;
+  resize: none;
+  white-space: pre-wrap;
+}
+
 .cv-inline-field:focus-visible {
   outline: 1px solid #4b82ad;
   outline-offset: 2px;
@@ -1929,6 +1937,47 @@ a {
   min-width: 0;
   color: #666672;
   font-size: 0.8rem;
+}
+
+.cv-template-modern .cv-document-education .cv-document-entry > .cv-document-dates {
+  align-self: start;
+  font-weight: 700;
+}
+
+.cv-template-modern .cv-document-experience .cv-document-entry-primary {
+  display: contents;
+}
+
+.cv-template-modern
+  .cv-document-experience
+  .cv-document-entry-primary
+  > .cv-inline-organization {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.cv-template-modern
+  .cv-document-experience
+  .cv-document-entry-primary
+  > .cv-inline-field:not(.cv-inline-organization) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.cv-template-modern .cv-document-experience .cv-document-entry > .cv-document-dates {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  justify-self: end;
+  font-weight: 700;
+}
+
+.cv-template-minimal .cv-document-entry > .cv-document-dates {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  justify-self: end;
+  font-weight: 700;
 }
 
 .cv-date-field {
@@ -2640,10 +2689,12 @@ a {
   align-self: start;
   justify-self: end;
   width: auto;
+  font-size: inherit;
   white-space: nowrap;
 }
 
 .cv-template-classic .cv-document-dates .cv-date-value {
+  font-size: inherit;
   font-weight: 700;
 }
 
@@ -4254,6 +4305,10 @@ a {
   }
 
   .cv-inline-multiline-field {
+    display: none !important;
+  }
+
+  .cv-inline-wrapped-field {
     display: none !important;
   }
 

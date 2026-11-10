@@ -580,6 +580,7 @@ export default function CvDocument({
                           updateEntry("education", index, "institution", value)
                         }
                         placeholder="Add institution"
+                        wrap={cv.template === "minimal"}
                         className={
                           isReorderedEntryLayout
                             ? "cv-inline-institution cv-inline-strong"
@@ -735,6 +736,7 @@ export default function CvDocument({
                           )
                         }
                         placeholder="Add company"
+                        wrap={cv.template === "minimal"}
                         className={
                           isReorderedEntryLayout
                             ? "cv-inline-organization cv-inline-strong"
