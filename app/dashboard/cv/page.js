@@ -136,6 +136,18 @@ export default function CvBuilderPage() {
     setEdited(true);
   }
 
+  function resetClassicColors() {
+    setCv((current) => ({
+      ...current,
+      colors: {
+        ...normalizeCvColors(current.colors),
+        classicBackground: emptyCv.colors.classicBackground,
+        classicSectionBackground: emptyCv.colors.classicSectionBackground,
+      },
+    }));
+    setEdited(true);
+  }
+
   function addEntry(section, entry) {
     updateCvList(section, (entries) => [...entries, entry]);
   }
@@ -359,15 +371,24 @@ export default function CvBuilderPage() {
                     aria-label="Background color"
                   />
                 </label>
+                <label className="cv-color-control">
+                  <span>Section headings</span>
+                  <input
+                    type="color"
+                    value={cvColors.classicSectionBackground}
+                    onChange={(event) =>
+                      updateTemplateColor(
+                        "classicSectionBackground",
+                        event.target.value,
+                      )
+                    }
+                    aria-label="Section heading background color"
+                  />
+                </label>
                 <button
                   className="cv-color-reset"
                   type="button"
-                  onClick={() =>
-                    updateTemplateColor(
-                      "classicBackground",
-                      emptyCv.colors.classicBackground,
-                    )
-                  }
+                  onClick={resetClassicColors}
                 >
                   Reset to default
                 </button>

@@ -108,6 +108,11 @@ export default function CvDocument({
       style={{
         "--cv-classic-background": colors.classicBackground,
         "--cv-classic-foreground": getContrastColor(colors.classicBackground),
+        "--cv-classic-section-background": colors.classicSectionBackground,
+        "--cv-classic-section-foreground": getContrastColor(
+          colors.classicSectionBackground,
+          "#111827",
+        ),
         "--cv-modern-sidebar-bg": colors.modernSidebar,
         "--cv-modern-sidebar-foreground": getContrastColor(
           colors.modernSidebar,

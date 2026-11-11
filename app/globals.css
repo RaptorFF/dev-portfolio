@@ -2570,7 +2570,7 @@ a {
 }
 
 .cv-template-classic .cv-document-personal strong {
-  color: #373b40;
+  color: var(--cv-classic-foreground, #20212a);
   font-size: 0.78rem;
   font-weight: 400;
   letter-spacing: 0;
@@ -2583,7 +2583,7 @@ a {
 
 .cv-template-classic .cv-document-personal .cv-inline-field,
 .cv-template-classic .cv-document-personal a {
-  color: #373b40;
+  color: var(--cv-classic-foreground, #20212a);
   font-size: 0.88rem;
   line-height: 1.4;
 }
@@ -2704,8 +2704,8 @@ a {
 
 .cv-template-classic .cv-document section > h3 {
   padding: 6px 22px;
-  color: #111827;
-  background: #d7e0e6;
+  color: var(--cv-classic-section-foreground, #111827);
+  background: var(--cv-classic-section-background, #d7e0e6);
   font-size: 0.88rem;
   letter-spacing: 0;
   line-height: 1.2;
@@ -4073,6 +4073,11 @@ a {
   margin: 0;
 }
 
+@page cv-classic {
+  size: A4;
+  margin: 0;
+}
+
 @page cv-minimal {
   size: A4;
   margin: 0;
@@ -4136,6 +4141,8 @@ a {
     grid-template-rows: minmax(74px, max-content) minmax(96px, max-content);
     gap: 18px 32px;
     padding: 46px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
     border: 0;
     border-radius: 0;
   }
@@ -4377,8 +4384,28 @@ a {
     page: cv-modern;
   }
 
+  .cv-layout.cv-template-classic {
+    page: cv-classic;
+  }
+
   .cv-layout.cv-template-minimal {
     page: cv-minimal;
+  }
+
+  .cv-layout.cv-template-classic::before {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    content: "";
+    background: var(--cv-classic-background, #fff);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .cv-layout.cv-template-classic .cv-document {
+    position: relative;
+    z-index: 1;
+    background: transparent;
   }
 
   .cv-layout.cv-template-modern .cv-document-sidebar,

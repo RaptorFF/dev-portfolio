@@ -15,6 +15,7 @@ export const emptyCv = {
   template: "modern",
   colors: {
     classicBackground: "#ffffff",
+    classicSectionBackground: "#d7e0e6",
     modernSidebar: "#4b5563",
     minimalHeader: "#315f8b",
     minimalSidebar: "#d1d5db",
@@ -58,6 +59,9 @@ export function normalizeCvColors(colors) {
     classicBackground: isHexColor(colors?.classicBackground)
       ? colors.classicBackground
       : emptyCv.colors.classicBackground,
+    classicSectionBackground: isHexColor(colors?.classicSectionBackground)
+      ? colors.classicSectionBackground
+      : emptyCv.colors.classicSectionBackground,
     modernSidebar: isHexColor(colors?.modernSidebar)
       ? colors.modernSidebar
       : emptyCv.colors.modernSidebar,
