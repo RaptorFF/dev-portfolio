@@ -4273,8 +4273,13 @@ a {
   }
 
   .cv-layout.cv-template-classic .cv-document section {
-    break-inside: avoid-page;
-    page-break-inside: avoid;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .cv-layout.cv-template-classic .cv-inline-print-value {
+    orphans: 3;
+    widows: 3;
   }
 
   .cv-document section > h3 {
