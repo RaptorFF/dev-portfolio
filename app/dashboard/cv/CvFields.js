@@ -301,7 +301,7 @@ function CvRichTextEditor({
 
   return (
     <div
-      className={`cv-rich-text ${bulletList ? "cv-rich-text-bullets" : ""}`}
+      className="cv-rich-text"
       onFocusCapture={showToolbar}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -415,21 +415,32 @@ function CvRichTextEditor({
           </label>
         </div>
       ) : null}
-      <div
-        ref={editorRef}
-        className={`cv-inline-field cv-inline-multiline-field ${className}`}
-        role="textbox"
-        aria-label={label}
-        aria-multiline="true"
-        contentEditable
-        suppressContentEditableWarning
-        data-placeholder={placeholder}
-        data-placeholder-visible={placeholderVisible}
-        onInput={handleInput}
-        onKeyUp={saveSelection}
-        onMouseUp={saveSelection}
-        onPaste={insertPlainText}
-      />
+      <div className="cv-rich-text-input">
+        <div
+          ref={editorRef}
+          className={`cv-inline-field cv-inline-multiline-field ${className}`}
+          role="textbox"
+          aria-label={label}
+          aria-multiline="true"
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInput}
+          onKeyUp={saveSelection}
+          onMouseUp={saveSelection}
+          onPaste={insertPlainText}
+        />
+        {placeholderVisible ? (
+          <span
+            className="cv-rich-text-placeholder"
+            style={{
+              left: bulletList && !plainTextMode ? "2em" : 0,
+            }}
+            aria-hidden="true"
+          >
+            {placeholder}
+          </span>
+        ) : null}
+      </div>
       <div
         ref={printRef}
         className="cv-inline-field cv-inline-print-value"

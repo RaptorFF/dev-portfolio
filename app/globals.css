@@ -1636,6 +1636,19 @@ a {
   min-width: 0;
 }
 
+.cv-rich-text-input {
+  position: relative;
+  min-width: 0;
+}
+
+.cv-rich-text-placeholder {
+  position: absolute;
+  top: 2px;
+  color: #8693a0;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
 .cv-rich-text-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -1705,16 +1718,6 @@ a {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   clip-path: inset(50%);
-}
-
-.cv-inline-multiline-field[data-placeholder-visible="true"]::before {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  color: #8693a0;
-  content: attr(data-placeholder);
-  opacity: 0.85;
-  pointer-events: none;
 }
 
 .cv-rich-text .cv-inline-multiline-field ul,
