@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PublicPortfolioView from "../../components/public-portfolio-view";
 
 export default function PreviewPanel({
+  previewPanelRef,
   profile,
   themes,
   selectedTheme,
@@ -29,7 +30,7 @@ export default function PreviewPanel({
   }, [previewOpen]);
 
   return (
-    <aside className="preview-panel" id="publish">
+    <aside className="preview-panel" id="publish" ref={previewPanelRef}>
       <p className="section-kicker">Live preview</p>
       <h2>How your public portfolio will look</h2>
 

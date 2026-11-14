@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 import PreviewPanel from "./_components/preview-panel";
@@ -11,8 +11,17 @@ import { useTheme } from "../lib/use-theme";
 
 export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("overview");
+  const [showFloatingPublish, setShowFloatingPublish] = useState(false);
+  const [floatingPublishPosition, setFloatingPublishPosition] = useState(null);
+  const publishButtonRef = useRef(null);
+  const previewPanelRef = useRef(null);
   const { themes, selectedTheme, saveTheme } = useTheme();
   const editor = usePortfolioEditor({ themes, selectedTheme, saveTheme });
+  const portfolioPublished =
+    editor.saveStatus === "Portfolio je objavljen:" && Boolean(editor.publishedSlug);
+  const githubAuthorizationExpired = editor.saveStatus.startsWith(
+    "GitHub autorizacija je istekla",
+  );
 
   // Update active section based on URL hash
   useEffect(() => {
@@ -27,6 +36,54 @@ export default function DashboardPage() {
     window.addEventListener("hashchange", updateActiveSection);
     return () => window.removeEventListener("hashchange", updateActiveSection);
   }, []);
+
+  useEffect(() => {
+    const publishButton = publishButtonRef.current;
+    if (!publishButton) return;
+
+    const updateFloatingPublishVisibility = () => {
+      setShowFloatingPublish(
+        publishButton.getBoundingClientRect().bottom <= 0,
+      );
+    };
+
+    updateFloatingPublishVisibility();
+    window.addEventListener("scroll", updateFloatingPublishVisibility, {
+      passive: true,
+    });
+    window.addEventListener("resize", updateFloatingPublishVisibility);
+    return () => {
+      window.removeEventListener("scroll", updateFloatingPublishVisibility);
+      window.removeEventListener("resize", updateFloatingPublishVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!showFloatingPublish) return;
+
+    const previewPanel = previewPanelRef.current;
+    if (!previewPanel) return;
+
+    const updateFloatingPublishPosition = () => {
+      if (window.matchMedia("(max-width: 960px)").matches) {
+        setFloatingPublishPosition({
+          left: "auto",
+          right: "calc(20px + env(safe-area-inset-right, 0px))",
+        });
+        return;
+      }
+
+      setFloatingPublishPosition({
+        left: `${previewPanel.getBoundingClientRect().left}px`,
+        right: "auto",
+      });
+    };
+
+    updateFloatingPublishPosition();
+    window.addEventListener("resize", updateFloatingPublishPosition);
+    return () =>
+      window.removeEventListener("resize", updateFloatingPublishPosition);
+  }, [showFloatingPublish]);
 
   return (
     <main className="dashboard-shell">
@@ -98,6 +155,7 @@ export default function DashboardPage() {
               </button>
             ) : null}
             <button
+              ref={publishButtonRef}
               type="button"
               className="button button-primary"
               onClick={editor.publish}
@@ -116,8 +174,7 @@ export default function DashboardPage() {
         {editor.saveStatus ? (
           <p className="save-status">
             {editor.saveStatus}{" "}
-            {editor.saveStatus === "Portfolio je objavljen:" &&
-            editor.publishedSlug ? (
+            {portfolioPublished ? (
               <a
                 href={`/u/${editor.publishedSlug}`}
                 target="_blank"
@@ -126,7 +183,7 @@ export default function DashboardPage() {
                 /u/{editor.publishedSlug}
               </a>
             ) : null}
-            {editor.saveStatus.startsWith("GitHub autorizacija je istekla") ? (
+            {githubAuthorizationExpired ? (
               <button
                 type="button"
                 className="button button-primary"
@@ -214,9 +271,56 @@ export default function DashboardPage() {
             onRemoveProject={editor.removeProject}
           />
         </div>
+        {showFloatingPublish && floatingPublishPosition ? (
+          <div
+            className={`floating-publish${portfolioPublished ? " floating-publish-published" : ""}`}
+            style={floatingPublishPosition}
+          >
+            {githubAuthorizationExpired ? (
+              <div className="floating-publish-notice" role="alert">
+                <span>{editor.saveStatus}</span>
+                <button
+                  type="button"
+                  className="button button-primary"
+                  onClick={() =>
+                    signIn("github", { callbackUrl: "/dashboard" })
+                  }
+                >
+                  Reconnect GitHub
+                </button>
+              </div>
+            ) : null}
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={editor.publish}
+              disabled={!editor.canPublish}
+              title={
+                editor.canPublish
+                  ? undefined
+                  : "Fix your portfolio link before publishing"
+              }
+            >
+              Publish
+            </button>
+            {portfolioPublished ? (
+              <p className="floating-publish-success" role="status">
+                {editor.saveStatus}{" "}
+                <a
+                  href={`/u/${editor.publishedSlug}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  /u/{editor.publishedSlug}
+                </a>
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       <PreviewPanel
+        previewPanelRef={previewPanelRef}
         profile={editor.profile}
         themes={themes}
         selectedTheme={selectedTheme}
