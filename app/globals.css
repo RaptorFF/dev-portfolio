@@ -703,6 +703,7 @@ a {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: var(--cv-font-family, inherit);
   color: #20212a;
   background: #fff;
   border-radius: 8px;
@@ -753,7 +754,7 @@ a {
 .cv-document-header h2 {
   margin: 0;
   color: inherit;
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-family: var(--cv-font-family, Inter, "Segoe UI", Arial, sans-serif);
   font-size: clamp(1.5rem, 2.4vw, 2rem);
   line-height: 1.08;
   overflow-wrap: anywhere;
@@ -888,7 +889,7 @@ a {
   display: grid;
   align-content: start;
   gap: 24px;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--cv-font-family, Georgia, "Times New Roman", serif);
   border-top: 8px solid #333;
   border-radius: 4px;
 }
@@ -911,7 +912,7 @@ a {
 }
 
 .cv-template-classic .cv-document-header h2 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--cv-font-family, Georgia, "Times New Roman", serif);
   font-size: 2.4rem;
 }
 
@@ -1022,6 +1023,16 @@ a {
   border-radius: 6px;
   background: transparent;
   cursor: pointer;
+}
+
+.cv-font-select {
+  min-height: 30px;
+  padding: 4px 8px;
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: var(--panel-bg);
+  font: inherit;
 }
 
 .cv-color-reset {
@@ -2470,7 +2481,7 @@ a {
   border-radius: 20px;
   border-top: 1px solid #dce2e8;
   box-shadow: none;
-  font-family: Arial, "Segoe UI", sans-serif;
+  font-family: var(--cv-font-family, Arial, "Segoe UI", sans-serif);
 }
 
 .cv-template-classic .cv-document-columns,
@@ -2518,7 +2529,7 @@ a {
 
 .cv-template-classic .cv-document-header .cv-inline-name {
   color: #123f67;
-  font-family: Arial, "Segoe UI", sans-serif;
+  font-family: var(--cv-font-family, Arial, "Segoe UI", sans-serif);
   font-size: inherit;
   letter-spacing: 0.01em;
 }

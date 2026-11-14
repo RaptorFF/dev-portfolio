@@ -13,6 +13,7 @@ export const emptyProfile = {
 
 export const emptyCv = {
   template: "modern",
+  fontFamily: "",
   colors: {
     classicBackground: "#ffffff",
     classicSectionBackground: "#d7e0e6",
@@ -50,6 +51,20 @@ export const templates = [
       "A distinctive layout with customizable header and sidebar colors.",
   },
 ];
+
+export const cvFontFamilies = [
+  { label: "Arial", value: 'Arial, "Segoe UI", sans-serif' },
+  { label: "Georgia", value: 'Georgia, "Times New Roman", serif' },
+  { label: "Tahoma", value: "Tahoma, Arial, sans-serif" },
+  { label: "Trebuchet MS", value: '"Trebuchet MS", Arial, sans-serif' },
+  { label: "Verdana", value: "Verdana, Arial, sans-serif" },
+];
+
+export function normalizeCvFontFamily(fontFamily) {
+  return cvFontFamilies.some((font) => font.value === fontFamily)
+    ? fontFamily
+    : emptyCv.fontFamily;
+}
 
 export function normalizeCvColors(colors) {
   const isHexColor = (value) =>

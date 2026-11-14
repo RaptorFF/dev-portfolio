@@ -126,6 +126,7 @@ export default function CvDocument({
           colors.minimalSidebar,
           "#374151",
         ),
+        ...(cv.fontFamily ? { "--cv-font-family": cv.fontFamily } : {}),
       }}
     >
       <aside className="cv-document-panel" aria-label="Editable CV document">

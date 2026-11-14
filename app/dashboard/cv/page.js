@@ -9,8 +9,10 @@ import {
   emptyProfile,
   MAX_CV_PHOTO_SIZE,
   normalizeCvColors,
+  normalizeCvFontFamily,
   normalizeSkills,
   resizeCvPhoto,
+  cvFontFamilies,
   templates,
 } from "./cv-utils";
 
@@ -61,6 +63,7 @@ export default function CvBuilderPage() {
           setCv({
             ...emptyCv,
             ...savedCv,
+            fontFamily: normalizeCvFontFamily(savedCv.fontFamily),
             colors: normalizeCvColors(savedCv.colors),
             experience: Array.isArray(savedCv.experience)
               ? savedCv.experience
@@ -136,15 +139,27 @@ export default function CvBuilderPage() {
     setEdited(true);
   }
 
-  function resetClassicColors() {
-    setCv((current) => ({
-      ...current,
-      colors: {
-        ...normalizeCvColors(current.colors),
-        classicBackground: emptyCv.colors.classicBackground,
-        classicSectionBackground: emptyCv.colors.classicSectionBackground,
-      },
-    }));
+  function updateTemplateFont(fontFamily) {
+    setCv((current) => ({ ...current, fontFamily }));
+    setEdited(true);
+  }
+
+  function resetTemplateAppearance() {
+    setCv((current) => {
+      const colors = normalizeCvColors(current.colors);
+      if (current.template === "classic") {
+        colors.classicBackground = emptyCv.colors.classicBackground;
+        colors.classicSectionBackground =
+          emptyCv.colors.classicSectionBackground;
+      } else if (current.template === "modern") {
+        colors.modernSidebar = emptyCv.colors.modernSidebar;
+      } else if (current.template === "minimal") {
+        colors.minimalHeader = emptyCv.colors.minimalHeader;
+        colors.minimalSidebar = emptyCv.colors.minimalSidebar;
+      }
+
+      return { ...current, fontFamily: emptyCv.fontFamily, colors };
+    });
     setEdited(true);
   }
 
@@ -352,9 +367,25 @@ export default function CvBuilderPage() {
           ))}
         </div>
 
-        <section className="cv-color-controls" aria-label="Template colors">
-          <strong>Customize template colors</strong>
+        <section className="cv-color-controls" aria-label="Template appearance">
+          <strong>Customize template appearance</strong>
           <div className="cv-color-control-list">
+            <label className="cv-color-control">
+              <span>Font</span>
+              <select
+                className="cv-font-select"
+                aria-label="CV font"
+                value={cv.fontFamily}
+                onChange={(event) => updateTemplateFont(event.target.value)}
+              >
+                <option value="">Template default</option>
+                {cvFontFamilies.map((font) => (
+                  <option key={font.value} value={font.value}>
+                    {font.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             {cv.template === "classic" ? (
               <>
                 <label className="cv-color-control">
@@ -385,13 +416,6 @@ export default function CvBuilderPage() {
                     aria-label="Section heading background color"
                   />
                 </label>
-                <button
-                  className="cv-color-reset"
-                  type="button"
-                  onClick={resetClassicColors}
-                >
-                  Reset to default
-                </button>
               </>
             ) : null}
             {cv.template === "modern" ? (
@@ -436,6 +460,13 @@ export default function CvBuilderPage() {
                 </label>
               </>
             ) : null}
+            <button
+              className="cv-color-reset"
+              type="button"
+              onClick={resetTemplateAppearance}
+            >
+              Reset to default
+            </button>
           </div>
         </section>
 

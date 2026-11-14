@@ -15,13 +15,6 @@ const CV_RICH_TEXT_TAGS = new Set([
   "U",
   "UL",
 ]);
-const CV_FONT_FAMILIES = new Set([
-  "Arial",
-  "Georgia",
-  "Tahoma",
-  "Times New Roman",
-  "Verdana",
-]);
 const CV_FONT_SIZES = {
   1: "12px",
   2: "14px",
@@ -64,12 +57,8 @@ function sanitizeCvRichText(value) {
     const cleanTag = tag === "FONT" ? "SPAN" : tag.toLowerCase();
     const cleanNode = document.createElement(cleanTag);
     if (tag === "FONT") {
-      const family = node.getAttribute("face");
       const size = CV_FONT_SIZES[node.getAttribute("size")];
       const color = node.getAttribute("color");
-      if (family && CV_FONT_FAMILIES.has(family)) {
-        cleanNode.style.fontFamily = family;
-      }
       if (size) cleanNode.style.fontSize = size;
       if (color && /^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(color)) {
         cleanNode.style.color = color;
@@ -80,15 +69,11 @@ function sanitizeCvRichText(value) {
     if (styles) {
       const color = styles.color;
       const fontSize = styles.fontSize;
-      const fontFamily = styles.fontFamily.replaceAll('"', "").split(",")[0].trim();
       if (color && /^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(color)) {
         cleanNode.style.color = color;
       }
       if (/^(?:12|14|16|18|24)px$/.test(fontSize)) {
         cleanNode.style.fontSize = fontSize;
-      }
-      if (CV_FONT_FAMILIES.has(fontFamily)) {
-        cleanNode.style.fontFamily = fontFamily;
       }
     }
 
@@ -324,26 +309,6 @@ function CvRichTextEditor({
           role="toolbar"
           aria-label={`${label} formatting`}
         >
-          <label>
-            <span className="cv-rich-text-visually-hidden">Font</span>
-            <select
-              aria-label="Font"
-              defaultValue=""
-              onChange={(event) => {
-                if (event.target.value) {
-                  applyCommand("fontName", event.target.value);
-                  event.target.value = "";
-                }
-              }}
-            >
-              <option value="">Font</option>
-              {[...CV_FONT_FAMILIES].map((font) => (
-                <option key={font} value={font}>
-                  {font}
-                </option>
-              ))}
-            </select>
-          </label>
           <label>
             <span className="cv-rich-text-visually-hidden">Font size</span>
             <select
