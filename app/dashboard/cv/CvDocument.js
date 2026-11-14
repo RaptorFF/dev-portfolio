@@ -142,14 +142,8 @@ export default function CvDocument({
         ),
         "--cv-modern-main-bg": colors.modernMain,
         "--cv-modern-main-foreground": getContrastColor(colors.modernMain),
-        "--cv-modern-main-heading": getContrastColor(
-          colors.modernMain,
-          "#263b5d",
-        ),
-        "--cv-modern-main-role": getContrastColor(
-          colors.modernMain,
-          "#315f8b",
-        ),
+        "--cv-modern-main-heading": getContrastColor(colors.modernMain),
+        "--cv-modern-main-role": getContrastColor(colors.modernMain),
         "--cv-modern-main-muted": getContrastColor(
           colors.modernMain,
           "#666672",
