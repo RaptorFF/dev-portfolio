@@ -44,13 +44,14 @@ export const templates = [
   {
     id: "modern",
     label: "Modern Sidebar",
-    description: "A clean two-column layout with a customizable sidebar color.",
+    description:
+      "A two-column layout with editable sidebar and main colors, plus dedicated sections for contact details, interests, and languages.",
   },
   {
     id: "minimal",
     label: "Color-Accented",
     description:
-      "A distinctive layout with customizable header and sidebar colors.",
+      "A distinctive layout with editable sidebar information and customizable background colors.",
   },
 ];
 
@@ -102,9 +103,7 @@ export function getContrastColor(hexColor, darkColor = "#20212a") {
   const channels = [16, 8, 0].map((shift) => ((value >> shift) & 0xff) / 255);
   const luminance = channels.reduce((sum, channel, index) => {
     const linear =
-      channel <= 0.04045
-        ? channel / 12.92
-        : ((channel + 0.055) / 1.055) ** 2.4;
+      channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
     return sum + linear * [0.2126, 0.7152, 0.0722][index];
   }, 0);
 
