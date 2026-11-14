@@ -801,6 +801,10 @@ a {
   text-underline-offset: 2px;
 }
 
+.cv-contact-print-link {
+  display: none !important;
+}
+
 .cv-document-interests ul {
   display: grid;
   gap: 7px;
@@ -2338,6 +2342,32 @@ a {
   padding-top: 164px;
 }
 
+.cv-layout.cv-template-minimal.cv-template-minimal-no-photo
+  .cv-document-contact {
+  padding-top: 20px;
+}
+
+.cv-layout.cv-template-minimal.cv-template-minimal-no-photo
+  .cv-document-header {
+  padding-left: 30px;
+  text-align: center;
+}
+
+.cv-layout.cv-template-minimal.cv-template-minimal-no-photo
+  .cv-document-header
+  .cv-inline-name,
+.cv-layout.cv-template-minimal.cv-template-minimal-no-photo
+  .cv-document-header
+  .cv-inline-role {
+  text-align: center;
+}
+
+.cv-layout.cv-template-minimal.cv-template-minimal-no-photo
+  .cv-document-header
+  .cv-inline-role {
+  text-indent: 0;
+}
+
 .cv-template-minimal .cv-document-main .cv-document-profile,
 .cv-template-minimal .cv-document-main .cv-document-experience,
 .cv-template-minimal .cv-document-main .cv-document-education {
@@ -2840,11 +2870,12 @@ a {
   position: relative;
   grid-template-columns: minmax(0, 1fr);
   gap: 18px 0;
-  min-height: 0;
+  min-height: min(1123px, 141.4vw);
   padding: 32px;
   border: 0;
   border-radius: 0;
-  aspect-ratio: 794 / 1123;
+  aspect-ratio: auto;
+  overflow: visible;
 }
 
 .cv-layout.cv-template-classic-no-photo .cv-document-photo {
@@ -2868,8 +2899,8 @@ a {
   grid-column: 1;
   grid-row: 1;
   padding: 0 0 12px;
-  border-bottom: 1px solid #d9e0e7;
-  text-align: center;
+  border-bottom: 0;
+  text-align: left;
   color: #111827;
 }
 
@@ -2898,14 +2929,14 @@ a {
 }
 
 .cv-layout.cv-template-classic-no-photo .cv-document-contact {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
   grid-column: 1;
   grid-row: 2;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0;
+  align-items: start;
+  gap: 10px 18px;
   margin: 0;
+  padding: 10px 0 12px;
   color: #50505b;
   font-size: 0.78rem;
 }
@@ -2913,11 +2944,12 @@ a {
 .cv-layout.cv-template-classic.cv-template-classic-no-photo
   .cv-document
   section.cv-document-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
   grid-column: 1;
   grid-row: 2;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  align-items: start;
+  text-align: left;
 }
 
 .cv-layout.cv-template-classic.cv-template-classic-no-photo
@@ -2927,48 +2959,37 @@ a {
   display: none;
 }
 
-.cv-layout.cv-template-classic-no-photo .cv-document-contact > h3,
-.cv-layout.cv-template-classic-no-photo .cv-document-contact > div > strong {
+.cv-layout.cv-template-classic-no-photo .cv-document-contact > h3 {
   display: none;
 }
 
 .cv-layout.cv-template-classic-no-photo .cv-document-contact > div {
-  display: flex;
-  grid-template-columns: none;
-  align-items: center;
-  gap: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 3px;
 }
 
 .cv-layout.cv-template-classic-no-photo
   .cv-document-contact
-  > div:nth-of-type(-n + 3) {
-  display: flex;
-  order: 2;
+  > div
+  > strong {
+  display: block;
+  color: #75808b;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.cv-layout.cv-template-classic-no-photo
-  .cv-document-contact
-  > div:nth-of-type(1) {
-  order: 3;
+.cv-layout.cv-template-classic-no-photo .cv-document-contact .cv-inline-field {
+  width: 100%;
+  min-width: 0;
+  color: #50505b;
+  font-size: inherit;
+  line-height: 1.5;
 }
 
-.cv-layout.cv-template-classic-no-photo
-  .cv-document-contact
-  > div:nth-of-type(3) {
-  order: 1;
-}
-
-.cv-layout.cv-template-classic-no-photo
-  .cv-document-contact
-  > div:nth-of-type(2)::after,
-.cv-layout.cv-template-classic-no-photo
-  .cv-document-contact
-  > div:nth-of-type(3)::after {
-  margin: 0 6px;
-  content: "|";
-}
-
-.cv-layout.cv-template-classic-no-photo .cv-document-contact .cv-inline-field,
 .cv-layout.cv-template-classic-no-photo .cv-document-contact p,
 .cv-layout.cv-template-classic-no-photo .cv-document-contact a {
   width: auto;
@@ -3017,6 +3038,17 @@ a {
 @media (max-width: 480px) {
   .cv-template-classic .cv-document-skills {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cv-layout.cv-template-classic-no-photo .cv-document-contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+  }
+
+  .cv-layout.cv-template-classic-no-photo
+    .cv-document-contact
+    > div:nth-of-type(1) {
+    grid-column: 1 / -1;
   }
 
   .cv-layout.cv-template-classic-no-photo .cv-document {
@@ -4255,23 +4287,23 @@ a {
     section.cv-document-personal {
     grid-column: 1 / -1;
     grid-row: 2;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+    align-items: start;
     text-align: left;
   }
 
   .cv-layout.cv-template-classic.cv-template-classic-no-photo .cv-document-header {
-    text-align: center;
+    text-align: left;
   }
 
   .cv-layout.cv-template-classic.cv-template-classic-no-photo
     .cv-document
     section.cv-document-personal {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+    align-items: start;
+    text-align: left;
   }
 
   .cv-layout.cv-template-classic .cv-document-profile,
@@ -4384,6 +4416,14 @@ a {
   .cv-inline-license input,
   .cv-inline-link > a {
     display: none !important;
+  }
+
+  .cv-document-contact .cv-contact-edit-field {
+    display: none !important;
+  }
+
+  .cv-document-contact .cv-contact-print-link {
+    display: inline !important;
   }
 
   .cv-inline-field {

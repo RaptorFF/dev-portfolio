@@ -12,6 +12,24 @@ import {
   normalizeCvColors,
 } from "./cv-utils";
 
+function getExternalHref(value) {
+  const trimmedValue = typeof value === "string" ? value.trim() : "";
+  if (!trimmedValue) return "";
+
+  const href = /^[a-z][a-z\d+.-]*:/i.test(trimmedValue)
+    ? trimmedValue
+    : `https://${trimmedValue}`;
+
+  try {
+    const url = new URL(href);
+    return url.protocol === "http:" || url.protocol === "https:"
+      ? url.href
+      : "";
+  } catch {
+    return "";
+  }
+}
+
 function CvSkillsSection({
   skills,
   addEntry,
@@ -88,6 +106,7 @@ export default function CvDocument({
   addTextItem,
 }) {
   const colors = normalizeCvColors(cv.colors);
+  const linkedinHref = getExternalHref(profile.linkedin);
   const hasContactDetails =
     cv.template === "classic"
       ? hasAnyText(profile.address, profile.phone, profile.email)
@@ -103,6 +122,10 @@ export default function CvDocument({
       className={`cv-layout cv-template-${cv.template}${
         cv.template === "classic" && !profile.photo
           ? " cv-template-classic-no-photo"
+          : ""
+      }${
+        cv.template === "minimal" && !profile.photo
+          ? " cv-template-minimal-no-photo"
           : ""
       }`}
       style={{
@@ -238,7 +261,16 @@ export default function CvDocument({
                     value={profile.phone}
                     onChange={(value) => updateProfileField("phone", value)}
                     placeholder="Add your phone"
+                    className="cv-contact-edit-field"
                   />
+                  {hasText(profile.phone) ? (
+                    <a
+                      className="cv-contact-print-link"
+                      href={`tel:${profile.phone.replace(/[^\d+]/g, "")}`}
+                    >
+                      {profile.phone}
+                    </a>
+                  ) : null}
                 </div>
                 <div className={hasText(profile.email) ? "" : "cv-print-empty"}>
                   <strong>Email</strong>
@@ -247,8 +279,16 @@ export default function CvDocument({
                     value={profile.email}
                     onChange={(value) => updateProfileField("email", value)}
                     placeholder="Add your email"
-                    className="cv-inline-email"
+                    className="cv-inline-email cv-contact-edit-field"
                   />
+                  {hasText(profile.email) ? (
+                    <a
+                      className="cv-contact-print-link"
+                      href={`mailto:${profile.email.trim()}`}
+                    >
+                      {profile.email}
+                    </a>
+                  ) : null}
                 </div>
                 <div
                   className={profile.hasDrivingLicense ? "" : "cv-print-empty"}
@@ -294,16 +334,26 @@ export default function CvDocument({
                         updateProfileField("linkedin", value)
                       }
                       placeholder="Add LinkedIn URL"
-                      className="cv-inline-email"
+                      className={`cv-inline-email ${
+                        linkedinHref ? "cv-contact-edit-field" : ""
+                      }`}
                     />
-                    {profile.linkedin ? (
+                    {linkedinHref ? (
                       <a
-                        href={profile.linkedin}
+                        href={linkedinHref}
                         target="_blank"
                         rel="noreferrer"
                         aria-label="Open LinkedIn profile"
                       >
                         Open
+                      </a>
+                    ) : null}
+                    {linkedinHref ? (
+                      <a
+                        className="cv-contact-print-link"
+                        href={linkedinHref}
+                      >
+                        {profile.linkedin}
                       </a>
                     ) : null}
                   </div>
