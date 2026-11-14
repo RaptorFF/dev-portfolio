@@ -1304,6 +1304,34 @@ a {
   border-radius: 5px;
 }
 
+.cv-template-modern .cv-document-main {
+  color: var(--cv-modern-main-foreground);
+  background: var(--cv-modern-main-bg);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.cv-template-modern .cv-document-main section > h3 {
+  color: var(--cv-modern-main-heading);
+}
+
+.cv-template-modern .cv-document-main .cv-document-header h3 {
+  color: var(--cv-modern-main-role);
+}
+
+.cv-template-modern .cv-document-entry .cv-document-dates span {
+  color: var(--cv-modern-main-muted);
+}
+
+.cv-template-modern .cv-document-main .cv-inline-strong {
+  color: var(--cv-modern-main-foreground);
+}
+
+.cv-template-modern .cv-document-main .cv-inline-field::placeholder,
+.cv-template-modern .cv-document-main .cv-rich-text-placeholder {
+  color: var(--cv-modern-main-placeholder);
+}
+
 .cv-template-modern .cv-document-sidebar {
   color: var(--cv-modern-sidebar-foreground);
   background: var(--cv-modern-sidebar-bg);
@@ -2141,6 +2169,9 @@ a {
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.68fr);
   grid-template-rows: 176px auto auto auto auto;
   min-height: 800px;
+  background: var(--cv-minimal-main-bg);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
 }
 
 .cv-template-minimal .cv-document-columns::before {
@@ -2169,6 +2200,28 @@ a {
 
 .cv-template-minimal .cv-document-main {
   display: contents;
+}
+
+.cv-template-minimal .cv-document-main section {
+  color: var(--cv-minimal-main-foreground);
+}
+
+.cv-template-minimal .cv-document-main section > h3 {
+  color: var(--cv-minimal-main-heading);
+}
+
+.cv-template-minimal .cv-document-main .cv-document-entry .cv-document-dates span {
+  color: var(--cv-minimal-main-muted);
+}
+
+.cv-template-minimal .cv-document-main .cv-inline-strong,
+.cv-template-minimal .cv-document-main section .cv-inline-field {
+  color: var(--cv-minimal-main-foreground);
+}
+
+.cv-template-minimal .cv-document-main .cv-inline-field::placeholder,
+.cv-template-minimal .cv-document-main .cv-rich-text-placeholder {
+  color: var(--cv-minimal-main-placeholder);
 }
 
 .cv-template-minimal .cv-document-header {
@@ -2404,8 +2457,19 @@ a {
   }
 
   .cv-template-minimal .cv-document-columns::before {
-    top: 0;
-    width: 100%;
+    display: none;
+  }
+
+  .cv-template-minimal .cv-document-sidebar {
+    background: var(--cv-minimal-sidebar-bg);
+  }
+
+  .cv-template-minimal .cv-document-main section {
+    background: var(--cv-minimal-main-bg);
+  }
+
+  .cv-template-minimal .cv-document-columns {
+    background: transparent;
   }
 
   .cv-template-minimal .cv-document-header {
@@ -4392,6 +4456,19 @@ a {
     width: 32.5%;
     content: "";
     background: var(--cv-modern-sidebar-bg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .cv-layout.cv-template-modern::after {
+    position: fixed;
+    z-index: 0;
+    inset: 0 0 0 auto;
+    width: 67.5%;
+    content: "";
+    background: var(--cv-modern-main-bg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .cv-layout.cv-template-modern {
@@ -4445,9 +4522,18 @@ a {
   }
 
   .cv-layout.cv-template-minimal .cv-document-columns::before {
+    display: none;
+  }
+
+  .cv-layout.cv-template-minimal::before {
     position: fixed;
+    z-index: 0;
     inset: 0 auto 0 0;
     width: 30%;
+    content: "";
+    background: var(--cv-minimal-sidebar-bg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .cv-layout.cv-template-minimal .cv-document-columns::after {
@@ -4456,7 +4542,9 @@ a {
     inset: 0 0 0 30%;
     border-left: 1px solid #d8dfe6;
     content: "";
-    background: #fff;
+    background: var(--cv-minimal-main-bg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .cv-layout.cv-template-minimal .cv-document-header {

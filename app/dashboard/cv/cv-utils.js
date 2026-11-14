@@ -18,8 +18,10 @@ export const emptyCv = {
     classicBackground: "#ffffff",
     classicSectionBackground: "#d7e0e6",
     modernSidebar: "#4b5563",
+    modernMain: "#ffffff",
     minimalHeader: "#315f8b",
     minimalSidebar: "#d1d5db",
+    minimalMain: "#ffffff",
   },
   experience: [],
   education: [],
@@ -80,12 +82,18 @@ export function normalizeCvColors(colors) {
     modernSidebar: isHexColor(colors?.modernSidebar)
       ? colors.modernSidebar
       : emptyCv.colors.modernSidebar,
+    modernMain: isHexColor(colors?.modernMain)
+      ? colors.modernMain
+      : emptyCv.colors.modernMain,
     minimalHeader: isHexColor(colors?.minimalHeader)
       ? colors.minimalHeader
       : emptyCv.colors.minimalHeader,
     minimalSidebar: isHexColor(colors?.minimalSidebar)
       ? colors.minimalSidebar
       : emptyCv.colors.minimalSidebar,
+    minimalMain: isHexColor(colors?.minimalMain)
+      ? colors.minimalMain
+      : emptyCv.colors.minimalMain,
   };
 }
 

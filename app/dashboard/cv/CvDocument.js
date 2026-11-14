@@ -117,6 +117,24 @@ export default function CvDocument({
         "--cv-modern-sidebar-foreground": getContrastColor(
           colors.modernSidebar,
         ),
+        "--cv-modern-main-bg": colors.modernMain,
+        "--cv-modern-main-foreground": getContrastColor(colors.modernMain),
+        "--cv-modern-main-heading": getContrastColor(
+          colors.modernMain,
+          "#263b5d",
+        ),
+        "--cv-modern-main-role": getContrastColor(
+          colors.modernMain,
+          "#315f8b",
+        ),
+        "--cv-modern-main-muted": getContrastColor(
+          colors.modernMain,
+          "#666672",
+        ),
+        "--cv-modern-main-placeholder": getContrastColor(
+          colors.modernMain,
+          "#8693a0",
+        ),
         "--cv-minimal-header-bg": colors.minimalHeader,
         "--cv-minimal-header-foreground": getContrastColor(
           colors.minimalHeader,
@@ -125,6 +143,20 @@ export default function CvDocument({
         "--cv-minimal-sidebar-foreground": getContrastColor(
           colors.minimalSidebar,
           "#374151",
+        ),
+        "--cv-minimal-main-bg": colors.minimalMain,
+        "--cv-minimal-main-foreground": getContrastColor(colors.minimalMain),
+        "--cv-minimal-main-heading": getContrastColor(
+          colors.minimalMain,
+          "#374151",
+        ),
+        "--cv-minimal-main-muted": getContrastColor(
+          colors.minimalMain,
+          "#666672",
+        ),
+        "--cv-minimal-main-placeholder": getContrastColor(
+          colors.minimalMain,
+          "#8693a0",
         ),
         ...(cv.fontFamily ? { "--cv-font-family": cv.fontFamily } : {}),
       }}

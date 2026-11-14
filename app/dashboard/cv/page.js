@@ -153,9 +153,11 @@ export default function CvBuilderPage() {
           emptyCv.colors.classicSectionBackground;
       } else if (current.template === "modern") {
         colors.modernSidebar = emptyCv.colors.modernSidebar;
+        colors.modernMain = emptyCv.colors.modernMain;
       } else if (current.template === "minimal") {
         colors.minimalHeader = emptyCv.colors.minimalHeader;
         colors.minimalSidebar = emptyCv.colors.minimalSidebar;
+        colors.minimalMain = emptyCv.colors.minimalMain;
       }
 
       return { ...current, fontFamily: emptyCv.fontFamily, colors };
@@ -419,17 +421,30 @@ export default function CvBuilderPage() {
               </>
             ) : null}
             {cv.template === "modern" ? (
-              <label className="cv-color-control">
-                <span>Sidebar</span>
-                <input
-                  type="color"
-                  value={cvColors.modernSidebar}
-                  onChange={(event) =>
-                    updateTemplateColor("modernSidebar", event.target.value)
-                  }
-                  aria-label="Sidebar color"
-                />
-              </label>
+              <>
+                <label className="cv-color-control">
+                  <span>Sidebar</span>
+                  <input
+                    type="color"
+                    value={cvColors.modernSidebar}
+                    onChange={(event) =>
+                      updateTemplateColor("modernSidebar", event.target.value)
+                    }
+                    aria-label="Sidebar color"
+                  />
+                </label>
+                <label className="cv-color-control">
+                  <span>Main area</span>
+                  <input
+                    type="color"
+                    value={cvColors.modernMain}
+                    onChange={(event) =>
+                      updateTemplateColor("modernMain", event.target.value)
+                    }
+                    aria-label="Main area background color"
+                  />
+                </label>
+              </>
             ) : null}
             {cv.template === "minimal" ? (
               <>
@@ -456,6 +471,17 @@ export default function CvBuilderPage() {
                       )
                     }
                     aria-label="Sidebar color"
+                  />
+                </label>
+                <label className="cv-color-control">
+                  <span>Main area</span>
+                  <input
+                    type="color"
+                    value={cvColors.minimalMain}
+                    onChange={(event) =>
+                      updateTemplateColor("minimalMain", event.target.value)
+                    }
+                    aria-label="Main area background color"
                   />
                 </label>
               </>
