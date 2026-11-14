@@ -656,6 +656,17 @@ a {
   justify-content: flex-end;
 }
 
+.cv-floating-download {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+}
+
+.cv-floating-download .button {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
 .cv-status a {
   color: var(--accent);
   text-decoration: underline;
@@ -4155,6 +4166,17 @@ a {
     grid-column: 1 / -1;
   }
 
+  .cv-floating-download {
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 16px;
+  }
+
+  .cv-floating-download .button {
+    width: 100%;
+    justify-content: center;
+  }
+
   .cv-document {
     padding: 0;
   }
@@ -4195,6 +4217,10 @@ a {
 
 @media print {
   .cv-print-empty {
+    display: none !important;
+  }
+
+  .cv-floating-download {
     display: none !important;
   }
 

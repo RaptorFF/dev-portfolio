@@ -26,9 +26,23 @@ export default function CvBuilderPage() {
   const [loaded, setLoaded] = useState(false);
   const [edited, setEdited] = useState(false);
   const photoInputRef = useRef(null);
+  const downloadButtonRef = useRef(null);
+  const [showFloatingDownload, setShowFloatingDownload] = useState(false);
   const cvColors = normalizeCvColors(cv.colors);
   const isReorderedEntryLayout =
     cv.template === "modern" || cv.template === "minimal";
+
+  useEffect(() => {
+    const button = downloadButtonRef.current;
+    if (!button) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setShowFloatingDownload(!entry.isIntersecting);
+    });
+    observer.observe(button);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -256,6 +270,7 @@ export default function CvBuilderPage() {
               Back to portfolio
             </Link>
             <button
+              ref={downloadButtonRef}
               className="button button-secondary"
               type="button"
               onClick={() => window.print()}
@@ -264,6 +279,18 @@ export default function CvBuilderPage() {
             </button>
           </div>
         </header>
+
+        {showFloatingDownload ? (
+          <div className="cv-floating-download">
+            <button
+              className="button button-secondary"
+              type="button"
+              onClick={() => window.print()}
+            >
+              Download PDF
+            </button>
+          </div>
+        ) : null}
 
         {status ? (
           <p className="save-status cv-status" role="status">
