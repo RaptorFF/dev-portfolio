@@ -663,11 +663,11 @@ export default function CvDocument({
                         }
                         placeholder="Add institution"
                         wrap={cv.template === "minimal"}
-                        className={
+                        className={`${
                           isReorderedEntryLayout
                             ? "cv-inline-institution cv-inline-strong"
                             : ""
-                        }
+                        } ${hasText(entry.institution) ? "" : "cv-print-empty"}`}
                       />
                     </div>
                     <CvDateRange
@@ -687,18 +687,27 @@ export default function CvDocument({
                         updateEntry("education", index, "endDate", value)
                       }
                     />
-                    <CvInlineField
-                      label={`Education details ${index + 1}`}
-                      value={entry.description}
-                      onChange={(value) =>
-                        updateEntry("education", index, "description", value)
-                      }
-                      placeholder="Add your education details or achievements"
-                      multiline
-                      className={`cv-inline-description cv-education-description ${
+                    <div
+                      className={`cv-document-role-details ${
                         hasText(entry.description) ? "" : "cv-print-empty"
                       }`}
-                    />
+                    >
+                      <CvInlineField
+                        label={`Education details ${index + 1}`}
+                        value={entry.description}
+                        onChange={(value) =>
+                          updateEntry(
+                            "education",
+                            index,
+                            "description",
+                            value,
+                          )
+                        }
+                        placeholder="Add your education details or achievements"
+                        multiline
+                        className="cv-inline-description cv-education-description"
+                      />
+                    </div>
                     <button
                       className="cv-document-remove cv-entry-remove"
                       type="button"

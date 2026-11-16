@@ -4521,6 +4521,10 @@ a {
     display: none !important;
   }
 
+  .cv-rich-text-placeholder {
+    display: none !important;
+  }
+
   .cv-inline-multiline-field {
     display: none !important;
   }
